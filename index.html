@@ -16,12 +16,12 @@
 --out:8px 8px 18px rgba(0,0,0,.13),-8px -8px 18px rgba(255,255,255,.95);
 --sm:4px 4px 10px rgba(0,0,0,.12),-4px -4px 10px rgba(255,255,255,.9);
 --in:inset 4px 4px 9px rgba(0,0,0,.14),inset -4px -4px 9px rgba(255,255,255,.9);
---onbg:#dcdcdf;--fill:#2a2a2d;--track:#d3d3d6;--pix:#161616;--pixd:#9a9a9a;--pixoff:rgba(0,0,0,.05);--colon:#f0c9a8;--bd:rgba(0,0,0,.25);--mn:#e05a00;color-scheme:light}
+--onbg:#dcdcdf;--fill:#2a2a2d;--track:#d3d3d6;--pix:#161616;--pixd:#9a9a9a;--pixoff:rgba(0,0,0,.05);--colon:#f0c9a8;--bd:rgba(0,0,0,.25);--mn:#e05a00;--hl:rgba(255,122,0,.15);color-scheme:light}
 :root[data-theme=dark]{--bg:#2b302d;--ink:#e9ebe7;--mut:#8f9893;--acc:#ff7a00;
 --out:8px 8px 18px rgba(0,0,0,.45),-6px -6px 16px rgba(255,255,255,.035);
 --sm:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(255,255,255,.035);
 --in:inset 4px 4px 9px rgba(0,0,0,.5),inset -3px -3px 8px rgba(255,255,255,.04);
---onbg:#222724;--fill:#dfe2de;--track:#1f2421;--pix:#e9ebe7;--pixd:#6f7873;--pixoff:rgba(255,255,255,.04);--colon:#e8553a;--bd:rgba(0,0,0,.55);--mn:#e8553a;color-scheme:dark}
+--onbg:#222724;--fill:#dfe2de;--track:#1f2421;--pix:#e9ebe7;--pixd:#6f7873;--pixoff:rgba(255,255,255,.04);--colon:#e8553a;--bd:rgba(0,0,0,.55);--mn:#e8553a;--hl:rgba(255,122,0,.2);color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{background:var(--bg)}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Arabic',system-ui,sans-serif}
 body{max-width:520px;margin:0 auto;padding:env(safe-area-inset-top) 16px 0}
@@ -90,6 +90,30 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 .rmx{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:12px;color:var(--mut);flex:none}
 #mb{font-family:'Amiri Quran',serif;font-size:27px;line-height:2.5;text-align:justify}
 #mb i{font-style:normal;color:var(--acc);font-size:20px}
+/* tafsir: tap an ayah -> compact bottom panel, text above stays visible */
+#mb .ay{border-radius:10px;-webkit-box-decoration-break:clone;box-decoration-break:clone;cursor:pointer;transition:background .2s;scroll-margin:72px 0 46vh}
+#mb .ay.sel{background:var(--hl)}
+#mh{margin:4px 0 0;font-size:12px}
+#ms.tfo #mb{padding-bottom:44vh}
+#tf{position:fixed;inset:auto 0 0;margin:auto;max-width:520px;max-height:44vh;display:flex;flex-direction:column;padding:14px 22px calc(16px + env(safe-area-inset-bottom));background:var(--bg);border-radius:28px 28px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.18);visibility:hidden;transform:translateY(110%);transition:transform .3s ease,visibility 0s .3s}
+#ms.tfo #tf{visibility:visible;transform:none;transition:transform .3s ease}
+.tfh{display:flex;align-items:center;gap:8px;flex:none}
+.tfh b{flex:1;min-width:0;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tfh .ib{width:38px;height:38px}.tfh .sm{flex:none}
+#tft{margin:12px 2px 0;overflow:auto;font-size:16px;line-height:2;white-space:pre-line;overscroll-behavior:contain}
+button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
+/* live tafsir window inside the player (only for reciters that have ayah timings) */
+#tb:not([hidden]){display:grid;place-items:center;padding:0}#tb .i{color:var(--ink)}#tb.on .i{color:var(--acc)}
+.vw{transition:width .3s,margin .3s}
+#pl.wo .vw{width:min(30vw,112px);margin:10px auto 12px}
+#wn{display:none;margin:2px 0 20px;padding:10px 14px 12px;border-radius:24px;box-shadow:var(--in)}
+#pl.wo #wn{display:block}
+.wh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.wh .sm{padding:6px 14px;font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wh .ib{width:34px;height:34px}
+#wt{max-height:132px;overflow:auto;font-size:15px;line-height:1.9;white-space:pre-line;overscroll-behavior:contain}
+@media (prefers-reduced-motion:reduce){.vw{transition:none}}
+@media (prefers-reduced-motion:reduce){#tf{transition:none}}
 .st{display:flex;gap:6px;padding:16px 10px;margin:0 0 6px;text-align:center}
 .st>div{flex:1;min-width:0}.st .tp{flex:1.5}
 .st b{display:block;font-size:17px;font-weight:600;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -151,6 +175,7 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
   </svg>
  </div>
  <h2 class="tt c"></h2><p class="rr mu c"></p>
+ <div id="wn" role="region" aria-label="تفسير الآية الحالية"><div class="wh"><button class="sm" id="wl" aria-label="خيارات التفسير"></button><button class="ib" data-wx data-ic="x" aria-label="إغلاق التفسير"></button></div><div id="wt"></div></div>
  <input type="range" id="sk" value="0" min="0" step="any" aria-label="التقدم">
  <div class="tm"><span id="t1">0:00</span><span id="t2">-0:00</span></div>
  <div class="ctl">
@@ -161,19 +186,24 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
   <button id="nx" data-ic="next" aria-label="السورة التالية"></button>
   <button id="spb">×1</button>
  </div>
- <div class="ctl2"><button id="mb2" aria-label="نص السورة">ق</button><span data-ic="vol" class="i2"></span><input type="range" id="vo" min="0" max="1" step=".01" aria-label="الصوت"></div>
+ <div class="ctl2"><button id="mb2" aria-label="نص السورة">ق</button><button id="tb" data-ic="msg" aria-label="تفسير الآية الحالية" hidden></button><span data-ic="vol" class="i2"></span><input type="range" id="vo" min="0" max="1" step=".01" aria-label="الصوت"></div>
  <button class="dlb" id="dl"></button>
  <p class="mu c" id="ds"></p>
 </section>
 
-<section class="sheet" id="ms"><div class="top"><button class="ib" data-close="ms" data-ic="x" aria-label="إغلاق"></button><b class="tt"></b><span class="ib"></span></div><div id="mb"></div></section>
+<section class="sheet" id="ms"><div class="top"><button class="ib" data-close="ms" data-ic="x" aria-label="إغلاق"></button><b class="tt"></b><span class="ib"></span></div><p class="mu c" id="mh" hidden>اضغط على أي آية لعرض تفسيرها</p><div id="mb"></div>
+ <div id="tf" role="region" aria-label="تفسير الآية">
+  <div class="tfh"><button class="ib" data-tfx data-ic="x" aria-label="إغلاق التفسير"></button><b id="tfl"></b><button class="sm" id="tfe" aria-label="اختيار التفسير"></button><button class="ib" id="tfp" data-ic="cr" aria-label="الآية السابقة"></button><button class="ib" id="tfn" data-ic="cl" aria-label="الآية التالية"></button></div>
+  <div id="tft"></div>
+ </div>
+</section>
 <div id="toast" role="status"></div><div id="bd"></div><section class="sheet" id="menu"></section>
 
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const N='الفاتحة|البقرة|آل عمران|النساء|المائدة|الأنعام|الأعراف|الأنفال|التوبة|يونس|هود|يوسف|الرعد|إبراهيم|الحجر|النحل|الإسراء|الكهف|مريم|طه|الأنبياء|الحج|المؤمنون|النور|الفرقان|الشعراء|النمل|القصص|العنكبوت|الروم|لقمان|السجدة|الأحزاب|سبأ|فاطر|يس|الصافات|ص|الزمر|غافر|فصلت|الشورى|الزخرف|الدخان|الجاثية|الأحقاف|محمد|الفتح|الحجرات|ق|الذاريات|الطور|النجم|القمر|الرحمن|الواقعة|الحديد|المجادلة|الحشر|الممتحنة|الصف|الجمعة|المنافقون|التغابن|الطلاق|التحريم|الملك|القلم|الحاقة|المعارج|نوح|الجن|المزمل|المدثر|القيامة|الإنسان|المرسلات|النبأ|النازعات|عبس|التكوير|الانفطار|المطففين|الانشقاق|البروج|الطارق|الأعلى|الغاشية|الفجر|البلد|الشمس|الليل|الضحى|الشرح|التين|العلق|القدر|البينة|الزلزلة|العاديات|القارعة|التكاثر|العصر|الهمزة|الفيل|قريش|الماعون|الكوثر|الكافرون|النصر|المسد|الإخلاص|الفلق|الناس'.split('|');
-const IC={list:'M4 6h16M4 12h16M4 18h10',users:'M15.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM4 21c0-3.6 3.6-5.5 8-5.5s8 1.9 8 5.5',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',disc:'M18 13a7 7 0 1 1-14 0 7 7 0 0 1 14 0zM13 13a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM21.5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM20.5 5l-5 7.5',clock:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2',sun:'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',moon:'M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z',prev:'M17 5v14M5 5l9 7-9 7z',next:'M7 5v14M19 5l-9 7 9 7z',x:'M6 6l12 12M18 6L6 18',vol:'M4 9v6h4l5 4V5L8 9zM16.5 9a4 4 0 0 1 0 6',dl:'M12 4v11M7 11l5 5 5-5M5 20h14',check:'M5 12l5 5 9-10',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13'};
+const IC={list:'M4 6h16M4 12h16M4 18h10',users:'M15.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM4 21c0-3.6 3.6-5.5 8-5.5s8 1.9 8 5.5',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',disc:'M18 13a7 7 0 1 1-14 0 7 7 0 0 1 14 0zM13 13a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM21.5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM20.5 5l-5 7.5',clock:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2',sun:'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',moon:'M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z',prev:'M17 5v14M5 5l9 7-9 7z',next:'M7 5v14M19 5l-9 7 9 7z',x:'M6 6l12 12M18 6L6 18',vol:'M4 9v6h4l5 4V5L8 9zM16.5 9a4 4 0 0 1 0 6',dl:'M12 4v11M7 11l5 5 5-5M5 20h14',check:'M5 12l5 5 9-10',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',cl:'M15 6l-6 6 6 6',cr:'M9 6l6 6-6 6',msg:'M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4 4v-4H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM8 9h8M8 12h5'};
 const ic=n=>`<svg class="i" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 $$('[data-ic]').forEach(e=>e.innerHTML=ic(e.dataset.ic));
 function applyTh(t){document.documentElement.dataset.theme=t;$('#th').innerHTML=ic(t==='dark'?'sun':'moon');const m=$('meta[name=theme-color]');if(m)m.content=t==='dark'?'#2b302d':'#e9e9eb'}
@@ -284,7 +314,9 @@ async function dlStart(k,u){
   const ts=new TransformStream({transform(c,o){got+=c.length;const p=tot?(got/tot*100|0)+'%':mb(got);if(p!==lp){lp=p;if(DJ){DJ.txt=p;dlUI()}}o.enqueue(c)}});
   const c=await caches.open(AUD);
   await c.put(u,new Response(res.body.pipeThrough(ts),{headers:{'Content-Type':'audio/mpeg'}}));
-  S.dl[k]={u,s:got,t:Date.now()};save();toast('تم التنزيل — متاحة بدون إنترنت ✓')
+  S.dl[k]={u,s:got,t:Date.now()};save();
+  if(WR&&key()===k){const sn=+k.split('|')[2];tmGet(WR,sn).catch(()=>{});tfGet(S.tf,sn).catch(()=>{})} // so the live tafsir also works offline for this surah
+  toast('تم التنزيل — متاحة بدون إنترنت ✓')
  }catch(e){
   if(window.caches)caches.open(AUD).then(c=>c.delete(u)).catch(()=>{});
   toast(ctl.signal.aborted?'تم إلغاء التنزيل':(e==='space'||(e&&e.name==='QuotaExceededError'))?'المساحة المتاحة على الجهاز لا تكفي':'تعذر التنزيل — تحقق من الإنترنت')}
@@ -302,7 +334,7 @@ function ui(){
  $('#cr').innerHTML=`<b>${E(br.r.name)}<small>${E(br.m.name)}</small></b><span class="mu">تغيير</span>`;
  $('#fv').classList.toggle('on',S.ft.includes(key()));
  showSaved();dlUI();updStorage();
- $('#mini').hidden=false;
+ $('#mini').hidden=false;tbUpd();
  if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:nm,artist:rn,album:'القرآن الكريم',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'}]})}
  render();
 }
@@ -350,6 +382,14 @@ document.addEventListener('click',e=>{
  const g=s=>e.target.closest(s);let t;
  if(t=g('[data-mi]')){const f=MI[t.dataset.mi];closeL(f);return}
  if(g('#bd')){closeL();return}
+ if(t=g('.ay')){if(String(getSelection()))return;const a=+t.dataset.a;msA===a?tfClose():tfShow(a);return}
+ if(g('#tb')){wnOn?wnClose():wnOpen();return}
+ if(g('[data-wx]')){wnClose();return}
+ if(g('#wl')){menu('التفسير',[...TFE.map(x=>[x[2],()=>{S.tf=x[0];save();wnKey='';wnLabel();if(wnPin)wnShow(wnN,wnA);else wnSync()}]),[wnPin?'متابعة التلاوة تلقائيًا':'تثبيت هذه الآية',()=>{wnPin=!wnPin;wnLabel();if(!wnPin){wnKey='';wnSync()}}]]);return}
+ if(g('[data-tfx]')){tfClose();return}
+ if(g('#tfp')){if(msA>1)tfShow(msA-1);return}
+ if(g('#tfn')){if(msA&&msA<msC)tfShow(msA+1);return}
+ if(g('#tfe')){menu('التفسير',TFE.map(x=>[x[2],()=>{S.tf=x[0];save();if(msA)tfShow(msA)}]));return}
  if(g('#hclr')){menu('مسح سجل الاستماع؟',[['نعم، امسح الكل',()=>{S.hs=[];save();render()}],['إلغاء',()=>{}]]);return}
  if(g('#dlall')){menu('حذف كل التنزيلات؟',[['نعم، احذف الكل',()=>{Object.keys(S.dl).forEach(dlDel);render();dlUI();updStorage()}],['إلغاء',()=>{}]]);return}
  if(t=g('[data-dlrm]')){dlDel(t.dataset.dlrm);render();dlUI();updStorage();return}
@@ -379,8 +419,8 @@ a.onerror=()=>toast(S.dl[pk]?'تعذر تشغيل الملف المحمّل':'ت
 addEventListener('visibilitychange',()=>{if(document.hidden){acc();savePos();save()}});
 addEventListener('pagehide',()=>{savePos();save()});
 function prog(){const d=isFinite(a.duration)?a.duration:0,c=a.currentTime||0;$('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');$('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)}
-a.ondurationchange=prog;
-a.ontimeupdate=()=>{prog();acc();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save();if(tab==='hist'&&$('#st'))$('#st').innerHTML=stHTML()}};
+a.ondurationchange=()=>{prog();if(wnOn)wnSync()};
+a.ontimeupdate=()=>{prog();acc();if(wnOn)wnSync();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save();if(tab==='hist'&&$('#st'))$('#st').innerHTML=stHTML()}};
 a.onended=()=>{delete S.pos[pk];save();if(slEnd){sleep(0);return}step(1)};
 $('#sk').oninput=e=>{a.currentTime=+e.target.value};
 $('#vo').oninput=e=>{S.vol=+e.target.value;a.volume=S.vol;e.target.style.setProperty('--p',S.vol*100+'%');save()};
@@ -397,11 +437,73 @@ function fade(){let v=a.volume;const i=setInterval(()=>{v-=.05;if(v<=.03){clearI
 $('#sb').onclick=()=>menu('مؤقت النوم',[['١٥ دقيقة',15],['٣٠ دقيقة',30],['٤٥ دقيقة',45],['ساعة',60],['نهاية السورة','end'],['إيقاف المؤقت',0]].map(x=>[x[0],()=>sleep(x[1])]));
 
 /* mushaf text */
+let msN=0,msC=0,msA=0,mTok=0,tfTok=0;const TF={};
 $('#mb2').onclick=async()=>{
- if(!HS().ms)push({ms:true});const b=$('#mb');b.textContent='جارٍ التحميل…';
- try{const j=await(await fetch(`https://api.alquran.cloud/v1/surah/${cur.n}/quran-uthmani`)).json();
-  b.innerHTML=j.data.ayahs.map(x=>E(x.text)+' <i>﴿'+x.numberInSurah.toLocaleString('ar-EG')+'﴾</i>').join(' ')}
- catch(err){b.textContent='تعذر تحميل النص. يلزم الإنترنت في أول مرة.'}};
+ if(!HS().ms)push({ms:true});const b=$('#mb'),n=cur.n,tok=++mTok;tfClose();$('#mh').hidden=true;b.textContent='جارٍ التحميل…';
+ try{const j=await(await fetch(`https://api.alquran.cloud/v1/surah/${n}/quran-uthmani`)).json();if(tok!==mTok)return;
+  msN=n;msC=j.data.ayahs.length;
+  b.innerHTML=j.data.ayahs.map(x=>`<span class="ay" data-a="${x.numberInSurah}">${E(x.text)} <i>﴿${x.numberInSurah.toLocaleString('ar-EG')}﴾</i></span>`).join(' ');
+  $('#mh').hidden=!!S.hn}
+ catch(err){if(tok===mTok)b.textContent='تعذر تحميل النص. يلزم الإنترنت في أول مرة.'}};
+
+/* tafsir (alquran.cloud): one request per surah+edition, then cached by the service worker for offline */
+const TFE=[['ar.muyassar','الميسّر','التفسير الميسّر'],['ar.jalalayn','الجلالين','تفسير الجلالين']];
+if(!TFE.some(x=>x[0]===S.tf))S.tf=TFE[0][0];
+function tfGet(ed,n){const k=ed+'|'+n;
+ return TF[k]||(TF[k]=fetch(`https://api.alquran.cloud/v1/surah/${n}/${ed}`).then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const d=Array.isArray(j.data)?j.data[0]:j.data,m={};d.ayahs.forEach(x=>m[x.numberInSurah]=x.text);return m}).catch(e=>{delete TF[k];throw e}))}
+async function tfShow(a){
+ msA=a;const t=$('#tft'),tok=++tfTok;
+ $('#ms').classList.add('tfo');
+ $$('#mb .ay.sel').forEach(e=>e.classList.remove('sel'));
+ const el=$(`#mb .ay[data-a="${a}"]`);if(el){el.classList.add('sel');el.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'})}
+ $('#tfl').textContent='الآية '+a.toLocaleString('ar-EG');
+ $('#tfe').textContent=TFE.find(x=>x[0]===S.tf)[1];
+ $('#tfp').disabled=a<=1;$('#tfn').disabled=a>=msC;
+ if(!S.hn){S.hn=1;save();$('#mh').hidden=true}
+ t.textContent='جارٍ التحميل…';t.scrollTop=0;
+ try{const m=await tfGet(S.tf,msN);if(tok!==tfTok)return;t.textContent=m[a]||'لا يوجد تفسير لهذه الآية.'}
+ catch(e){if(tok!==tfTok)return;t.textContent=navigator.onLine?'تعذر تحميل التفسير. حاول مرة أخرى.':'يلزم الإنترنت لتحميل التفسير في أول مرة.'}}
+function tfClose(){tfTok++;msA=0;$('#ms').classList.remove('tfo');$$('#mb .ay.sel').forEach(e=>e.classList.remove('sel'))}
+
+/* live tafsir window: follows the ayah being recited. Only for reciters whose files have mp3quran ayah timings */
+let RD=null,WR=0,wnOn=0,wnPin=0,wnA=0,wnN=0,wnKey='';const TM={};
+const nu=u=>String(u||'').replace(/^https?:\/\//i,'').replace(/\/+$/,'').toLowerCase();
+function readsGet(){return RD||(RD=fetch('https://mp3quran.net/api/v3/ayat_timing/reads').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const l=Array.isArray(j)?j:(j.reads||j.data||[]),m=new Map();l.forEach(x=>{if(x&&x.folder_url&&x.id!=null)m.set(nu(x.folder_url),x.id)});return m}).catch(e=>{RD=null;throw e}))}
+async function readFor(m){try{return(await readsGet()).get(nu(m&&m.server))||0}catch(e){return 0}}
+function tmGet(rd,n){const k=rd+'|'+n;
+ return TM[k]||(TM[k]=fetch(`https://mp3quran.net/api/v3/ayat_timing?surah=${n}&read=${rd}`).then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const l=(Array.isArray(j)?j:(j.ayat||j.data||[])).map(x=>({a:+x.ayah,s:+x.start_time,e:+x.end_time})).filter(x=>x.a>0&&isFinite(x.s)&&isFinite(x.e)).sort((x,y)=>x.s-y.s);if(!l.length)throw 0;return l}).catch(e=>{delete TM[k];throw e}))}
+/* unit is not documented (looks like ms): detect it from the audio length, and refuse timings that don't fit the file */
+function tmFactor(l){const d=a.duration;if(!isFinite(d)||d<=0)return 0;const last=l[l.length-1].e,f=last/d>50?1e3:1,r=last/f/d;return(r>1.25||r<.6)?-1:f}
+function tmAt(l,f,t){t*=f;let r=0;for(const x of l){if(t>=x.s)r=x.a;else break}return r}
+function wnLabel(){
+ const ed=TFE.find(x=>x[0]===S.tf)[1];
+ $('#wl').textContent=(wnA>0?'الآية '+wnA.toLocaleString('ar-EG'):'بداية السورة')+' · '+ed+(wnPin?' · مثبّتة':'')}
+function wnMsg(t){wnKey='';$('#wt').textContent=t;wnLabel()}
+async function wnSync(){
+ if(!wnOn||!WR||!cur.m)return;
+ if(wnPin&&wnN!==cur.n)wnPin=0;
+ if(wnPin)return;
+ const n=cur.n;let l;
+ try{l=await tmGet(WR,n)}catch(e){if(wnOn&&n===cur.n)wnMsg('التفسير المتزامن غير متاح لهذه السورة');return}
+ if(!wnOn||n!==cur.n||wnPin)return;
+ const f=tmFactor(l);
+ if(!f){wnMsg('شغّل السورة ليظهر تفسير الآية');return}
+ if(f<0){wnMsg('التوقيت غير متاح لهذه التلاوة');return}
+ wnShow(n,tmAt(l,f,a.currentTime))}
+function wnShow(n,x){
+ const key=`${n}|${x}|${S.tf}`;if(key===wnKey)return;
+ wnKey=key;wnA=x;wnN=n;wnLabel();
+ const t=$('#wt');t.scrollTop=0;
+ if(!x){t.textContent='…';return}
+ t.textContent='جارٍ التحميل…';
+ tfGet(S.tf,n).then(m=>{if(wnKey===key)t.textContent=m[x]||'لا يوجد تفسير لهذه الآية.'}).catch(()=>{if(wnKey===key){t.textContent=navigator.onLine?'تعذر تحميل التفسير.':'يلزم الإنترنت لتحميل التفسير في أول مرة.';wnKey=''}})}
+function wnOpen(){if(!WR)return;wnOn=1;wnPin=0;wnKey='';$('#pl').classList.add('wo');$('#tb').classList.add('on');wnLabel();wnSync()}
+function wnClose(){wnOn=0;wnPin=0;wnKey='';$('#pl').classList.remove('wo');$('#tb').classList.remove('on')}
+async function tbUpd(){
+ const m=cur.m;if(!m)return;const rd=await readFor(m);if(cur.m!==m)return;
+ WR=rd;$('#tb').hidden=!rd;if(!rd)wnClose();else if(wnOn)wnSync()}
+/* reading the long tafsir text = the person wants it to stay: pin it when they scroll it */
+['wheel','touchmove'].forEach(ev=>$('#wt').addEventListener(ev,()=>{const t=$('#wt');if(wnOn&&!wnPin&&wnA>0&&t.scrollHeight>t.clientHeight+2){wnPin=1;wnLabel()}},{passive:true}));
 
 /* media session */
 if('mediaSession' in navigator){const m=navigator.mediaSession,h=(k,f)=>{try{m.setActionHandler(k,f)}catch(e){}};
