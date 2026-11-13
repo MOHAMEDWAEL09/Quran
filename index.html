@@ -6,6 +6,7 @@
 <title>القرآن الكريم</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#e9e9eb">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src https: blob:; connect-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <script>(function(){var t;try{t=(JSON.parse(localStorage.getItem("q")||"{}")).th}catch(e){}if(!t)t="light";document.documentElement.dataset.theme=t;var m=document.querySelector('meta[name=theme-color]');if(m)m.content=t=="dark"?"#2b302d":"#e9e9eb"})()</script>
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -92,6 +93,15 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 .rmx{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:12px;color:var(--mut);flex:none}
 #mb{font-family:'Amiri Quran',serif;font-size:27px;line-height:2.5;text-align:justify}
 #mb i{font-style:normal;color:var(--acc);font-size:20px}
+.st{display:flex;gap:6px;padding:16px 10px;margin:0 0 6px;text-align:center}
+.st>div{flex:1;min-width:0}.st .tp{flex:1.5}
+.st b{display:block;font-size:17px;font-weight:600;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.dlb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 16px;margin:18px 0 6px;font-size:14px}
+.dlb.on{color:var(--acc)}
+#ds{margin:0 0 14px;font-size:12px}
+#toast{position:fixed;left:0;right:0;margin:auto;width:max-content;max-width:calc(100% - 40px);top:calc(env(safe-area-inset-top) + 16px);z-index:40;padding:10px 18px;border-radius:999px;background:var(--fill);color:var(--bg);font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;text-align:center}
+#toast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -110,6 +120,7 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
  <section class="v" id="v-fav" hidden><div id="fl"></div></section>
  <section class="v" id="v-hist" hidden>
   <h1><span>سجل الاستماع</span><button id="hclr" class="sm" hidden>مسح الكل</button></h1>
+  <div class="card st" id="st"></div>
   <div id="hl"></div>
  </section>
 </main>
@@ -154,17 +165,19 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
   <button id="spb">×1</button>
  </div>
  <div class="ctl2"><button id="mb2" aria-label="نص السورة">ق</button><span data-ic="vol" class="i2"></span><input type="range" id="vo" min="0" max="1" step=".01" aria-label="الصوت"></div>
+ <button class="dlb" id="dl"></button>
+ <p class="mu c" id="ds"></p>
  <div class="clk" id="clk" role="timer" aria-label="الساعة"></div>
 </section>
 
 <section class="sheet" id="ms"><div class="top"><button class="ib" data-close="ms" data-ic="x" aria-label="إغلاق"></button><b class="tt"></b><span class="ib"></span></div><div id="mb"></div></section>
-<div id="bd"></div><section class="sheet" id="menu"></section>
+<div id="toast" role="status"></div><div id="bd"></div><section class="sheet" id="menu"></section>
 
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const N='الفاتحة|البقرة|آل عمران|النساء|المائدة|الأنعام|الأعراف|الأنفال|التوبة|يونس|هود|يوسف|الرعد|إبراهيم|الحجر|النحل|الإسراء|الكهف|مريم|طه|الأنبياء|الحج|المؤمنون|النور|الفرقان|الشعراء|النمل|القصص|العنكبوت|الروم|لقمان|السجدة|الأحزاب|سبأ|فاطر|يس|الصافات|ص|الزمر|غافر|فصلت|الشورى|الزخرف|الدخان|الجاثية|الأحقاف|محمد|الفتح|الحجرات|ق|الذاريات|الطور|النجم|القمر|الرحمن|الواقعة|الحديد|المجادلة|الحشر|الممتحنة|الصف|الجمعة|المنافقون|التغابن|الطلاق|التحريم|الملك|القلم|الحاقة|المعارج|نوح|الجن|المزمل|المدثر|القيامة|الإنسان|المرسلات|النبأ|النازعات|عبس|التكوير|الانفطار|المطففين|الانشقاق|البروج|الطارق|الأعلى|الغاشية|الفجر|البلد|الشمس|الليل|الضحى|الشرح|التين|العلق|القدر|البينة|الزلزلة|العاديات|القارعة|التكاثر|العصر|الهمزة|الفيل|قريش|الماعون|الكوثر|الكافرون|النصر|المسد|الإخلاص|الفلق|الناس'.split('|');
-const IC={list:'M4 6h16M4 12h16M4 18h10',users:'M15.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM4 21c0-3.6 3.6-5.5 8-5.5s8 1.9 8 5.5',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',disc:'M18 13a7 7 0 1 1-14 0 7 7 0 0 1 14 0zM13 13a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM21.5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM20.5 5l-5 7.5',clock:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2',sun:'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',moon:'M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z',prev:'M17 5v14M5 5l9 7-9 7z',next:'M7 5v14M19 5l-9 7 9 7z',x:'M6 6l12 12M18 6L6 18',vol:'M4 9v6h4l5 4V5L8 9zM16.5 9a4 4 0 0 1 0 6'};
+const IC={list:'M4 6h16M4 12h16M4 18h10',users:'M15.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM4 21c0-3.6 3.6-5.5 8-5.5s8 1.9 8 5.5',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',disc:'M18 13a7 7 0 1 1-14 0 7 7 0 0 1 14 0zM13 13a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM21.5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM20.5 5l-5 7.5',clock:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2',sun:'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',moon:'M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z',prev:'M17 5v14M5 5l9 7-9 7z',next:'M7 5v14M19 5l-9 7 9 7z',x:'M6 6l12 12M18 6L6 18',vol:'M4 9v6h4l5 4V5L8 9zM16.5 9a4 4 0 0 1 0 6',dl:'M12 4v11M7 11l5 5 5-5M5 20h14',check:'M5 12l5 5 9-10',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13'};
 const ic=n=>`<svg class="i" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 $$('[data-ic]').forEach(e=>e.innerHTML=ic(e.dataset.ic));
 function applyTh(t){document.documentElement.dataset.theme=t;$('#th').innerHTML=ic(t==='dark'?'sun':'moon');const m=$('meta[name=theme-color]');if(m)m.content=t==='dark'?'#2b302d':'#e9e9eb'}
@@ -173,53 +186,144 @@ $('#th').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'l
 const fmt=s=>{s=Math.max(0,s|0);return(s/60|0)+':'+String(s%60).padStart(2,'0')};
 
 let S={};try{S=JSON.parse(localStorage.getItem('q')||'{}')}catch(e){}
-S.fr||=[];S.ft||=[];S.hs||=[];S.sp||=1;S.vol??=1;
+S.fr||=[];S.ft||=[];S.hs||=[];S.sp||=1;S.vol??=1;S.dl||={};S.pos||={};S.ls||={};
 const save=()=>{try{localStorage.setItem('q',JSON.stringify(S))}catch(e){}};
-let R=[],cur={r:null,m:null,n:S.n||1},tab='home',MI=[];
+let R=[],cur={r:null,m:null,n:S.n||1},br={r:null,m:null},tab='home',MI=[]; // cur = what is actually loaded in the player, br = reciter being browsed
 const a=new Audio();a.preload='none';a.volume=S.vol;a.defaultPlaybackRate=a.playbackRate=S.sp;
 $('#spb').textContent='×'+S.sp;$('#vo').value=S.vol;$('#vo').style.setProperty('--p',S.vol*100+'%');
 
-const avail=()=>new Set(((cur.m&&cur.m.surah_list)||'').split(',').map(Number));
+const avail=m=>new Set(((m&&m.surah_list)||'').split(',').map(Number));
 const key=()=>`${cur.r.id}|${cur.m.id}|${cur.n}`;
-const url=n=>cur.m.server.replace(/\/?$/,'/')+String(n).padStart(3,'0')+'.mp3';
+const url=n=>{const v=String(cur.m.server||'');return(/^https:\/\//.test(v)?v.replace(/\/?$/,'/'):'about:blank#')+String(n).padStart(3,'0')+'.mp3'};
 
-function setReciter(r,mid){if(!r)return;cur.r=r;cur.m=r.moshaf.find(m=>m.id==mid)||r.moshaf[0];S.r=r.id;S.m=cur.m.id;save();ui()}
+function setReciter(r,mid){if(!r)return;br.r=r;br.m=r.moshaf.find(m=>m.id==mid)||r.moshaf[0];if(!a.src){cur.r=br.r;cur.m=br.m;S.r=r.id;S.m=br.m.id;save()}ui()}
+const AUD='quran-audio';
+const mb=b=>b>=1e9?(b/1e9).toFixed(1)+' GB':b>=1e6?Math.round(b/1e6)+' MB':b>0?'<1 MB':'0 MB';
+const dk=d=>{d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const dur=s=>{s=Math.round(s);if(s<=0)return '0 د';if(s<60)return 'أقل من دقيقة';const m=Math.floor(s/60),h=Math.floor(m/60);return h?h+' س'+(m%60?' '+m%60+' د':''):m+' د'};
+for(const d in S.ls)if(d<dk(new Date(Date.now()-35*864e5)))delete S.ls[d];
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200)}
 function logH(){const k=key();S.hs=[{k,t:Date.now()},...S.hs.filter(x=>x.k!==k)].slice(0,100)}
-function play(n){if(!cur.m)return;cur.n=n;S.n=n;logH();save();a.src=url(n);a.defaultPlaybackRate=a.playbackRate=S.sp;a.play().catch(()=>{});ui()}
+
+/* resume + listening stats */
+let pk=null,lc=null,seekTo=null,lastSave=0,blobU=null,ptok=0;
+function savePos(){
+ if(!pk||!a.src||seekTo!==null)return;
+ const c=a.currentTime||0,d=isFinite(a.duration)?a.duration:0;if(!d)return;
+ if(c>d-5)delete S.pos[pk];else if(c>=3)S.pos[pk]=[Math.floor(c),Math.floor(d),Date.now()]}
+function acc(){
+ if(pk&&lc!=null&&!a.paused&&!a.seeking){const d=a.currentTime-lc;
+  if(d>0&&d<30){const rid=pk.split('|')[0],o=(S.ls[dk()]||={});o[rid]=(o[rid]||0)+d/(a.playbackRate||1)}}
+ lc=a.currentTime}
+function stats(){let today=0,week=0;const by={};
+ for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const o=S.ls[dk(d)]||{};for(const r in o){week+=o[r];by[r]=(by[r]||0)+o[r];if(!i)today+=o[r]}}
+ return{today,week,top:Object.entries(by).sort((x,y)=>y[1]-x[1])[0]}}
+function stHTML(){const s=stats(),t=s.top,r=t&&R.find(x=>x.id==t[0]);
+ return `<div><b>${dur(s.today)}</b><small>اليوم</small></div><div><b>${dur(s.week)}</b><small>آخر ٧ أيام</small></div><div class="tp"><b>${r?E(r.name):'—'}</b><small>${t?'أكتر قارئ · '+dur(t[1]):'أكتر قارئ'}</small></div>`}
+
+/* playback (resumes from saved position unless fresh) */
+function play(n,fresh,same){
+ if(!(same?cur.m:br.m))return;
+ savePos();
+ if(!same){cur.r=br.r;cur.m=br.m}
+ S.r=cur.r.id;S.m=cur.m.id;
+ cur.n=n;S.n=n;logH();
+ const k=key(),u=url(n),tok=++ptok;
+ pk=k;lc=null;
+ const p=S.pos[k];seekTo=(!fresh&&p&&p[0]>=3)?p[0]:null;
+ if(fresh)delete S.pos[k];
+ save();a.defaultPlaybackRate=a.playbackRate=S.sp;
+ const start=src=>{if(tok!==ptok)return;if(src.startsWith('about:')){toast('رابط الصوت غير آمن أو غير صالح');return}const old=blobU;blobU=src.startsWith('blob:')?src:null;a.src=src;if(old)URL.revokeObjectURL(old);a.play().catch(()=>{})};
+ if(S.dl[k])localSrc(k,u).then(start);else start(u);
+ ui()}
+async function localSrc(k,u){
+ try{const r=await(await caches.open(AUD)).match(u);if(r)return URL.createObjectURL(await r.blob())}catch(e){}
+ delete S.dl[k];save();dlUI();return u}
 const tog=()=>{if(!cur.m)return;if(!a.src)play(cur.n);else a.paused?a.play():a.pause()};
-function step(d){const av=[...avail()].sort((x,y)=>x-y).filter(x=>d>0?x>cur.n:x<cur.n);if(!av.length)return false;play(d>0?av[0]:av[av.length-1]);return true}
+function step(d){const av=[...avail(cur.m)].sort((x,y)=>x-y).filter(x=>d>0?x>cur.n:x<cur.n);if(!av.length)return false;play(d>0?av[0]:av[av.length-1],true,true);return true}
+function showSaved(){
+ if(a.src||!cur.m)return;const p=S.pos[key()],c=p?p[0]:0,d=p?p[1]:0;
+ $('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');
+ $('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)}
+
+/* offline downloads */
+let DJ=null;
+function dlUI(){
+ const b=$('#dl');if(!b||!cur.m)return;const k=key();let h,on=false;
+ if(DJ&&DJ.k===k)h=ic('x')+`<span>جارٍ التنزيل ${DJ.txt} · إلغاء</span>`;
+ else if(S.dl[k]){h=ic('check')+`<span>محمّلة · ${mb(S.dl[k].s)} · حذف</span>`;on=true}
+ else h=ic('dl')+'<span>تنزيل للاستماع بدون إنترنت</span>';
+ b.innerHTML=h;b.classList.toggle('on',on)}
+async function updStorage(){
+ const el=$('#ds');if(!el)return;
+ let t='التنزيلات على جهازك: <bdi>'+mb(Object.values(S.dl).reduce((s,o)=>s+o.s,0))+'</bdi>';
+ try{const e=await navigator.storage.estimate();if(e.quota)t+=' · المتاح: <bdi>'+mb(e.quota-e.usage)+'</bdi>'}catch(e){}
+ el.innerHTML=t}
+function dlDel(k){const o=S.dl[k];if(!o)return;delete S.dl[k];save();if(window.caches)caches.open(AUD).then(c=>c.delete(o.u)).catch(()=>{})}
+async function dlAsk(){
+ if(!navigator.onLine){toast('لا يوجد اتصال بالإنترنت');return}
+ const k=key(),u=url(cur.n),nm='سورة '+N[cur.n-1];let sz=0;
+ try{sz=+(await fetch(u,{method:'HEAD'})).headers.get('content-length')||0}catch(e){}
+ if(sz>=30e6)menu('تنزيل '+nm+'؟',[['تنزيل ('+mb(sz)+')',()=>dlStart(k,u)],['إلغاء',()=>{}]]);else dlStart(k,u)}
+async function dlStart(k,u){
+ if(!window.caches){toast('المتصفح لا يدعم التنزيل');return}
+ if(DJ){toast('يوجد تنزيل جارٍ بالفعل');return}
+ const ctl=new AbortController();DJ={k,ctl,txt:'0%'};dlUI();
+ try{
+  const res=await fetch(u,{signal:ctl.signal});
+  if(!res.ok||!res.body)throw 0;
+  const tot=+res.headers.get('content-length')||0;
+  if(tot&&navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();if(e.quota&&tot>e.quota-e.usage)throw'space'}
+  try{navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+  let got=0,lp='';
+  const ts=new TransformStream({transform(c,o){got+=c.length;const p=tot?(got/tot*100|0)+'%':mb(got);if(p!==lp){lp=p;if(DJ){DJ.txt=p;dlUI()}}o.enqueue(c)}});
+  const c=await caches.open(AUD);
+  await c.put(u,new Response(res.body.pipeThrough(ts),{headers:{'Content-Type':'audio/mpeg'}}));
+  S.dl[k]={u,s:got,t:Date.now()};save();toast('تم التنزيل — متاحة بدون إنترنت ✓')
+ }catch(e){
+  if(window.caches)caches.open(AUD).then(c=>c.delete(u)).catch(()=>{});
+  toast(ctl.signal.aborted?'تم إلغاء التنزيل':(e==='space'||(e&&e.name==='QuotaExceededError'))?'المساحة المتاحة على الجهاز لا تكفي':'تعذر التنزيل — تحقق من الإنترنت')}
+ DJ=null;dlUI();if(tab==='fav')render();updStorage()}
+function dlBtn(){
+ if(!cur.m)return;const k=key();
+ if(DJ&&DJ.k===k){DJ.ctl.abort();return}
+ if(S.dl[k]){menu('حذف التنزيل؟',[['نعم، احذف',()=>{dlDel(k);dlUI();updStorage();if(tab==='fav')render()}],['إلغاء',()=>{}]]);return}
+ dlAsk()}
 
 function ui(){
  if(!cur.r)return;
  const nm='سورة '+N[cur.n-1],rn=cur.r.name;
  $$('.tt').forEach(e=>e.textContent=nm);$$('.rr').forEach(e=>e.textContent=rn);
- $('#cr').innerHTML=`<b>${E(rn)}<small>${E(cur.m.name)}</small></b><span class="mu">تغيير</span>`;
+ $('#cr').innerHTML=`<b>${E(br.r.name)}<small>${E(br.m.name)}</small></b><span class="mu">تغيير</span>`;
  $('#fv').classList.toggle('on',S.ft.includes(key()));
+ showSaved();dlUI();updStorage();
  $('#mini').hidden=false;
  if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:nm,artist:rn,album:'القرآن الكريم',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'}]})}
  render();
 }
 function render(){({home,rec,fav,hist:histV})[tab]()}
 function home(){
- const q=$('#q').value.trim(),av=avail();
- $('#sl').innerHTML=N.map((s,i)=>[i+1,s]).filter(([id,s])=>av.has(id)&&(!q||s.includes(q)||String(id)===q)).map(([id,s])=>`<div class="card row${cur.n==id?' cur':''}" data-n="${id}" tabindex="0"><span class="n">${id}</span><b>${s}</b></div>`).join('')||'<p class="mu c">لا توجد نتائج</p>';
+ const q=$('#q').value.trim(),av=avail(br.m),same=cur.r&&br.r&&cur.r.id==br.r.id&&cur.m.id==br.m.id;
+ $('#sl').innerHTML=N.map((s,i)=>[i+1,s]).filter(([id,s])=>av.has(id)&&(!q||s.includes(q)||String(id)===q)).map(([id,s])=>{const k=`${br.r.id}|${br.m.id}|${id}`,p=S.pos[k],bits=[];if(p)bits.push('وصلت لـ '+fmt(p[0]));if(S.dl[k])bits.push('محمّلة');return `<div class="card row${same&&cur.n==id?' cur':''}" data-n="${id}" tabindex="0"><span class="n">${id}</span><b>${s}${bits.length?`<small>${bits.join(' · ')}</small>`:''}</b></div>`}).join('')||'<p class="mu c">لا توجد نتائج</p>';
 }
 function rec(){
  const q=$('#rq').value.trim();
- $('#rl').innerHTML=R.filter(r=>!q||r.name.includes(q)).map(r=>`<div class="card row${cur.r&&cur.r.id==r.id?' cur':''}" data-r="${r.id}" tabindex="0"><b>${E(r.name)}<small>${r.moshaf.length>1?r.moshaf.length+' روايات':E(r.moshaf[0].name)}</small></b><button class="ib fv${S.fr.includes(r.id)?' on':''}" data-fr="${r.id}" aria-label="مفضلة">${ic('star')}</button></div>`).join('')||'<p class="mu c">تعذر تحميل القراء. تحقق من الإنترنت ثم أعد فتح التطبيق.</p>';
+ $('#rl').innerHTML=R.filter(r=>!q||r.name.includes(q)).map(r=>`<div class="card row${br.r&&br.r.id==r.id?' cur':''}" data-r="${r.id}" tabindex="0"><b>${E(r.name)}<small>${r.moshaf.length>1?r.moshaf.length+' روايات':E(r.moshaf[0].name)}</small></b><button class="ib fv${S.fr.includes(r.id)?' on':''}" data-fr="${r.id}" aria-label="مفضلة">${ic('star')}</button></div>`).join('')||'<p class="mu c">تعذر تحميل القراء. تحقق من الإنترنت ثم أعد فتح التطبيق.</p>';
 }
 function fav(){
  const fr=R.filter(r=>S.fr.includes(r.id));
- const ft=S.ft.map(k=>{const[r,m,n]=k.split('|'),x=R.find(y=>y.id==r);return x?`<div class="card row" data-ft="${k}" tabindex="0"><span class="n">${n}</span><b>سورة ${N[n-1]}<small>${E(x.name)}</small></b><button class="ib fv on" data-ftrm="${k}" aria-label="إزالة">${ic('star')}</button></div>`:''}).join('');
- $('#fl').innerHTML=(fr.length?'<h1>القراء المفضلون</h1>'+fr.map(r=>`<div class="card row" data-r="${r.id}" tabindex="0"><b>${E(r.name)}</b><button class="ib fv on" data-fr="${r.id}" aria-label="إزالة">${ic('star')}</button></div>`).join(''):'')+(ft?'<h1>التلاوات المفضلة</h1>'+ft:'')||'<p class="mu c" style="margin-top:40px">لا توجد مفضلة بعد.<br>اضغط النجمة على قارئ أو تلاوة لإضافتها.</p>';
+ const ft=S.ft.map(k=>{const[r,m,n]=k.split('|'),x=R.find(y=>y.id==r);return x?`<div class="card row" data-ft="${k}" tabindex="0"><span class="n">${+n||0}</span><b>سورة ${N[n-1]}<small>${E(x.name)}</small></b><button class="ib fv on" data-ftrm="${k}" aria-label="إزالة">${ic('star')}</button></div>`:''}).join('');
+ const dls=Object.entries(S.dl).sort((x,y)=>y[1].t-x[1].t);
+ const dh=dls.length?`<h1><span>التحميلات</span><button id="dlall" class="sm">حذف الكل</button></h1><p class="mu" style="margin:-6px 6px 14px;font-size:13px">${dls.length} سورة · ${mb(dls.reduce((s,[,o])=>s+o.s,0))} على هذا الجهاز</p>`+dls.map(([k,o])=>{const[r,m,n]=k.split('|'),x=R.find(y=>y.id==r);return `<div class="card row" data-dl="${E(k)}" tabindex="0"><span class="n">${+n||0}</span><b>سورة ${N[n-1]}<small>${x?E(x.name)+' · ':''}${mb(o.s)}</small></b><button class="ib" data-dlrm="${E(k)}" aria-label="حذف التنزيل">${ic('trash')}</button></div>`}).join(''):'';
+ $('#fl').innerHTML=(fr.length?'<h1>القراء المفضلون</h1>'+fr.map(r=>`<div class="card row" data-r="${r.id}" tabindex="0"><b>${E(r.name)}</b><button class="ib fv on" data-fr="${r.id}" aria-label="إزالة">${ic('star')}</button></div>`).join(''):'')+(ft?'<h1>التلاوات المفضلة</h1>'+ft:'')+dh||'<p class="mu c" style="margin-top:40px">لا توجد مفضلة بعد.<br>اضغط النجمة على قارئ أو تلاوة لإضافتها.</p>';
 }
 const dayLbl=t=>{const a=new Date();a.setHours(0,0,0,0);const d=Math.round((a-new Date(t).setHours(0,0,0,0))/864e5);return d<=0?'اليوم':d==1?'أمس':new Date(t).toLocaleDateString('ar-EG',{day:'numeric',month:'long',year:'numeric'})};
 const tmLbl=t=>new Date(t).toLocaleTimeString('ar-EG',{hour:'numeric',minute:'2-digit'});
 function histV(){
  const L=S.hs;let out='',last='';
  for(const x of L){const[r,m,n]=x.k.split('|'),y=R.find(z=>z.id==r);if(!y)continue;const d=dayLbl(x.t);if(d!==last){out+=`<div class="sec">${d}</div>`;last=d}
-  out+=`<div class="card row" data-hs="${E(x.k)}" tabindex="0"><span class="n">${n}</span><b>سورة ${N[n-1]}<small>${E(y.name)}</small></b><span class="rmx">${tmLbl(x.t)}</span><button class="ib" data-hrm="${E(x.k)}" aria-label="حذف من السجل">${ic('x')}</button></div>`}
- $('#hclr').hidden=!out;
+  const p=S.pos[x.k];out+=`<div class="card row" data-hs="${E(x.k)}" tabindex="0"><span class="n">${+n||0}</span><b>سورة ${N[n-1]}<small>${E(y.name)}${p?' · وصلت لـ '+fmt(p[0]):''}</small></b><span class="rmx">${tmLbl(x.t)}</span><button class="ib" data-hrm="${E(x.k)}" aria-label="حذف من السجل">${ic('x')}</button></div>`}
+ $('#hclr').hidden=!out;$('#st').innerHTML=stHTML();
  $('#hl').innerHTML=out||'<p class="mu c" style="margin-top:40px">لا يوجد سجل استماع بعد.<br>ابدأ بتشغيل أي سورة وستظهر هنا.</p>';
 }
 /* navigation + back button */
@@ -255,11 +359,15 @@ document.addEventListener('click',e=>{
  if(t=g('[data-mi]')){const f=MI[t.dataset.mi];closeL(f);return}
  if(g('#bd')){closeL();return}
  if(g('#hclr')){menu('مسح سجل الاستماع؟',[['نعم، امسح الكل',()=>{S.hs=[];save();render()}],['إلغاء',()=>{}]]);return}
+ if(g('#dlall')){menu('حذف كل التنزيلات؟',[['نعم، احذف الكل',()=>{Object.keys(S.dl).forEach(dlDel);render();dlUI();updStorage()}],['إلغاء',()=>{}]]);return}
+ if(t=g('[data-dlrm]')){dlDel(t.dataset.dlrm);render();dlUI();updStorage();return}
+ if(t=g('[data-dl]')){const[r,m,n]=t.dataset.dl.split('|'),x=R.find(y=>y.id==r);if(x){setReciter(x,m);play(+n)}else toast('تعذر تحميل بيانات القارئ — تحقق من الإنترنت');return}
+ if(g('#dl')){dlBtn();return}
  if(t=g('[data-hrm]')){S.hs=S.hs.filter(x=>x.k!==t.dataset.hrm);save();render();return}
- if(t=g('[data-hs]')){const[r,m,n]=t.dataset.hs.split('|');setReciter(R.find(x=>x.id==r),m);play(+n);return}
+ if(t=g('[data-hs]')){const[r,m,n]=t.dataset.hs.split('|'),x=R.find(y=>y.id==r);if(x){setReciter(x,m);play(+n)}else toast('تعذر تحميل بيانات القارئ — تحقق من الإنترنت');return}
  if(t=g('[data-fr]')){const i=+t.dataset.fr;S.fr=S.fr.includes(i)?S.fr.filter(x=>x!=i):[...S.fr,i];save();render();return}
  if(t=g('[data-ftrm]')){S.ft=S.ft.filter(x=>x!=t.dataset.ftrm);save();ui();return}
- if(t=g('[data-ft]')){const[r,m,n]=t.dataset.ft.split('|');setReciter(R.find(x=>x.id==r),m);play(+n);return}
+ if(t=g('[data-ft]')){const[r,m,n]=t.dataset.ft.split('|'),x=R.find(y=>y.id==r);if(x){setReciter(x,m);play(+n)}else toast('تعذر تحميل بيانات القارئ — تحقق من الإنترنت');return}
  if(t=g('[data-r]')){pickR(t.dataset.r);return}
  if(t=g('[data-n]')){play(+t.dataset.n);return}
  if(t=g('[data-tab]')){t.dataset.tab=='player'?openPl():go(t.dataset.tab);return}
@@ -271,11 +379,17 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.c
 $('#q').oninput=home;$('#rq').oninput=rec;
 
 /* audio */
-a.onplay=()=>document.body.classList.add('playing');
-a.onpause=()=>document.body.classList.remove('playing');
+a.onplay=()=>{document.body.classList.add('playing');lc=a.currentTime};
+a.onpause=()=>{document.body.classList.remove('playing');lc=null;savePos();save()};
+a.onloadedmetadata=()=>{if(seekTo!=null){if(seekTo<a.duration-5)a.currentTime=seekTo;seekTo=null}lc=a.currentTime;prog()};
+a.onseeking=()=>{lc=null};a.onseeked=()=>{lc=a.currentTime};
+a.onerror=()=>toast(S.dl[pk]?'تعذر تشغيل الملف المحمّل':'تعذر التشغيل — تحقق من الإنترنت أو نزّل السورة للاستماع بدون نت');
+addEventListener('visibilitychange',()=>{if(document.hidden){acc();savePos();save()}});
+addEventListener('pagehide',()=>{savePos();save()});
 function prog(){const d=isFinite(a.duration)?a.duration:0,c=a.currentTime||0;$('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');$('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)}
-a.ontimeupdate=a.ondurationchange=prog;
-a.onended=()=>{if(slEnd){sleep(0);return}step(1)};
+a.ondurationchange=prog;
+a.ontimeupdate=()=>{prog();acc();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save();if(tab==='hist'&&$('#st'))$('#st').innerHTML=stHTML()}};
+a.onended=()=>{delete S.pos[pk];save();if(slEnd){sleep(0);return}step(1)};
 $('#sk').oninput=e=>{a.currentTime=+e.target.value};
 $('#vo').oninput=e=>{S.vol=+e.target.value;a.volume=S.vol;e.target.style.setProperty('--p',S.vol*100+'%');save()};
 $('#pv').onclick=()=>step(-1);$('#nx').onclick=()=>step(1);
@@ -313,6 +427,7 @@ if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(
  R=R.filter(r=>r.moshaf&&r.moshaf.length);
  const r=R.find(x=>x.id==S.r)||R.find(x=>x.name.includes('الحصري'))||R[0];
  if(r)setReciter(r,S.m);else rec();
+ if(window.caches)caches.open(AUD).then(c=>c.keys()).then(ks=>{const have=new Set(ks.map(q=>q.url));let ch=0;for(const k in S.dl)if(!have.has(S.dl[k].u)){delete S.dl[k];ch=1}if(ch){save();render();dlUI();updStorage()}}).catch(()=>{});
 })();
 </script>
 </body>
