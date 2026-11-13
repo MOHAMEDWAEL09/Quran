@@ -81,9 +81,6 @@ body.playing .arm{transform:none}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:99px;direction:rtl;outline:0;box-shadow:var(--in);background:linear-gradient(to left,var(--fill) var(--p,0%),var(--track) var(--p,0%))}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:0;height:0}
 input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
-.pa{fill:var(--pix)}.pd{fill:var(--pixd)}.po{fill:var(--pixoff)}.pc{fill:var(--colon)}.pc.off{opacity:.35}
-.clk{margin-top:auto;padding:18px 10px;border-radius:26px;box-shadow:var(--in);direction:ltr}
-.clk svg{display:block;width:100%;height:auto}
 .hd{display:flex;gap:10px;align-items:center}
 .hd .ib{width:40px;height:40px}
 #th{color:var(--mn)}
@@ -93,6 +90,10 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 .rmx{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:12px;color:var(--mut);flex:none}
 #mb{font-family:'Amiri Quran',serif;font-size:27px;line-height:2.5;text-align:justify}
 #mb i{font-style:normal;color:var(--acc);font-size:20px}
+.st{display:flex;gap:6px;padding:16px 10px;margin:0 0 6px;text-align:center}
+.st>div{flex:1;min-width:0}.st .tp{flex:1.5}
+.st b{display:block;font-size:17px;font-weight:600;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
 .dlb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 16px;margin:18px 0 6px;font-size:14px}
 .dlb.on{color:var(--acc)}
 #ds{margin:0 0 14px;font-size:12px}
@@ -116,6 +117,7 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
  <section class="v" id="v-fav" hidden><div id="fl"></div></section>
  <section class="v" id="v-hist" hidden>
   <h1><span>سجل الاستماع</span><button id="hclr" class="sm" hidden>مسح الكل</button></h1>
+  <div class="card st" id="st"></div>
   <div id="hl"></div>
  </section>
 </main>
@@ -162,7 +164,6 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
  <div class="ctl2"><button id="mb2" aria-label="نص السورة">ق</button><span data-ic="vol" class="i2"></span><input type="range" id="vo" min="0" max="1" step=".01" aria-label="الصوت"></div>
  <button class="dlb" id="dl"></button>
  <p class="mu c" id="ds"></p>
- <div class="clk" id="clk" role="timer" aria-label="الساعة"></div>
 </section>
 
 <section class="sheet" id="ms"><div class="top"><button class="ib" data-close="ms" data-ic="x" aria-label="إغلاق"></button><b class="tt"></b><span class="ib"></span></div><div id="mb"></div></section>
@@ -213,6 +214,9 @@ function acc(){
 function stats(){let today=0,week=0;const by={};
  for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const o=S.ls[dk(d)]||{};for(const r in o){week+=o[r];by[r]=(by[r]||0)+o[r];if(!i)today+=o[r]}}
  return{today,week,top:Object.entries(by).sort((x,y)=>y[1]-x[1])[0]}}
+
+function stHTML(){const s=stats(),t=s.top,r=t&&R.find(x=>x.id==t[0]);
+ return `<div><b>${dur(s.today)}</b><small>اليوم</small></div><div><b>${dur(s.week)}</b><small>آخر ٧ أيام</small></div><div class="tp"><b>${r?E(r.name):'—'}</b><small>${t?'أكتر قارئ · '+dur(t[1]):'أكتر قارئ'}</small></div>`}
 
 /* playback (resumes from saved position unless fresh) */
 function play(n,fresh,same){
@@ -316,7 +320,7 @@ function histV(){
  const L=S.hs;let out='',last='';
  for(const x of L){const[r,m,n]=x.k.split('|'),y=R.find(z=>z.id==r);if(!y)continue;const d=dayLbl(x.t);if(d!==last){out+=`<div class="sec">${d}</div>`;last=d}
   const p=S.pos[x.k];out+=`<div class="card row" data-hs="${E(x.k)}" tabindex="0"><span class="n">${+n||0}</span><b>سورة ${N[n-1]}<small>${E(y.name)}${p?' · وصلت لـ '+fmt(p[0]):''}</small></b><span class="rmx">${tmLbl(x.t)}</span><button class="ib" data-hrm="${E(x.k)}" aria-label="حذف من السجل">${ic('x')}</button></div>`}
- $('#hclr').hidden=!out;
+ $('#hclr').hidden=!out;$('#st').innerHTML=stHTML();
  $('#hl').innerHTML=out||'<p class="mu c" style="margin-top:40px">لا يوجد سجل استماع بعد.<br>ابدأ بتشغيل أي سورة وستظهر هنا.</p>';
 }
 /* navigation + back button */
@@ -324,23 +328,10 @@ const HS=()=>history.state||{t:'home'};let busy=false;
 history.replaceState({t:'home'},'');
 function push(p){history.pushState({...HS(),...p},'');apply(HS())}
 function closeL(cb){if(busy)return;busy=true;if(cb)addEventListener('popstate',()=>cb(),{once:true});history.back()}
-function apply(s){$('#pl').classList.toggle('open',!!s.pl);$('#ms').classList.toggle('open',!!s.ms);$('#menu').classList.toggle('open',!!s.menu);$('#bd').classList.toggle('open',!!s.menu);if(s.t!==tab)show(s.t);if(s.pl)clock()}
+function apply(s){$('#pl').classList.toggle('open',!!s.pl);$('#ms').classList.toggle('open',!!s.ms);$('#menu').classList.toggle('open',!!s.menu);$('#bd').classList.toggle('open',!!s.menu);if(s.t!==tab)show(s.t)}
 addEventListener('popstate',e=>{busy=false;apply(e.state||{t:'home'})});
 function show(t){tab=t;$$('.v').forEach(v=>v.hidden=v.id!='v-'+t);$$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab==t));render();scrollTo(0,0)}
 function go(t){const s=HS();if(t===s.t)return;if(t==='home')closeL();else if(s.t==='home')push({t});else{history.replaceState({...s,t},'');show(t)}}
-/* pixel clock */
-const F={'0':'01110 10001 10011 10101 11001 10001 01110','1':'00100 01100 00100 00100 00100 00100 01110','2':'01110 10001 00001 00010 00100 01000 11111','3':'11110 00001 00001 01110 00001 00001 11110','4':'00010 00110 01010 10010 11111 00010 00010','5':'11111 10000 11110 00001 00001 10001 01110','6':'00110 01000 10000 11110 10001 10001 01110','7':'11111 00001 00010 00100 01000 01000 01000','8':'01110 10001 10001 01110 10001 10001 01110','9':'01110 10001 10001 01111 00001 00010 01100',':':'0 0 1 0 1 0 0',' ':'000 000 000 000 000 000 000','A':'01110 10001 10001 11111 10001 10001 10001','P':'11110 10001 10001 11110 10000 10000 10000','M':'10001 11011 10101 10101 10001 10001 10001'};
-function clock(){
- if(!$('#pl').classList.contains('open'))return;
- const d=new Date(),H=d.getHours(),h12=H%12||12,m=d.getMinutes(),s=d.getSeconds(),p2=n=>String(n).padStart(2,'0');
- const str=(h12<10?' ':'')+h12+':'+p2(m)+':'+p2(s)+' '+(H<12?'A':'P')+'M';
- const U=10,G=1;let x=0,o='';
- [...str].forEach((ch,i)=>{const g=F[ch].split(' '),w=g[0].length,ampm=i>=str.length-2,cls=ch===':'?'pc'+(s%2?' off':''):ampm?'pd':'pa';
-  g.forEach((row,r)=>{[...row].forEach((v,c)=>{if(v==='1')o+=`<rect class="${cls}" x="${(x+c)*U+.9}" y="${r*U+.9}" width="8.2" height="8.2" rx="1"/>`;else if(ch!==':'&&ch!==' ')o+=`<rect class="po" x="${(x+c)*U+.9}" y="${r*U+.9}" width="8.2" height="8.2" rx="1"/>`})});
-  x+=w+G});
- $('#clk').innerHTML=`<svg viewBox="0 0 ${(x-G)*U} ${7*U}" aria-hidden="true">${o}</svg>`;
-}
-setInterval(clock,1000);
 function menu(title,items){MI=items.map(x=>x[1]);$('#menu').innerHTML=`<h1>${title}</h1>`+items.map((x,i)=>`<button class="card row" style="width:100%;text-align:start" data-mi="${i}"><b>${x[0]}</b></button>`).join('');push({menu:true})}
 const openPl=()=>{if(!HS().pl)push({pl:true})};
 function pickR(id){const r=R.find(x=>x.id==id);if(!r)return;
@@ -381,7 +372,7 @@ addEventListener('visibilitychange',()=>{if(document.hidden){acc();savePos();sav
 addEventListener('pagehide',()=>{savePos();save()});
 function prog(){const d=isFinite(a.duration)?a.duration:0,c=a.currentTime||0;$('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');$('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)}
 a.ondurationchange=prog;
-a.ontimeupdate=()=>{prog();acc();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save()}};
+a.ontimeupdate=()=>{prog();acc();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save();if(tab==='hist'&&$('#st'))$('#st').innerHTML=stHTML()}};
 a.onended=()=>{delete S.pos[pk];save();if(slEnd){sleep(0);return}step(1)};
 $('#sk').oninput=e=>{a.currentTime=+e.target.value};
 $('#vo').oninput=e=>{S.vol=+e.target.value;a.volume=S.vol;e.target.style.setProperty('--p',S.vol*100+'%');save()};
