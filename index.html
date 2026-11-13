@@ -179,6 +179,14 @@ $$('[data-ic]').forEach(e=>e.innerHTML=ic(e.dataset.ic));
 function applyTh(t){document.documentElement.dataset.theme=t;$('#th').innerHTML=ic(t==='dark'?'sun':'moon');const m=$('meta[name=theme-color]');if(m)m.content=t==='dark'?'#2b302d':'#e9e9eb'}
 applyTh(document.documentElement.dataset.theme||'light');
 $('#th').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';S.th=t;save();applyTh(t)};
+/* flexible Arabic search: hamza/ya/ta-marbuta/diacritics, optional بن/ابن, optional ال, spaces in compound names */
+const nz=t=>String(t).replace(/[\u064B-\u065F\u0670\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/[^\u0621-\u064Aa-z0-9\s]/gi,' ').toLowerCase();
+const wd=t=>nz(t).split(/\s+/).filter(w=>w&&w!=='بن'&&w!=='ابن'&&w!=='سوره');
+function match(name,q){
+ const n=wd(name),t=wd(q);
+ if(!t.length)return nz(name).includes(nz(q).trim());
+ const ns=n.map(w=>w.length>3&&w.startsWith('ال')?w.slice(2):w);
+ return t.every(w=>ns.some(x=>x.includes(w)||(w.startsWith('ال')&&x.includes(w.slice(2)))))||n.join('').includes(t.join(''))}
 const fmt=s=>{s=Math.max(0,s|0);return(s/60|0)+':'+String(s%60).padStart(2,'0')};
 
 let S={};try{S=JSON.parse(localStorage.getItem('q')||'{}')}catch(e){}
@@ -301,11 +309,11 @@ function ui(){
 function render(){({home,rec,fav,hist:histV})[tab]()}
 function home(){
  const q=$('#q').value.trim(),av=avail(br.m),same=cur.r&&br.r&&cur.r.id==br.r.id&&cur.m.id==br.m.id;
- $('#sl').innerHTML=N.map((s,i)=>[i+1,s]).filter(([id,s])=>av.has(id)&&(!q||s.includes(q)||String(id)===q)).map(([id,s])=>{const k=`${br.r.id}|${br.m.id}|${id}`,p=S.pos[k],bits=[];if(p)bits.push('وصلت لـ '+fmt(p[0]));if(S.dl[k])bits.push('محمّلة');return `<div class="card row${same&&cur.n==id?' cur':''}" data-n="${id}" tabindex="0"><span class="n">${id}</span><b>${s}${bits.length?`<small>${bits.join(' · ')}</small>`:''}</b></div>`}).join('')||'<p class="mu c">لا توجد نتائج</p>';
+ $('#sl').innerHTML=N.map((s,i)=>[i+1,s]).filter(([id,s])=>av.has(id)&&(!q||match(s,q)||String(id)===q)).map(([id,s])=>{const k=`${br.r.id}|${br.m.id}|${id}`,p=S.pos[k],bits=[];if(p)bits.push('وصلت لـ '+fmt(p[0]));if(S.dl[k])bits.push('محمّلة');return `<div class="card row${same&&cur.n==id?' cur':''}" data-n="${id}" tabindex="0"><span class="n">${id}</span><b>${s}${bits.length?`<small>${bits.join(' · ')}</small>`:''}</b></div>`}).join('')||'<p class="mu c">لا توجد نتائج</p>';
 }
 function rec(){
  const q=$('#rq').value.trim();
- $('#rl').innerHTML=R.filter(r=>!q||r.name.includes(q)).map(r=>`<div class="card row${br.r&&br.r.id==r.id?' cur':''}" data-r="${r.id}" tabindex="0"><b>${E(r.name)}<small>${r.moshaf.length>1?r.moshaf.length+' روايات':E(r.moshaf[0].name)}</small></b><button class="ib fv${S.fr.includes(r.id)?' on':''}" data-fr="${r.id}" aria-label="مفضلة">${ic('star')}</button></div>`).join('')||'<p class="mu c">تعذر تحميل القراء. تحقق من الإنترنت ثم أعد فتح التطبيق.</p>';
+ $('#rl').innerHTML=R.filter(r=>!q||match(r.name,q)).map(r=>`<div class="card row${br.r&&br.r.id==r.id?' cur':''}" data-r="${r.id}" tabindex="0"><b>${E(r.name)}<small>${r.moshaf.length>1?r.moshaf.length+' روايات':E(r.moshaf[0].name)}</small></b><button class="ib fv${S.fr.includes(r.id)?' on':''}" data-fr="${r.id}" aria-label="مفضلة">${ic('star')}</button></div>`).join('')||'<p class="mu c">تعذر تحميل القراء. تحقق من الإنترنت ثم أعد فتح التطبيق.</p>';
 }
 function fav(){
  const fr=R.filter(r=>S.fr.includes(r.id));
