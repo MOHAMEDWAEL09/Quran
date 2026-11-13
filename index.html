@@ -88,13 +88,21 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 #hc{display:flex;justify-content:space-between;align-items:center}
 .sm{font-size:13px;padding:8px 14px}
 .rmx{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-size:12px;color:var(--mut);flex:none}
-#mb{font-family:'Amiri Quran',serif;font-size:27px;line-height:2.5;text-align:justify}
-#mb i{font-style:normal;color:var(--acc);font-size:20px}
+/* mushaf page: one raised card, inset surah title, standalone basmala, ayah numbers as small inset discs */
+#mb{padding:28px 4px 0;text-align:center;font-size:15px;line-height:2;color:var(--mut)}
+#ms{padding-left:14px;padding-right:14px}
+#mb.pg{margin-top:12px;padding:12px 12px 20px;background:var(--bg);box-shadow:var(--out);border-radius:28px;color:var(--ink);text-align:start;font-family:'Amiri Quran',serif;font-size:inherit;line-height:inherit}
+.sh{display:flex;flex-direction:column;align-items:center;padding:8px 14px;margin:0 0 4px;border-radius:999px;box-shadow:var(--in)}
+.sh b{font-size:25px;font-weight:400;line-height:1.8}
+.sh small{color:var(--mut);font:400 12px/1.6 'IBM Plex Sans Arabic',system-ui,sans-serif}
+.bm{text-align:center;font-size:26px;line-height:2.3;margin-top:12px}
+.tx{font-size:26px;line-height:2.5;text-align:justify;text-align-last:center;margin-top:2px}
+#mb .ay i{display:inline-grid;place-items:center;min-width:1.9em;height:1.9em;padding:0 .25em;margin:0 .3em;border-radius:999px;box-shadow:var(--in);font:normal 600 13px/1 'IBM Plex Sans Arabic',system-ui,sans-serif;color:var(--acc);vertical-align:middle}
 /* tafsir: tap an ayah -> compact bottom panel, text above stays visible */
 #mb .ay{border-radius:10px;-webkit-box-decoration-break:clone;box-decoration-break:clone;cursor:pointer;transition:background .2s;scroll-margin:72px 0 46vh}
 #mb .ay.sel{background:var(--hl)}
 #mh{margin:4px 0 0;font-size:12px}
-#ms.tfo #mb{padding-bottom:44vh}
+#ms.tfo::after{content:'';display:block;height:44vh}
 #tf{position:fixed;inset:auto 0 0;margin:auto;max-width:520px;max-height:44vh;display:flex;flex-direction:column;padding:14px 22px calc(16px + env(safe-area-inset-bottom));background:var(--bg);border-radius:28px 28px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.18);visibility:hidden;transform:translateY(110%);transition:transform .3s ease,visibility 0s .3s}
 #ms.tfo #tf{visibility:visible;transform:none;transition:transform .3s ease}
 .tfh{display:flex;align-items:center;gap:8px;flex:none}
@@ -191,7 +199,7 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
  <p class="mu c" id="ds"></p>
 </section>
 
-<section class="sheet" id="ms"><div class="top"><button class="ib" data-close="ms" data-ic="x" aria-label="إغلاق"></button><b class="tt"></b><span class="ib"></span></div><p class="mu c" id="mh" hidden>اضغط على أي آية لعرض تفسيرها</p><div id="mb"></div>
+<section class="sheet" id="ms"><div class="top"><button class="ib" data-close="ms" data-ic="x" aria-label="إغلاق"></button><span class="mu">المصحف</span><span class="ib"></span></div><p class="mu c" id="mh" hidden>اضغط على أي آية لعرض تفسيرها</p><div id="mb"></div>
  <div id="tf" role="region" aria-label="تفسير الآية">
   <div class="tfh"><button class="ib" data-tfx data-ic="x" aria-label="إغلاق التفسير"></button><b id="tfl"></b><button class="sm" id="tfe" aria-label="اختيار التفسير"></button><button class="ib" id="tfp" data-ic="cr" aria-label="الآية السابقة"></button><button class="ib" id="tfn" data-ic="cl" aria-label="الآية التالية"></button></div>
   <div id="tft"></div>
@@ -439,12 +447,17 @@ $('#sb').onclick=()=>menu('مؤقت النوم',[['١٥ دقيقة',15],['٣٠ �
 /* mushaf text */
 let msN=0,msC=0,msA=0,mTok=0,tfTok=0;const TF={};
 $('#mb2').onclick=async()=>{
- if(!HS().ms)push({ms:true});const b=$('#mb'),n=cur.n,tok=++mTok;tfClose();$('#mh').hidden=true;b.textContent='جارٍ التحميل…';
+ if(!HS().ms)push({ms:true});const b=$('#mb'),n=cur.n,tok=++mTok;tfClose();$('#mh').hidden=true;b.className='';b.textContent='جارٍ التحميل…';
  try{const j=await(await fetch(`https://api.alquran.cloud/v1/surah/${n}/quran-uthmani`)).json();if(tok!==mTok)return;
-  msN=n;msC=j.data.ayahs.length;
-  b.innerHTML=j.data.ayahs.map(x=>`<span class="ay" data-a="${x.numberInSurah}">${E(x.text)} <i>﴿${x.numberInSurah.toLocaleString('ar-EG')}﴾</i></span>`).join(' ');
+  const d=j.data,ay=d.ayahs.map(x=>({n:x.numberInSurah,t:x.text}));let bm='';
+  /* the API glues the basmala to the first ayah of most surahs: show it as its own line (not for al-Fatiha, where it IS ayah 1, nor at-Tawba) */
+  if(n!==1&&n!==9&&ay.length){const w=ay[0].t.trim().split(/\s+/);if(w.length>4&&nz(w.slice(0,4).join(' ')).trim().replace(/\s+/g,' ')==='بسم الله الرحمن الرحيم'){bm=w.slice(0,4).join(' ');ay[0].t=w.slice(4).join(' ')}}
+  const rv=d.revelationType==='Meccan'?'مكية':d.revelationType==='Medinan'?'مدنية':'',c=ay.length;
+  msN=n;msC=c;
+  b.className='pg';
+  b.innerHTML=`<div class="sh"><b>سورة ${N[n-1]}</b><small>${[rv,c.toLocaleString('ar-EG')+' '+(c<=10?'آيات':'آية')].filter(Boolean).join(' · ')}</small></div>${bm?`<div class="bm">${E(bm)}</div>`:''}<div class="tx">${ay.map(x=>`<span class="ay" data-a="${x.n}">${E(x.t)}<i>${x.n.toLocaleString('ar-EG')}</i></span>`).join(' ')}</div>`;
   $('#mh').hidden=!!S.hn}
- catch(err){if(tok===mTok)b.textContent='تعذر تحميل النص. يلزم الإنترنت في أول مرة.'}};
+ catch(err){if(tok===mTok){b.className='';b.textContent='تعذر تحميل النص. يلزم الإنترنت في أول مرة.'}}};
 
 /* tafsir (alquran.cloud): one request per surah+edition, then cached by the service worker for offline */
 const TFE=[['ar.muyassar','الميسّر','التفسير الميسّر'],['ar.jalalayn','الجلالين','تفسير الجلالين']];
