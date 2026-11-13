@@ -541,8 +541,10 @@ if('serviceWorker' in navigator){
 (async()=>{
  try{R=(await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]}catch(e){R=[]}
  R=R.filter(r=>r.moshaf&&r.moshaf.length);
- const r=R.find(x=>x.id==S.r)||R.find(x=>x.name.includes('الحصري'))||R[0];
- if(r)setReciter(r,S.m);else rec();
+ /* default reciter (first launch only): Abdul Basit Abdul Samad, al-Mushaf al-Mujawwad; falls back to al-Husary */
+ const isMj=m=>nz(m.name).includes('مجود'),ab=R.find(x=>{const n=nz(x.name).replace(/\s/g,'');return n.includes('عبدالباسط')&&n.includes('عبدالصمد')&&x.moshaf.some(isMj)});
+ const sv=R.find(x=>x.id==S.r),r=sv||ab||R.find(x=>x.name.includes('الحصري'))||R[0];
+ if(r)setReciter(r,sv?S.m:(r===ab?ab.moshaf.find(isMj).id:undefined));else rec();
  if(window.caches)caches.open(AUD).then(c=>c.keys()).then(ks=>{const have=new Set(ks.map(q=>q.url));let ch=0;for(const k in S.dl)if(!have.has(S.dl[k].u)){delete S.dl[k];ch=1}if(ch){save();render();dlUI();updStorage()}}).catch(()=>{});
 })();
 </script>
