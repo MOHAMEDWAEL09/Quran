@@ -96,7 +96,7 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 .sh b{font-size:25px;font-weight:400;line-height:1.8}
 .sh small{color:var(--mut);font:400 12px/1.6 'IBM Plex Sans Arabic',system-ui,sans-serif}
 .bm{text-align:center;font-size:26px;line-height:2.3;margin-top:12px}
-.tx{font-size:26px;line-height:2.5;text-align:justify;text-align-last:center;margin-top:2px}
+.qt{font-size:26px;line-height:2.5;text-align:justify;text-align-last:center;margin-top:2px}
 #mb .ay i{display:inline-grid;place-items:center;min-width:1.9em;height:1.9em;padding:0 .25em;margin:0 .3em;border-radius:999px;box-shadow:var(--in);font:normal 600 13px/1 'IBM Plex Sans Arabic',system-ui,sans-serif;color:var(--acc);vertical-align:middle}
 /* tafsir: tap an ayah -> compact bottom panel, text above stays visible */
 #mb .ay{border-radius:10px;-webkit-box-decoration-break:clone;box-decoration-break:clone;cursor:pointer;transition:background .2s;scroll-margin:72px 0 46vh}
@@ -455,7 +455,7 @@ $('#mb2').onclick=async()=>{
   const rv=d.revelationType==='Meccan'?'مكية':d.revelationType==='Medinan'?'مدنية':'',c=ay.length;
   msN=n;msC=c;
   b.className='pg';
-  b.innerHTML=`<div class="sh"><b>سورة ${N[n-1]}</b><small>${[rv,c.toLocaleString('ar-EG')+' '+(c<=10?'آيات':'آية')].filter(Boolean).join(' · ')}</small></div>${bm?`<div class="bm">${E(bm)}</div>`:''}<div class="tx">${ay.map(x=>`<span class="ay" data-a="${x.n}">${E(x.t)}<i>${x.n.toLocaleString('ar-EG')}</i></span>`).join(' ')}</div>`;
+  b.innerHTML=`<div class="sh"><b>سورة ${N[n-1]}</b><small>${[rv,c.toLocaleString('ar-EG')+' '+(c<=10?'آيات':'آية')].filter(Boolean).join(' · ')}</small></div>${bm?`<div class="bm">${E(bm)}</div>`:''}<div class="qt">${ay.map(x=>`<span class="ay" data-a="${x.n}">${E(x.t)}<i>${x.n.toLocaleString('ar-EG')}</i></span>`).join(' ')}</div>`;
   $('#mh').hidden=!!S.hn}
  catch(err){if(tok===mTok){b.className='';b.textContent='تعذر تحميل النص. يلزم الإنترنت في أول مرة.'}}};
 
