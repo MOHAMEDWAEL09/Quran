@@ -364,7 +364,7 @@ $('#q').oninput=home;$('#rq').oninput=rec;
 
 /* audio */
 a.onplay=()=>{document.body.classList.add('playing');lc=a.currentTime};
-a.onpause=()=>{document.body.classList.remove('playing');lc=null;savePos();save()};
+a.onpause=()=>{document.body.classList.remove('playing');lc=null;savePos();save();if(newVer)setTimeout(()=>location.reload(),300)};
 a.onloadedmetadata=()=>{if(seekTo!=null){if(seekTo<a.duration-5)a.currentTime=seekTo;seekTo=null}lc=a.currentTime;prog()};
 a.onseeking=()=>{lc=null};a.onseeked=()=>{lc=a.currentTime};
 a.onerror=()=>toast(S.dl[pk]?'تعذر تشغيل الملف المحمّل':'تعذر التشغيل — تحقق من الإنترنت أو نزّل السورة للاستماع بدون نت');
@@ -403,7 +403,11 @@ if('mediaSession' in navigator){const m=navigator.mediaSession,h=(k,f)=>{try{m.s
 /* install + sw */
 let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#ins').hidden=false});
 $('#ins').onclick=()=>{dp&&dp.prompt();$('#ins').hidden=true};
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+let newVer=false;
+if('serviceWorker' in navigator){
+ const had=!!navigator.serviceWorker.controller;
+ navigator.serviceWorker.register('sw.js').then(reg=>{const chk=()=>reg.update().catch(()=>{});addEventListener('visibilitychange',()=>{if(!document.hidden)chk()});setInterval(chk,36e5)}).catch(()=>{});
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!had)return;if(a.paused)location.reload();else{newVer=true;toast('يوجد تحديث جديد — سيُطبَّق عند إيقاف التشغيل')}})}
 
 /* boot */
 (async()=>{
