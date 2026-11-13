@@ -155,7 +155,7 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
 </main>
 
 <div id="mini" class="card" hidden>
- <div class="mv"><svg viewBox="0 0 200 200" aria-hidden="true"><g class="disc"><circle cx="100" cy="100" r="98" fill="#85858a"/><g fill="none" stroke="#000" stroke-opacity=".18" stroke-width="3"><circle cx="100" cy="100" r="82"/><circle cx="100" cy="100" r="66"/><circle cx="100" cy="100" r="50"/></g><path d="M100 100V4A96 96 0 0 1 150 17z" fill="#fff" opacity=".2"/><path d="M100 100V196A96 96 0 0 1 50 183z" fill="#fff" opacity=".2"/><circle cx="100" cy="100" r="34" fill="#ff7a00"/><circle cx="100" cy="100" r="6" fill="#111"/></g><g class="arm"><path d="M172 28L160 96L140 134" stroke="#cfcfd3" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="127" y="122" width="24" height="32" rx="5" fill="#2b2b2e" transform="rotate(25 140 134)"/><circle cx="172" cy="28" r="20" fill="#dcdce0" stroke="#b0b0b5" stroke-width="3"/><circle cx="172" cy="28" r="7" fill="#8a8a8e"/></g></svg></div>
+ <div class="mv"><svg viewBox="0 0 200 200" aria-hidden="true"><g class="disc"><circle cx="100" cy="100" r="98" fill="#85858a"/><g fill="none" stroke="#000" stroke-opacity=".18" stroke-width="3"><circle cx="100" cy="100" r="82"/><circle cx="100" cy="100" r="66"/><circle cx="100" cy="100" r="50"/></g><path d="M100 100V4A96 96 0 0 1 150 17z" fill="#fff" opacity=".2"/><path d="M100 100V196A96 96 0 0 1 50 183z" fill="#fff" opacity=".2"/><circle class="lb" cx="100" cy="100" r="34" fill="#ff7a00"/><circle cx="100" cy="100" r="6" fill="#111"/></g><g class="arm"><path d="M172 28L160 96L140 134" stroke="#cfcfd3" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="127" y="122" width="24" height="32" rx="5" fill="#2b2b2e" transform="rotate(25 140 134)"/><circle cx="172" cy="28" r="20" fill="#dcdce0" stroke="#b0b0b5" stroke-width="3"/><circle cx="172" cy="28" r="7" fill="#8a8a8e"/></g></svg></div>
  <div class="tx"><b class="tt"></b><small class="rr mu"></small></div>
  <button class="ib pp" aria-label="تشغيل / إيقاف"><svg class="i f p1" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg><svg class="i f p2" viewBox="0 0 24 24"><path d="M7 4h4v16H7zM13 4h4v16h-4z"/></svg></button>
 </div>
@@ -177,8 +177,9 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
     <circle cx="100" cy="100" r="98" fill="url(#g)"/>
     <g fill="none" stroke="#000" stroke-opacity=".13"><circle cx="100" cy="100" r="90"/><circle cx="100" cy="100" r="80"/><circle cx="100" cy="100" r="70"/><circle cx="100" cy="100" r="60"/><circle cx="100" cy="100" r="50"/><circle cx="100" cy="100" r="42"/></g>
     <path d="M100 100V4A96 96 0 0 1 150 17z" fill="#fff" opacity=".16"/><path d="M100 100V196A96 96 0 0 1 50 183z" fill="#fff" opacity=".16"/>
-    <circle cx="100" cy="100" r="32" fill="#ff7a00" stroke="#e05a00" stroke-width="2"/><circle cx="100" cy="100" r="4" fill="#111"/>
+    <circle class="lb" cx="100" cy="100" r="32" fill="#ff7a00" stroke="#e05a00" stroke-width="2"/>
    </g>
+   <text id="dn" x="100" y="110" text-anchor="middle" font-size="30" font-weight="700" fill="#fff"></text>
    <g class="arm"><path d="M172 28L160 96L140 134" stroke="#cfcfd3" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="130" y="126" width="18" height="26" rx="4" fill="#2b2b2e" transform="rotate(25 140 134)"/><circle cx="172" cy="28" r="14" fill="#dcdce0" stroke="#b9b9be" stroke-width="2"/><circle cx="172" cy="28" r="5" fill="#8a8a8e"/></g>
   </svg>
  </div>
@@ -335,10 +336,14 @@ function dlBtn(){
  if(S.dl[k]){menu('حذف التنزيل؟',[['نعم، احذف',()=>{dlDel(k);dlUI();updStorage();if(tab==='fav')render()}],['إلغاء',()=>{}]]);return}
  dlAsk()}
 
+const DC=[['#ff7a00','#e05a00'],['#e8553a','#c4411f'],['#7d8f62','#5f7046']]; // disc label colour per surah: orange / burnt red / olive
 function ui(){
  if(!cur.r)return;
  const nm='سورة '+N[cur.n-1],rn=cur.r.name;
- $$('.tt').forEach(e=>e.textContent=nm);$$('.rr').forEach(e=>e.textContent=rn);
+ $$('.tt').forEach(e=>e.textContent=nm);
+ const pc=DC[(cur.n-1)%3];$$('.lb').forEach(c=>{c.setAttribute('fill',pc[0]);if(c.hasAttribute('stroke'))c.setAttribute('stroke',pc[1])});
+ const dn=$('#dn');dn.textContent=cur.n.toLocaleString('ar-EG');dn.setAttribute('font-size',cur.n>99?24:30);dn.setAttribute('y',cur.n>99?108:110);
+$$('.rr').forEach(e=>e.textContent=rn);
  $('#cr').innerHTML=`<b>${E(br.r.name)}<small>${E(br.m.name)}</small></b><span class="mu">تغيير</span>`;
  $('#fv').classList.toggle('on',S.ft.includes(key()));
  showSaved();dlUI();updStorage();
