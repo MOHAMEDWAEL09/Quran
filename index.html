@@ -6,7 +6,7 @@
 <title>القرآن الكريم</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#e9e9eb">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src https: blob:; connect-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.vercel-insights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src https: blob:; connect-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <script>(function(){var t;try{t=(JSON.parse(localStorage.getItem("q")||"{}")).th}catch(e){}if(!t)t="light";document.documentElement.dataset.theme=t;var m=document.querySelector('meta[name=theme-color]');if(m)m.content=t=="dark"?"#2b302d":"#e9e9eb"})()</script>
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -132,6 +132,7 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
 #toast{position:fixed;left:0;right:0;margin:auto;width:max-content;max-width:calc(100% - 40px);top:calc(env(safe-area-inset-top) + 16px);z-index:40;padding:10px 18px;border-radius:999px;background:var(--fill);color:var(--bg);font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;text-align:center}
 #toast.show{opacity:1}
 </style>
+<script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
 <body>
 <main>
