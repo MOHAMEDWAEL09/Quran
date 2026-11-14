@@ -520,8 +520,6 @@ function wnClose(){wnOn=0;wnPin=0;wnKey='';$('#pl').classList.remove('wo');$('#t
 async function tbUpd(){
  const m=cur.m;if(!m)return;const rd=await readFor(m);if(cur.m!==m)return;
  WR=rd;$('#tb').hidden=!rd;if(!rd)wnClose();else if(wnOn)wnSync()}
-/* reading the long tafsir text = the person wants it to stay: pin it when they scroll it */
-['wheel','touchmove'].forEach(ev=>$('#wt').addEventListener(ev,()=>{const t=$('#wt');if(wnOn&&!wnPin&&wnA>0&&t.scrollHeight>t.clientHeight+2){wnPin=1;wnLabel()}},{passive:true}));
 
 /* media session */
 if('mediaSession' in navigator){const m=navigator.mediaSession,h=(k,f)=>{try{m.setActionHandler(k,f)}catch(e){}};
