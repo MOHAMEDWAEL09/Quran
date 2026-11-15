@@ -100,6 +100,7 @@ input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 #mb .ay i{display:inline-grid;place-items:center;min-width:1.9em;height:1.9em;padding:0 .25em;margin:0 .3em;border-radius:999px;box-shadow:var(--in);font:normal 600 13px/1 'IBM Plex Sans Arabic',system-ui,sans-serif;color:var(--acc);vertical-align:middle}
 /* tafsir: tap an ayah -> compact bottom panel, text above stays visible */
 #mb .ay{border-radius:10px;-webkit-box-decoration-break:clone;box-decoration-break:clone;cursor:pointer;transition:background .2s;scroll-margin:72px 0 46vh}
+#mb .ay.now{background:var(--hl)}
 #mb .ay.sel{background:var(--hl)}
 #mh{margin:4px 0 0;font-size:12px}
 #ms.tfo::after{content:'';display:block;height:44vh}
@@ -381,7 +382,7 @@ const HS=()=>history.state||{t:'home'};let busy=false;
 history.replaceState({t:'home'},'');
 function push(p){history.pushState({...HS(),...p},'');apply(HS())}
 function closeL(cb){if(busy)return;busy=true;if(cb)addEventListener('popstate',()=>cb(),{once:true});history.back()}
-function apply(s){$('#pl').classList.toggle('open',!!s.pl);$('#ms').classList.toggle('open',!!s.ms);$('#menu').classList.toggle('open',!!s.menu);$('#bd').classList.toggle('open',!!s.menu);if(s.t!==tab)show(s.t)}
+function apply(s){$('#pl').classList.toggle('open',!!s.pl);$('#ms').classList.toggle('open',!!s.ms);msOn=s.ms?1:0;$('#menu').classList.toggle('open',!!s.menu);$('#bd').classList.toggle('open',!!s.menu);if(s.t!==tab)show(s.t)}
 addEventListener('popstate',e=>{busy=false;apply(e.state||{t:'home'})});
 function show(t){tab=t;$$('.v').forEach(v=>v.hidden=v.id!='v-'+t);$$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab==t));render();scrollTo(0,0)}
 function go(t){const s=HS();if(t===s.t)return;if(t==='home')closeL();else if(s.t==='home')push({t});else{history.replaceState({...s,t},'');show(t)}}
@@ -432,8 +433,8 @@ a.onerror=()=>toast(S.dl[pk]?'تعذر تشغيل الملف المحمّل':'ت
 addEventListener('visibilitychange',()=>{if(document.hidden){acc();savePos();save()}});
 addEventListener('pagehide',()=>{savePos();save()});
 function prog(){const d=isFinite(a.duration)?a.duration:0,c=a.currentTime||0;$('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');$('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)}
-a.ondurationchange=()=>{prog();if(wnOn)wnSync()};
-a.ontimeupdate=()=>{prog();acc();if(wnOn)wnSync();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save();if(tab==='hist'&&$('#st'))$('#st').innerHTML=stHTML()}};
+a.ondurationchange=()=>{prog();if(wnOn)wnSync();if(msOn)msSync()};
+a.ontimeupdate=()=>{prog();acc();if(wnOn)wnSync();if(msOn)msSync();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save();if(tab==='hist'&&$('#st'))$('#st').innerHTML=stHTML()}};
 a.onended=()=>{delete S.pos[pk];save();if(slEnd){sleep(0);return}step(1)};
 $('#sk').oninput=e=>{a.currentTime=+e.target.value};
 $('#vo').oninput=e=>{S.vol=+e.target.value;a.volume=S.vol;e.target.style.setProperty('--p',S.vol*100+'%');save()};
@@ -451,8 +452,11 @@ $('#sb').onclick=()=>menu('مؤقت النوم',[['١٥ دقيقة',15],['٣٠ �
 
 /* mushaf text */
 let msN=0,msC=0,msA=0,mTok=0,tfTok=0;const TF={};
-$('#mb2').onclick=async()=>{
- if(!HS().ms)push({ms:true});const b=$('#mb'),n=cur.n,tok=++mTok;tfClose();$('#mh').hidden=true;b.className='';b.textContent='جارٍ التحميل…';
+/* follow mode: when the reciter has ayah timings, the page opens at the ayah being recited, shades it, and moves with the recitation */
+var msOn=0,msTm=null,msNow=0,msFresh=0,msFol=0,msLoadN=0;
+$('#mb2').onclick=()=>{if(!HS().ms)push({ms:true});$('#ms').scrollTop=0;msLoad(cur.n)};
+async function msLoad(n){
+ const b=$('#mb'),tok=++mTok;msLoadN=n;msTm=null;msNow=0;msFol=0;msFresh=0;tfClose();$('#mh').hidden=true;b.className='';b.textContent='جارٍ التحميل…';
  try{const j=await(await fetch(`https://api.alquran.cloud/v1/surah/${n}/quran-uthmani`)).json();if(tok!==mTok)return;
   const d=j.data,ay=d.ayahs.map(x=>({n:x.numberInSurah,t:x.text}));let bm='';
   /* the API glues the basmala to the first ayah of most surahs: show it as its own line (not for al-Fatiha, where it IS ayah 1, nor at-Tawba) */
@@ -461,8 +465,27 @@ $('#mb2').onclick=async()=>{
   msN=n;msC=c;
   b.className='pg';
   b.innerHTML=`<div class="sh"><b>سورة ${N[n-1]}</b><small>${[rv,c.toLocaleString('ar-EG')+' '+(c<=10?'آيات':'آية')].filter(Boolean).join(' · ')}</small></div>${bm?`<div class="bm">${E(bm)}</div>`:''}<div class="qt">${ay.map(x=>`<span class="ay" data-a="${x.n}">${E(x.t)}<i>${x.n.toLocaleString('ar-EG')}</i></span>`).join(' ')}</div>`;
-  $('#mh').hidden=!!S.hn}
- catch(err){if(tok===mTok){b.className='';b.textContent='تعذر تحميل النص. يلزم الإنترنت في أول مرة.'}}};
+  $('#mh').hidden=!!S.hn;$('#ms').scrollTop=0;msFollow(n,tok)}
+ catch(err){if(tok===mTok){b.className='';b.textContent='تعذر تحميل النص. يلزم الإنترنت في أول مرة.'}}}
+async function msFollow(n,tok){
+ if(!a.src||cur.n!==n)return;const rd=await readFor(cur.m);if(!rd||tok!==mTok)return;
+ let l;try{l=await tmGet(rd,n)}catch(e){return}
+ if(tok!==mTok||cur.n!==n)return;msTm=l;msFol=1;msFresh=1;msSync()}
+const msBot=sc=>sc.getBoundingClientRect().bottom-(sc.classList.contains('tfo')?innerHeight*.44:0);
+function msSync(){
+ if(!msOn||!a.src||!cur.m)return;
+ if(cur.n!==msN){if(msFol&&msLoadN!==cur.n)msLoad(cur.n);return}
+ if(!msTm)return;const f=tmFactor(msTm);if(f<=0)return;
+ const x=tmAt(msTm,f,a.currentTime);if(x===msNow&&!msFresh)return;
+ const sc=$('#ms'),prev=msNow?$(`#mb .ay[data-a="${msNow}"]`):null;let was=true;
+ if(prev){const r=prev.getBoundingClientRect();was=r.bottom>sc.getBoundingClientRect().top+64&&r.top<msBot(sc)}
+ $$('#mb .ay.now').forEach(e=>e.classList.remove('now'));msNow=x;
+ const el=x?$(`#mb .ay[data-a="${x}"]`):null;if(!el){msFresh=0;return}
+ el.classList.add('now');
+ /* only move the page if you were following (the previous ayah was on screen) or this is the first jump */
+ if(msFresh||was){const r=el.getBoundingClientRect(),top=sc.getBoundingClientRect().top;
+  if(msFresh||r.top<top+64||r.bottom>msBot(sc)-8)sc.scrollTo({top:sc.scrollTop+r.top-top-Math.max(110,(msBot(sc)-top-r.height)/3),behavior:msFresh||matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'})}
+ msFresh=0}
 
 /* tafsir (alquran.cloud): one request per surah+edition, then cached by the service worker for offline */
 const TFE=[['ar.muyassar','الميسّر','التفسير الميسّر'],['ar.jalalayn','الجلالين','تفسير الجلالين']];
