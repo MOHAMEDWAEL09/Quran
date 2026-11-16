@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>منشئ قائمة الشيوخ</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9e9eb;--ink:#1a1a1c;--mut:#8a8a90;--acc:#ff7a00;--bad:#c4411f;--ok:#4f7a32;
+--out:8px 8px 18px rgba(0,0,0,.13),-8px -8px 18px rgba(255,255,255,.95);
+--sm:4px 4px 10px rgba(0,0,0,.12),-4px -4px 10px rgba(255,255,255,.9);
+--in:inset 4px 4px 9px rgba(0,0,0,.14),inset -4px -4px 9px rgba(255,255,255,.9);--bd:rgba(0,0,0,.25);color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#2b302d;--ink:#e9ebe7;--mut:#8f9893;--bad:#e8553a;--ok:#9bbf7a;
+--out:8px 8px 18px rgba(0,0,0,.45),-6px -6px 16px rgba(255,255,255,.035);
+--sm:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(255,255,255,.035);
+--in:inset 4px 4px 9px rgba(0,0,0,.5),inset -3px -3px 8px rgba(255,255,255,.04);--bd:rgba(0,0,0,.55);color-scheme:dark}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Arabic',system-ui,sans-serif}
+body{max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 8px) 16px 120px}
+button{font:inherit;color:inherit;border:0;background:var(--bg);box-shadow:var(--sm);border-radius:999px;cursor:pointer;padding:10px 18px}
+button:active,button.on{box-shadow:var(--in)}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+h1{font-size:20px;margin:18px 4px 4px}h3{margin:0;font-size:16px}
+.mu{color:var(--mut);font-size:13px}.c{text-align:center}
+.card{background:var(--bg);box-shadow:var(--out);border-radius:24px;padding:14px 16px;margin-bottom:14px}
+.inp{width:100%;border:0;border-radius:999px;padding:13px 20px;background:var(--bg);box-shadow:var(--in);font:inherit;color:var(--ink);outline:0;margin:0 0 12px}
+.inp.ltr{direction:ltr;text-align:left}
+textarea.inp{border-radius:20px;min-height:110px;resize:vertical;line-height:1.7;font-size:13px;white-space:pre}
+.cnt{font-size:12px;color:var(--mut);margin:-6px 6px 10px}
+.lb{display:block;margin:10px 6px 6px;font-size:13px;color:var(--mut)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.bar button{flex:1;min-width:120px}
+.acc{color:var(--acc)}
+.seg{display:flex;gap:10px;margin:14px 0}.seg button{flex:1}
+.rowc{display:flex;align-items:center;gap:8px}.rowc b{flex:1;min-width:0;font-weight:600}
+.rowc small{display:block;color:var(--mut);font-weight:400;font-size:12px}
+.ib{width:38px;height:38px;padding:0;display:grid;place-items:center;flex:none;font-size:15px}
+.mo{padding:12px;margin:0 0 12px;border-radius:20px;box-shadow:var(--in)}
+.mo .inp{box-shadow:var(--sm)}
+.res{font-size:13px;margin:2px 6px 0;min-height:18px}.res.ok{color:var(--ok)}.res.no{color:var(--bad)}
+.hid{opacity:.5}
+#dirty{position:fixed;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom));margin:auto;width:calc(100% - 32px);max-width:488px;padding:12px 16px;border-radius:999px;background:var(--bg);box-shadow:var(--out);display:flex;align-items:center;gap:10px;font-size:13px}
+#dirty span{flex:1}#dirty[hidden]{display:none}
+#toast{position:fixed;left:0;right:0;margin:auto;width:max-content;max-width:calc(100% - 40px);top:calc(env(safe-area-inset-top) + 14px);padding:10px 18px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;text-align:center}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<h1>منشئ قائمة الشيوخ</h1>
+<p class="mu" style="margin:0 4px 6px">بتجهّز ملف <b>reciters.json</b> للتطبيق: تضيف شيوخك، وتخفي من قراء mp3quran، وتختار القارئ الافتراضي.</p>
+
+<div class="bar">
+ <button id="imp">استيراد ملف</button>
+ <button id="dl" class="acc">تحميل reciters.json</button>
+ <button id="cp">نسخ المحتوى</button>
+</div>
+<input type="file" id="fi" accept=".json,application/json" hidden>
+
+<div class="seg"><button id="t1" class="on">شيوخي</button><button id="t2">إخفاء قراء mp3quran</button></div>
+<div id="app"></div>
+
+<div id="dirty" hidden><span>فيه تعديلات لسه ما اتنزلتش</span><button id="dl2" class="acc">تحميل</button></div>
+<div id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nz=t=>String(t).replace(/[ً-ٰٟـ]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').toLowerCase();
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),3000)};
+const ar2en=t=>String(t).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+/* same rules as the app: blank = all 114; "1-10,18" ranges; returns sorted list or null if the text is invalid */
+function expand(t){t=ar2en(t).trim();if(!t)t='1-114';const o=new Set();for(const p of t.split(/[,،\s]+/).filter(Boolean)){const m=p.match(/^(\d+)(?:-(\d+))?$/);if(!m)return null;const a=+m[1],b=m[2]?+m[2]:a;if(a<1||b>114||a>b)return null;for(let i=a;i<=b;i++)o.add(i)}return o.size?[...o].sort((x,y)=>x-y):null}
+const pad=n=>String(n).padStart(3,'0');
+const srv=u=>String(u).trim().replace(/\/*$/,'/');
+/* one link per surah (e.g. Catbox): "https://…mp3" lines go in order from surah 1, or write "surah-number link" to jump */
+function parseLinks(t){const f={};let n=0,ln=0;for(const raw of ar2en(t).split(/\r?\n/)){ln++;const l=raw.trim();if(!l)continue;
+ const m=l.match(/^(?:(\d{1,3})[\s,.:=|)\-]+)?(https:\/\/\S+)$/);if(!m)return{err:'السطر '+ln+' مش رابط https صحيح'};
+ n=m[1]?+m[1]:n+1;if(n<1||n>114)return{err:'السطر '+ln+': رقم السورة لازم بين 1 و114'};if(f[n])return{err:'السورة '+n+' مكررة (السطر '+ln+')'};f[n]=m[2]}
+ return Object.keys(f).length?{files:f}:{err:''}}
+const filesText=m=>m.files?Object.keys(m.files).map(Number).sort((a,b)=>a-b).map(n=>n+' '+m.files[n]).join('\n'):'';
+const range=ls=>{const o=[];for(let i=0;i<ls.length;){let j=i;while(j+1<ls.length&&ls[j+1]===ls[j]+1)j++;o.push(j>i?ls[i]+'-'+ls[j]:''+ls[i]);i=j+1}return o.join('، ')};
+
+let D={next:1000001,hidden:[],default:0,reciters:[]},dirty=false,tab=1,edit=null,API=null;
+try{const x=JSON.parse(localStorage.getItem('adm-draft')||'null');if(x&&Array.isArray(x.reciters)){D=x;dirty=true}}catch(e){}
+function norm(J){const o={next:1000001,hidden:[],default:0,reciters:[]};if(!J||typeof J!=='object')return o;
+ let mx=1000000;
+ (J.reciters||[]).forEach(c=>{const ms=(c.moshaf||[]).map(m=>{if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}return{id:+m.id,name:String(m.name||'مرتل'),files:f}}return{id:+m.id,name:String(m.name||'مرتل'),server:String(m.server||''),surahs:String(m.surahs||'1-114')}});if(!c.name||!(+c.id>=1e6)||!ms.length)return;o.reciters.push({id:+c.id,name:String(c.name),moshaf:ms});mx=Math.max(mx,+c.id,...ms.map(m=>m.id))});
+ o.hidden=(J.hidden||[]).map(Number).filter(Number.isFinite);o.default=+J.default||0;o.next=Math.max(+J.next||0,mx+1,1000001);return o}
+function mark(){dirty=true;try{localStorage.setItem('adm-draft',JSON.stringify(D))}catch(e){}$('#dirty').hidden=false}
+const out=()=>JSON.stringify({v:1,next:D.next,default:D.default,hidden:D.hidden,reciters:D.reciters},null,1);
+
+function draw(){
+ $('#t1').classList.toggle('on',tab===1);$('#t2').classList.toggle('on',tab===2);$('#dirty').hidden=!dirty;
+ if(tab===2)return drawHide();
+ if(edit)return drawForm();
+ const L=D.reciters;
+ $('#app').innerHTML=`<button class="acc" id="add" style="width:100%;margin-bottom:14px">+ إضافة شيخ</button>`+(L.map((r,i)=>`<div class="card"><div class="rowc"><b>${E(r.name)}<small>${r.moshaf.length>1?r.moshaf.length+' روايات':E(r.moshaf[0].name)}${D.default===r.id?' · القارئ الافتراضي':''}</small></b>
+  <button class="ib" data-a="up" data-i="${i}" ${i?'':'disabled'} aria-label="أعلى">↑</button><button class="ib" data-a="dn" data-i="${i}" ${i<L.length-1?'':'disabled'} aria-label="أسفل">↓</button></div>
+  <div class="bar" style="margin:10px 0 0"><button data-a="ed" data-i="${i}">تعديل</button><button data-a="df" data-i="${i}">${D.default===r.id?'إلغاء الافتراضي':'جعله الافتراضي'}</button><button data-a="rm" data-i="${i}">حذف</button></div></div>`).join('')||'<p class="mu c" style="margin-top:36px">لسه ما أضفتش شيوخ.<br>اضغط «إضافة شيخ» أو استورد ملف reciters.json الحالي.</p>');
+}
+function moBlock(m,k){return `<div class="mo" data-k="${k}"><label class="lb">اسم الرواية (مثال: مرتل)</label><input class="inp" data-f="name" value="${E(m.name)}">
+ <label class="lb">روابط السور — رابط لكل سورة (Catbox مثلاً)</label><textarea class="inp ltr" data-f="links" data-k="${k}" rows="5" placeholder="https://files.catbox.moe/abc123.mp3&#10;https://files.catbox.moe/def456.mp3&#10;…">${E(m.links||'')}</textarea><div class="cnt" id="cnt${k}"></div>
+ <label class="lb">أو: رابط مجلد منظّم (https) — الملفات 001.mp3 … 114.mp3. لو كتبت روابط فوق، ده بيتجاهل.</label><input class="inp ltr" data-f="server" placeholder="https://…/" value="${E(m.server)}">
+ <label class="lb">السور المتاحة (فاضي = كل السور، أو مثال: 1-10,18,36)</label><input class="inp ltr" data-f="surahs" value="${E(m.surahs==='1-114'?'':m.surahs)}">
+ <div class="bar" style="margin:0"><button data-a="test" data-k="${k}">اختبار الرابط</button>${edit.ms.length>1?`<button data-a="rmm" data-k="${k}">حذف الرواية</button>`:''}</div><div class="res" id="res${k}"></div></div>`}
+function drawForm(){
+ $('#app').innerHTML=`<div class="card"><label class="lb" style="margin-top:0">اسم الشيخ</label><input class="inp" id="fname" value="${E(edit.name)}">`+edit.ms.map(moBlock).join('')+
+ `<p class="mu" style="margin:0 6px 10px">الطريقة الأسهل: ارفع السور على catbox.moe (تقدر ترفع كذا ملف مرة واحدة) وانسخ الروابط بالترتيب، سطر لكل سورة. الروابط المرتّبة من الفاتحة مش محتاجة ترقيم. ولو بدأت من سورة تانية اكتب رقمها قبل الرابط، مثل: <span dir="ltr">18 https://…</span></p><div class="bar" style="margin:0"><button data-a="addm">+ رواية أخرى</button></div></div>
+ <div class="bar"><button class="acc" data-a="save">حفظ</button><button data-a="cancel">إلغاء</button></div>`;document.querySelectorAll('textarea[data-f=links]').forEach(cnt)}
+function cnt(t){const el=$('#cnt'+t.dataset.k);if(!el)return;if(!t.value.trim()){el.textContent='';return}const r=parseLinks(t.value);el.textContent=r.err?r.err:r.files?Object.keys(r.files).length+' رابط ← السور: '+range(Object.keys(r.files).map(Number).sort((a,b)=>a-b)):''}
+function readForm(){edit.name=$('#fname').value;document.querySelectorAll('.mo').forEach(b=>{const m=edit.ms[+b.dataset.k];b.querySelectorAll('[data-f]').forEach(i=>m[i.dataset.f]=i.value)})}
+function drawHide(){
+ if(!API){$('#app').innerHTML=`<p class="mu">الإخفاء بيتم من قايمة mp3quran الأصلية. محتاج إنترنت لتحميلها.</p><button class="acc" id="load" style="width:100%">تحميل قائمة القراء</button>`;return}
+ const q=nz(($('#hq')||{}).value||'');
+ $('#app').innerHTML=`<input class="inp" id="hq" placeholder="ابحث عن قارئ…" value="${E(($('#hq')||{}).value||'')}"><div id="hl"></div>`;listHide();$('#hq').oninput=listHide}
+function listHide(){const q=nz($('#hq').value),H=new Set(D.hidden);
+ $('#hl').innerHTML=API.filter(r=>!q||nz(r.name).includes(q)).map(r=>`<div class="card ${H.has(r.id)?'hid':''}"><div class="rowc"><b>${E(r.name)}<small>${H.has(r.id)?'مخفي':D.default===r.id?'القارئ الافتراضي':E(r.moshaf[0].name)}</small></b><button data-a="hide" data-i="${r.id}">${H.has(r.id)?'إظهار':'إخفاء'}</button><button data-a="dfa" data-i="${r.id}">${D.default===r.id?'✓ افتراضي':'افتراضي'}</button></div></div>`).join('')}
+
+async function test(k){
+ readForm();const m=edit.ms[k],res=$('#res'+k);
+ const set=(t,c)=>{res.textContent=t;res.className='res '+(c||'')};
+ let ls,u,nm;
+ if(m.links&&m.links.trim()){const r=parseLinks(m.links);if(!r.files){set(r.err||'اكتب الروابط','no');return}ls=Object.keys(r.files).map(Number).sort((a,b)=>a-b);u=r.files[ls[0]];nm='سورة '+ls[0]}
+ else{ls=expand(m.surahs);if(!/^https:\/\//i.test(m.server.trim())){set('اكتب روابط السور أو رابط مجلد يبدأ بـ https://','no');return}
+  if(!ls){set('صيغة السور غير صحيحة','no');return}u=srv(m.server)+pad(ls[0])+'.mp3';nm=pad(ls[0])+'.mp3'}
+ set('جارٍ الاختبار… ('+nm+')');
+ const play=await new Promise(ok=>{const a=new Audio();a.preload='metadata';const t=setTimeout(()=>{a.src='';ok(false)},12000);a.onloadedmetadata=()=>{clearTimeout(t);ok(true)};a.onerror=()=>{clearTimeout(t);ok(false)};a.src=u});
+ let cors=false;try{const c=new AbortController(),r=await fetch(u,{signal:c.signal});cors=r.ok;c.abort()}catch(e){}
+ if(!play)set('✗ '+nm+' مش بيشتغل. اتأكد إن الرابط بيفتح الصوت مباشرة (مش صفحة).','no');
+ else if(cors)set('✓ بيشتغل، وبيدعم التنزيل للاستماع بدون نت.','ok');
+ else set('✓ بيشتغل، لكن التنزيل بدون نت مش هيشتغل مع الرابط ده (الموقع مش بيسمح بالتنزيل من تطبيقات تانية).','ok')}
+
+function save(){
+ readForm();const name=edit.name.trim();if(!name){toast('اكتب اسم الشيخ');return}
+ const ms=[];for(const m of edit.ms){
+  if(m.links&&m.links.trim()){const r=parseLinks(m.links);if(!r.files){toast(r.err||'اكتب الروابط');return}ms.push({id:m.id,name:m.name.trim()||'مرتل',files:r.files});continue}
+  const s=srv(m.server);if(!/^https:\/\/[^\s]+$/i.test(s)){toast('اكتب روابط السور أو رابط مجلد لـ «'+(m.name||'الرواية')+'»');return}
+  if(!expand(m.surahs)){toast('صيغة السور غير صحيحة');return}ms.push({id:m.id,name:m.name.trim()||'مرتل',server:s,surahs:m.surahs.trim()?ar2en(m.surahs).trim():'1-114'})}
+ const rid=edit.id||D.next++;ms.forEach(m=>{if(!m.id)m.id=D.next++});
+ if(edit.id){const r=D.reciters.find(x=>x.id===edit.id);r.name=name;r.moshaf=ms}else D.reciters.push({id:rid,name,moshaf:ms});
+ edit=null;mark();draw();toast('تم الحفظ — فاضل تنزّل الملف وترفعه')}
+
+document.addEventListener('click',async e=>{
+ const t=e.target.closest('button');if(!t)return;const a=t.dataset.a,i=+t.dataset.i;
+ if(t.id==='t1'){tab=1;draw();return}if(t.id==='t2'){tab=2;edit=null;draw();return}
+ if(t.id==='imp'){$('#fi').click();return}
+ if(t.id==='dl'||t.id==='dl2'){const b=new Blob([out()],{type:'application/json'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='reciters.json';l.click();setTimeout(()=>URL.revokeObjectURL(l.href),2e3);dirty=false;try{localStorage.removeItem('adm-draft')}catch(x){}draw();toast('اترفع الملف؟ ارفعه على GitHub مكان القديم');return}
+ if(t.id==='cp'){try{await navigator.clipboard.writeText(out());toast('تم النسخ — الصقه في GitHub')}catch(x){toast('تعذر النسخ، استخدم التحميل')}return}
+ if(t.id==='add'){edit={id:0,name:'',ms:[{id:0,name:'مرتل',server:'',surahs:'',links:''}]};draw();return}
+ if(t.id==='load'){t.disabled=true;t.textContent='جارٍ التحميل…';try{API=((await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(x){toast('تعذر تحميل القائمة — تحقق من الإنترنت')}draw();return}
+ if(a==='up'||a==='dn'){const j=a==='up'?i-1:i+1,L=D.reciters;[L[i],L[j]]=[L[j],L[i]];mark();draw();return}
+ if(a==='df'){const r=D.reciters[i];D.default=D.default===r.id?0:r.id;mark();draw();return}
+ if(a==='dfa'){D.default=D.default===i?0:i;mark();listHide();return}
+ if(a==='hide'){D.hidden=D.hidden.includes(i)?D.hidden.filter(x=>x!==i):[...D.hidden,i];mark();listHide();return}
+ if(a==='ed'){const r=D.reciters[i];edit={id:r.id,name:r.name,ms:r.moshaf.map(m=>({...m,links:filesText(m),server:m.server||'',surahs:m.surahs||''}))};draw();return}
+ if(a==='rm'){if(confirm('حذف «'+D.reciters[i].name+'»؟')){const r=D.reciters[i];D.reciters.splice(i,1);if(D.default===r.id)D.default=0;mark();draw()}return}
+ if(a==='addm'){readForm();edit.ms.push({id:0,name:'',server:'',surahs:'',links:''});draw();return}
+ if(a==='rmm'){readForm();edit.ms.splice(+t.dataset.k,1);draw();return}
+ if(a==='test'){test(+t.dataset.k);return}
+ if(a==='save'){save();return}
+ if(a==='cancel'){edit=null;draw();return}
+});
+$('#fi').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{D=norm(JSON.parse(await f.text()));mark();edit=null;draw();toast('تم الاستيراد: '+D.reciters.length+' شيخ')}catch(x){toast('الملف مش صالح')}};
+document.addEventListener('input',e=>{const t=e.target;if(t.matches&&t.matches('textarea[data-f=links]'))cnt(t)});
+addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+/* when hosted next to the app, start from the live file so nothing is lost */
+(async()=>{if(dirty)return draw();try{const r=await fetch('reciters.json',{cache:'no-cache'});if(r.ok){D=norm(await r.json());toast('تم تحميل القائمة الحالية من الموقع')}}catch(e){}draw()})();
+</script>
+</body>
+</html>
