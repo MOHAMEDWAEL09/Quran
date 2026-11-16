@@ -1,0 +1,21 @@
+{
+ "v": 1,
+ "next": 1000003,
+ "default": 0,
+ "hidden": [],
+ "reciters": [
+  {
+   "id": 1000001,
+   "name": "محمد عبادة",
+   "moshaf": [
+    {
+     "id": 1000002,
+     "name": "مرتل",
+     "files": {
+      "1": "https://files.catbox.moe/f6zjdi.mp3"
+     }
+    }
+   ]
+  }
+ ]
+}
