@@ -6,14 +6,13 @@
  "reciters": [
   {
    "id": 1000001,
-   "name": "محمد عبادة",
+   "name": "محمد عبادة ٢",
    "moshaf": [
     {
      "id": 1000002,
-     "name": "حفص عن عاصم-مرتل",
-     "files": {
-      "1": "https://files.catbox.moe/f6zjdi.mp3"
-     }
+     "name": "مرتل",
+     "server": "https://archive.org/details/mohammed-abada/001.mp3/",
+     "surahs": "1-114"
     }
    ]
   }
