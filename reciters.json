@@ -1,20 +1,7 @@
 {
  "v": 1,
- "next": 1000005,
+ "next": 1000003,
  "default": 0,
  "hidden": [],
- "reciters": [
-  {
-   "id": 1000003,
-   "name": "محمد عبادة",
-   "moshaf": [
-    {
-     "id": 1000004,
-     "name": "حفص عن عاصم-مرتل",
-     "server": "https://archive.org/download/z02402xxxxxxxxxxx/%D8%AA%D9%84%D8%A7%D9%88%D8%A9%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%B9%D8%A8%D8%A7%D8%AF%D8%A9%20%D8%B3%D9%88%D8%B1%D8%A9%20001%20%20%D8%A7%D9%84%D9%81%D8%A7%D8%AA%D8%AD%D8%A9%20%20mp3.mp3/",
-     "surahs": "1-114"
-    }
-   ]
-  }
- ]
+ "reciters": []
 }
