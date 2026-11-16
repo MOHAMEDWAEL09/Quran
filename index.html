@@ -6,12 +6,8 @@
 <title>القرآن الكريم</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#e9e9eb">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src https: blob:; connect-src 'self' https: https://va.vercel-scripts.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src https: blob:; connect-src 'self' https:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <script>(function(){var t;try{t=(JSON.parse(localStorage.getItem("q")||"{}")).th}catch(e){}if(!t)t="light";document.documentElement.dataset.theme=t;var m=document.querySelector('meta[name=theme-color]');if(m)m.content=t=="dark"?"#2b302d":"#e9e9eb"})()</script>
-<script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600&family=Amiri+Quran&display=swap" rel="stylesheet">
@@ -242,7 +238,7 @@ $('#spb').textContent='×'+S.sp;$('#vo').value=S.vol;$('#vo').style.setProperty(
 
 const avail=m=>new Set(((m&&m.surah_list)||'').split(',').map(Number));
 const key=()=>`${cur.r.id}|${cur.m.id}|${cur.n}`;
-const url=n=>{const v=String(cur.m.server||'');return(/^https:\/\//.test(v)?v.replace(/\/?$/,'/'):'about:blank#')+String(n).padStart(3,'0')+'.mp3'};
+const url=n=>{const f=cur.m.files&&cur.m.files[n];if(f&&/^https:\/\//.test(f))return f;const v=String(cur.m.server||'');return(/^https:\/\//.test(v)?v.replace(/\/?$/,'/'):'about:blank#')+String(n).padStart(3,'0')+'.mp3'};
 
 function setReciter(r,mid){if(!r)return;br.r=r;br.m=r.moshaf.find(m=>m.id==mid)||r.moshaf[0];if(!a.src){cur.r=br.r;cur.m=br.m;S.r=r.id;S.m=br.m.id;save()}ui()}
 const AUD='quran-audio';
@@ -564,11 +560,26 @@ if('serviceWorker' in navigator){
 
 /* boot */
 (async()=>{
- try{R=(await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]}catch(e){R=[]}
+/* extra reciters + hidden ones come from reciters.json (made with admin.html); the app works normally without it.
+ A moshaf is either {server,surahs} (a folder of 001.mp3…) or {files:{"1":"https://…mp3",…}} (one link per surah, e.g. Catbox) */
+ const SX=t=>{t=String(t||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).trim();if(!t)t='1-114';const o=new Set();for(const p of t.split(/[,،\s]+/).filter(Boolean)){const m=p.match(/^(\d+)(?:-(\d+))?$/);if(!m)continue;const a=+m[1],b=m[2]?+m[2]:a;for(let i=Math.max(1,a);i<=Math.min(114,b);i++)o.add(i)}return[...o].sort((x,y)=>x-y).join(',')};
+ function custom(J){
+  const out={x:[],h:new Set(),d:0};if(!J||typeof J!=='object')return out;
+  try{(J.reciters||[]).forEach(c=>{const id=+c.id;if(!(id>=1e6)||!c.name)return;
+    const ms=(c.moshaf||[]).map(m=>{const o={id:+m.id,name:String(m.name||'مرتل'),server:''};
+      if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}o.files=f;o.surah_list=Object.keys(f).map(Number).sort((a,b)=>a-b).join(',')}
+      else{o.server=String(m.server||'');o.surah_list=/^https:\/\//.test(o.server)?SX(m.surahs):''}
+      return o}).filter(m=>m.id>=1e6&&m.surah_list);
+    if(ms.length)out.x.push({id,name:String(c.name),moshaf:ms})});
+   (J.hidden||[]).forEach(x=>out.h.add(+x));out.d=+J.default||0}catch(e){}
+  return out}
+ const jp=fetch('reciters.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
+ let api=[];try{api=((await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(e){}
+ const cx=custom(await jp);R=[...cx.x,...api.filter(r=>!cx.h.has(r.id))];
  R=R.filter(r=>r.moshaf&&r.moshaf.length);
  /* default reciter (first launch only): Abdul Basit Abdul Samad, al-Mushaf al-Mujawwad; falls back to al-Husary */
  const isMj=m=>nz(m.name).includes('مجود'),ab=R.find(x=>{const n=nz(x.name).replace(/\s/g,'');return n.includes('عبدالباسط')&&n.includes('عبدالصمد')&&x.moshaf.some(isMj)});
- const sv=R.find(x=>x.id==S.r),r=sv||ab||R.find(x=>x.name.includes('الحصري'))||R[0];
+ const sv=R.find(x=>x.id==S.r),df=R.find(x=>x.id==cx.d),r=sv||df||ab||R.find(x=>x.name.includes('الحصري'))||R[0];
  if(r)setReciter(r,sv?S.m:(r===ab?ab.moshaf.find(isMj).id:undefined));else rec();
  if(window.caches)caches.open(AUD).then(c=>c.keys()).then(ks=>{const have=new Set(ks.map(q=>q.url));let ch=0;for(const k in S.dl)if(!have.has(S.dl[k].u)){delete S.dl[k];ch=1}if(ch){save();render();dlUI();updStorage()}}).catch(()=>{});
 })();
