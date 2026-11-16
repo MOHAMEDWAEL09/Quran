@@ -3,18 +3,5 @@
  "next": 1000003,
  "default": 0,
  "hidden": [],
- "reciters": [
-  {
-   "id": 1000001,
-   "name": "محمد عبادة ٢",
-   "moshaf": [
-    {
-     "id": 1000002,
-     "name": "مرتل",
-     "server": "https://archive.org/details/mohammed-abada/",
-     "surahs": "1-114"
-    }
-   ]
-  }
- ]
+ "reciters": []
 }
