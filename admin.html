@@ -114,18 +114,18 @@ function rssConvert(k){const x=$('#rsx'+k).value,res=$('#rsr'+k);const set=(t,c)
 const filesText=m=>m.files?Object.keys(m.files).map(Number).sort((a,b)=>a-b).map(n=>n+' '+m.files[n]).join('\n'):'';
 const range=ls=>{const o=[];for(let i=0;i<ls.length;){let j=i;while(j+1<ls.length&&ls[j+1]===ls[j]+1)j++;o.push(j>i?ls[i]+'-'+ls[j]:''+ls[i]);i=j+1}return o.join('، ')};
 
-var ra;let D={next:1000001,hidden:[],default:0,reciters:[]},dirty=false,tab=1,edit=null,API=null,em=0;const RDEF='https://stream.radiojar.com/8s5u5tpdtwzuv';
+var ra;let D={next:1000001,hidden:[],default:0,reciters:[]},dirty=false,tab=1,edit=null,API=null,em=0;const RDEF=[{name:'إذاعة القرآن الكريم من القاهرة',country:'مصر',url:'https://stream.radiojar.com/8s5u5tpdtwzuv'},{name:'إذاعة القرآن الكريم من الرياض',country:'السعودية',url:'https://stream.radiojar.com/0tpy1h0kxtzuv'},{name:'إذاعة الشارقة للقرآن الكريم',country:'الإمارات',url:'https://l3.itworkscdn.net/smcquranlive/quranradiolive/icecast.audio'},{name:'إذاعة القرآن الكريم من نابلس',country:'فلسطين',url:'https://quran-radio.org:8899/;?type=http&nocache=29'}];
 try{const x=JSON.parse(localStorage.getItem('adm-draft')||'null');if(x&&Array.isArray(x.reciters)){D=x;dirty=true}}catch(e){}
 function norm(J){const o={next:1000001,hidden:[],default:0,reciters:[]};if(!J||typeof J!=='object')return o;
  let mx=1000000;
  (J.reciters||[]).forEach(c=>{const ms=(c.moshaf||[]).map(m=>{if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}return{id:+m.id,name:String(m.name||'مرتل'),files:f}}return{id:+m.id,name:String(m.name||'مرتل'),server:String(m.server||''),surahs:String(m.surahs||'1-114')}});if(!c.name||!(+c.id>=1e6)||!ms.length)return;o.reciters.push({id:+c.id,name:String(c.name),moshaf:ms});mx=Math.max(mx,+c.id,...ms.map(m=>m.id))});
- o.hidden=(J.hidden||[]).map(Number).filter(Number.isFinite);o.default=+J.default||0;o.hm=(J.hm||[]).map(Number).filter(Number.isFinite);o.sx=J.sx&&typeof J.sx==='object'?J.sx:{};o.xf=J.xf&&typeof J.xf==='object'?J.xf:{};o.rx=J.rx&&typeof J.rx==='object'?J.rx:{};if(J.radio&&/^https:\/\/\S+$/.test(J.radio.url||''))o.radio={url:J.radio.url};o.next=Math.max(+J.next||0,mx+1,1000001);return o}
+ o.hidden=(J.hidden||[]).map(Number).filter(Number.isFinite);o.default=+J.default||0;o.hm=(J.hm||[]).map(Number).filter(Number.isFinite);o.sx=J.sx&&typeof J.sx==='object'?J.sx:{};o.xf=J.xf&&typeof J.xf==='object'?J.xf:{};o.rx=J.rx&&typeof J.rx==='object'?J.rx:{};if(Array.isArray(J.radios))o.radios=J.radios.filter(x=>x&&x.name&&/^https:\/\/\S+$/.test(x.url||'')).map(x=>({name:String(x.name),country:String(x.country||''),url:x.url}));o.next=Math.max(+J.next||0,mx+1,1000001);return o}
 function mark(){dirty=true;try{localStorage.setItem('adm-draft',JSON.stringify(D))}catch(e){}$('#dirty').hidden=false}
 const fix=()=>{D.hm||=[];D.sx||={};D.xf||={};D.rx||={}};
 const out=()=>{fix();const o={v:1,next:D.next,default:D.default,hidden:D.hidden,reciters:D.reciters};
  if(D.hm.length)o.hm=D.hm;if(Object.keys(D.sx).length)o.sx=D.sx;if(Object.keys(D.xf).length)o.xf=D.xf;
  const rx={};for(const k in D.rx)if(D.rx[k].length)rx[k]=D.rx[k];if(Object.keys(rx).length)o.rx=rx;
- if(D.radio&&D.radio.url&&D.radio.url!==RDEF)o.radio={url:D.radio.url};
+ if(D.radios)o.radios=D.radios;
  return JSON.stringify(o,null,1)};
 const cmp=l=>{const o=[];for(let i=0;i<l.length;){let j=i;while(j+1<l.length&&l[j+1]===l[j]+1)j++;o.push(j>i?l[i]+'-'+l[j]:''+l[i]);i=j+1}return o.join(',')};
 
@@ -202,8 +202,9 @@ function emRead(final){
   else if(!final)rx.push({id:old.id||D.next++,name:nm,files:{}})}
  D.rx[em]=rx;return true}
 function drawRadio(){
- const u=(D.radio&&D.radio.url)||RDEF;
- $('#app').innerHTML=`<div class="card"><h3>إذاعة القرآن الكريم (بث مباشر)</h3><p class="mu" style="margin:6px 0 0">رابط البث اللي التطبيق بيشغّله. لو الإذاعة وقفت يوم، حط رابط جديد هنا وارفع الملف.</p><label class="lb">رابط البث (https)</label><input class="inp ltr" id="ru" value="${E(u)}"><div class="bar" style="margin:0"><button data-a="rtest">تجربة</button><button data-a="rdef">الرابط الافتراضي</button><button class="acc" data-a="rsave">حفظ</button></div><div class="res" id="rres"></div></div>`}
+ const L=D.radios||RDEF;
+ $('#app').innerHTML=`<div class="card"><h3>الإذاعات (بث مباشر)</h3><p class="mu" style="margin:6px 0 0">دي الإذاعات اللي بتظهر في التطبيق (فوقها بتتضاف تلقائيًا إذاعات القراء من mp3quran). أضف إذاعة من أي دولة بالاسم والدولة ورابط البث https. لو إذاعة وقفت امسحها أو غيّر رابطها.</p></div>`+L.map((x,i)=>`<div class="card" data-i="${i}"><label class="lb" style="margin-top:0">الاسم</label><input class="inp" data-rx="name" value="${E(x.name)}"><label class="lb">الدولة</label><input class="inp" data-rx="country" value="${E(x.country||'')}"><label class="lb">رابط البث (https)</label><input class="inp ltr" data-rx="url" value="${E(x.url)}"><div class="bar" style="margin:0"><button data-a="rtest" data-i="${i}">تجربة</button><button data-a="rdel" data-i="${i}">حذف</button></div><div class="res"></div></div>`).join('')+`<button data-a="radd" style="width:100%;margin-bottom:12px">+ إضافة إذاعة</button><div class="bar"><button class="acc" data-a="rsave">حفظ</button><button data-a="rdef">رجوع للقائمة الافتراضية</button></div>`}
+function rRead(){const L=[];document.querySelectorAll('#app [data-i]').forEach(c=>{if(!c.querySelector('[data-rx=url]'))return;L.push({name:c.querySelector('[data-rx=name]').value.trim(),country:c.querySelector('[data-rx=country]').value.trim(),url:c.querySelector('[data-rx=url]').value.trim()})});return L}
 function save(){
  readForm();const name=edit.name.trim();if(!name){toast('اكتب اسم الشيخ');return}
  const ms=[];for(const m of edit.ms){
@@ -243,10 +244,12 @@ document.addEventListener('click',async e=>{
  if(a==='rxdel'){if(!emRead(false))return;D.rx[em].splice(i,1);draw();return}
  if(a==='emsave'){if(!emRead(true))return;mark();em=0;draw();toast('تم الحفظ — فاضل تنزّل الملف وترفعه');return}
  if(a==='emback'){em=0;draw();return}
- if(a==='rdef'){D.radio=null;mark();draw();return}
- if(a==='rsave'){const u=$('#ru').value.trim();if(!/^https:\/\/\S+$/.test(u)){toast('اكتب رابط يبدأ بـ https://');return}D.radio=u===RDEF?null:{url:u};mark();toast('تم الحفظ — فاضل تنزّل الملف وترفعه');return}
- if(a==='rtest'){const u=$('#ru').value.trim(),r=$('#rres');if(!/^https:\/\//.test(u)){r.textContent='اكتب رابط https';r.className='res no';return}
-  window.ra&&ra.pause();ra=new Audio(u);r.textContent='جارٍ التشغيل… لو سمعت الصوت يبقى الرابط شغال';r.className='res';ra.onerror=()=>{r.textContent='الرابط ده مش شغال';r.className='res no'};ra.onplaying=()=>{r.textContent='شغال ✓';r.className='res ok'};ra.play().catch(()=>{});return}
+ if(a==='rdef'){D.radios=null;mark();draw();return}
+ if(a==='radd'){D.radios=[...rRead(),{name:'',country:'',url:''}];draw();return}
+ if(a==='rdel'){const L=rRead();L.splice(i,1);D.radios=L;mark();draw();return}
+ if(a==='rsave'){const L=rRead();for(const x of L){if(!x.name||!/^https:\/\/\S+$/.test(x.url)){toast('كل إذاعة لازم اسم ورابط يبدأ بـ https://');return}}D.radios=JSON.stringify(L)===JSON.stringify(RDEF)?null:L;mark();toast('تم الحفظ — فاضل تنزّل الملف وترفعه');return}
+ if(a==='rtest'){const c=t.closest('[data-i]'),u=c.querySelector('[data-rx=url]').value.trim(),r=c.querySelector('.res');if(!/^https:\/\//.test(u)){r.textContent='اكتب رابط https';r.className='res no';return}
+  if(ra){ra.pause();ra.src=''}ra=new Audio(u);r.textContent='جارٍ التشغيل… لو سمعت الصوت يبقى الرابط شغال';r.className='res';ra.onerror=()=>{r.textContent='الرابط ده مش شغال';r.className='res no'};ra.onplaying=()=>{r.textContent='شغال ✓';r.className='res ok'};ra.play().catch(()=>{});return}
  if(a==='save'){save();return}
  if(a==='cancel'){edit=null;draw();return}
 });
