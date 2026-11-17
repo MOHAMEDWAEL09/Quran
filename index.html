@@ -133,8 +133,11 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
 #toast{position:fixed;left:0;right:0;margin:auto;width:max-content;max-width:calc(100% - 40px);top:calc(env(safe-area-inset-top) + 16px);z-index:40;padding:10px 18px;border-radius:999px;background:var(--fill);color:var(--bg);font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;text-align:center}
 #toast.show{opacity:1}
 #rd{align-items:center;gap:12px;margin-bottom:14px}
-#rs{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:18px 4px 4px}#rs[hidden]{display:none}
-#rs button{font-size:13px;padding:9px 16px;max-width:100%}#rs button.on{color:var(--acc)}
+#rs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:18px 4px 4px}#rs[hidden]{display:none}
+#rs button{font-size:12.5px;padding:8px 14px;margin:0;border-radius:999px;white-space:nowrap;box-shadow:var(--sm)}#rs button.on{color:var(--acc);box-shadow:var(--in)}
+body.live #rs{margin:20px 0 0}
+body.live .ctl{justify-content:center;margin:34px 0 26px}
+body.live .vw{margin-top:34px}
 #rd b{flex:1;font-weight:600;min-width:0}#rd small{display:block;color:var(--mut);font-weight:400;font-size:12px}
 #rd .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);flex:none}
 body.playing.live #rd .dot{animation:lv 1.2s ease-in-out infinite}
