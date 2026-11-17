@@ -132,13 +132,15 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
 #ds{margin:0 0 14px;font-size:12px}
 #toast{position:fixed;left:0;right:0;margin:auto;width:max-content;max-width:calc(100% - 40px);top:calc(env(safe-area-inset-top) + 16px);z-index:40;padding:10px 18px;border-radius:999px;background:var(--fill);color:var(--bg);font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;text-align:center}
 #toast.show{opacity:1}
-#rd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+#rd{align-items:center;gap:12px;margin-bottom:14px}
+#rs{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:18px 4px 4px}#rs[hidden]{display:none}
+#rs button{font-size:13px;padding:9px 16px;max-width:100%}#rs button.on{color:var(--acc)}
 #rd b{flex:1;font-weight:600;min-width:0}#rd small{display:block;color:var(--mut);font-weight:400;font-size:12px}
 #rd .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);flex:none}
-#rd.on .dot{animation:lv 1.2s ease-in-out infinite}
+body.playing.live #rd .dot{animation:lv 1.2s ease-in-out infinite}
 @keyframes lv{50%{opacity:.25}}
 body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live #fw,body.live #spb,body.live #mb2,body.live #tb,body.live #fv,body.live #dl,body.live #ds,body.live #wn{display:none!important}
-@media (prefers-reduced-motion:reduce){#rd.on .dot{animation:none}}
+@media (prefers-reduced-motion:reduce){body.live #rd .dot{animation:none!important}}
 </style>
 </head>
 <body>
@@ -151,7 +153,7 @@ body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live 
  </section>
  <section class="v" id="v-rec" hidden>
   <h1>القراء</h1>
-  <div class="card row" id="rd" data-radio tabindex="0" role="button"><span class="dot"></span><b>إذاعة القرآن الكريم<small>القاهرة · بث مباشر</small></b></div>
+  <div class="card row" id="rd" data-rad="0" tabindex="0" role="button"><span class="dot"></span><b>إذاعة القرآن الكريم<small>القاهرة · بث مباشر</small></b></div>
   <input class="inp" id="rq" placeholder="ابحث عن قارئ…" aria-label="بحث عن قارئ">
   <div id="rl"></div>
  </section>
@@ -193,6 +195,7 @@ body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live 
   </svg>
  </div>
  <h2 class="tt c"></h2><p class="rr mu c"></p>
+ <div id="rs" hidden></div>
  <div id="wn" role="region" aria-label="تفسير الآية الحالية"><div class="wh"><button class="sm" id="wl" aria-label="خيارات التفسير"></button><button class="ib" data-wx data-ic="x" aria-label="إغلاق التفسير"></button></div><div id="wt"></div></div>
  <input type="range" id="sk" value="0" min="0" step="any" aria-label="التقدم">
  <div class="tm"><span id="t1">0:00</span><span id="t2">-0:00</span></div>
@@ -240,7 +243,8 @@ const fmt=s=>{s=Math.max(0,s|0);return(s/60|0)+':'+String(s%60).padStart(2,'0')}
 let S={};try{S=JSON.parse(localStorage.getItem('q')||'{}')}catch(e){}
 S.fr||=[];S.ft||=[];S.hs||=[];S.sp||=1;S.vol??=1;S.dl||={};S.pos||={};S.ls||={};
 const save=()=>{try{localStorage.setItem('q',JSON.stringify(S))}catch(e){}};
-let LV=null,RAD={name:'إذاعة القرآن الكريم',sub:'القاهرة · بث مباشر',url:'https://stream.radiojar.com/8s5u5tpdtwzuv'};
+let LV=null,QR=null,QRp=null; // LV = live station being played; QR = mp3quran reciter radios (loaded when the list opens)
+let RDS=[{n:'إذاعة القرآن الكريم من القاهرة',c:'مصر',u:'https://stream.radiojar.com/8s5u5tpdtwzuv'},{n:'إذاعة القرآن الكريم من الرياض',c:'السعودية',u:'https://stream.radiojar.com/0tpy1h0kxtzuv'},{n:'إذاعة الشارقة للقرآن الكريم',c:'الإمارات',u:'https://l3.itworkscdn.net/smcquranlive/quranradiolive/icecast.audio'},{n:'إذاعة القرآن الكريم من نابلس',c:'فلسطين',u:'https://quran-radio.org:8899/;?type=http&nocache=29'}];
 let R=[],cur={r:null,m:null,n:S.n||1},br={r:null,m:null},tab='home',MI=[]; // cur = what is actually loaded in the player, br = reciter being browsed
 const a=new Audio();a.preload='none';a.volume=S.vol;a.defaultPlaybackRate=a.playbackRate=S.sp;
 $('#spb').textContent='×'+S.sp;$('#vo').value=S.vol;$('#vo').style.setProperty('--p',S.vol*100+'%');
@@ -278,7 +282,7 @@ function stHTML(){const s=stats(),t=s.top,r=t&&R.find(x=>x.id==t[0]);
 /* playback (resumes from saved position unless fresh) */
 function play(n,fresh,same){
  if(!(same?cur.m:br.m))return;
- if(LV){LV=null;document.body.classList.remove('live');$('#rd').classList.remove('on');if(same&&!cur.m)return}
+ if(LV){LV=null;document.body.classList.remove('live');$('#rs').hidden=true;if(same&&!cur.m)return}
  savePos();
  if(!same){cur.r=br.r;cur.m=br.m}
  S.r=cur.r.id;S.m=cur.m.id;
@@ -348,18 +352,19 @@ function dlBtn(){
  dlAsk()}
 
 const DC=[['#ff7a00','#e05a00'],['#e8553a','#c4411f'],['#7d8f62','#5f7046']]; // disc label colour per surah: orange / burnt red / olive
-function playRadio(){
- if(LV&&!a.paused){openPl();return}
- savePos();pk=null;lc=null;seekTo=null;ptok++;LV={url:RAD.url};
- if(!/^https:\/\//.test(RAD.url)){LV=null;toast('رابط الإذاعة غير صالح');return}
- document.body.classList.add('live');$('#rd').classList.add('on');
- a.defaultPlaybackRate=a.playbackRate=1;const old=blobU;blobU=null;a.src=RAD.url;if(old)URL.revokeObjectURL(old);a.play().catch(()=>{});
+function playRadio(st){
+ if(!st||!/^https:\/\//.test(st.u)){toast('رابط الإذاعة غير صالح');return}
+ if(LV&&LV.url===st.u&&!a.paused){openPl();return}
+ savePos();pk=null;lc=null;seekTo=null;ptok++;LV={url:st.u,name:st.n,sub:(st.c?st.c+' · ':'')+'بث مباشر'};
+ document.body.classList.add('live');
+ a.defaultPlaybackRate=a.playbackRate=1;const old=blobU;blobU=null;a.src=st.u;if(old)URL.revokeObjectURL(old);a.play().catch(()=>{});
  ui();openPl()}
 function liveUI(){
- $$('.tt').forEach(e=>e.textContent=RAD.name);$$('.rr').forEach(e=>e.textContent=RAD.sub);
+ $$('.tt').forEach(e=>e.textContent=LV.name);$$('.rr').forEach(e=>e.textContent=LV.sub);
  const dn=$('#dn');dn.textContent='مباشر';dn.setAttribute('font-size',17);dn.setAttribute('y',106);
- $('#rd').classList.add('on');$('#mini').hidden=false;tbUpd();
- if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:RAD.name,artist:RAD.sub,album:'القرآن الكريم',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'}]})}
+ const rs=$('#rs');rs.hidden=RDS.length<2;rs.innerHTML=RDS.map((x,i)=>`<button class="card${LV.url===x.u?' on':''}" data-rad="${i}">${E(x.c||x.n)}</button>`).join('');
+ $('#mini').hidden=false;tbUpd();
+ if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:LV.name,artist:LV.sub,album:'القرآن الكريم',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'}]})}
  render()}
 function ui(){
  if(LV){liveUI();return}
@@ -438,7 +443,7 @@ document.addEventListener('click',e=>{
  if(t=g('[data-fr]')){const i=+t.dataset.fr;S.fr=S.fr.includes(i)?S.fr.filter(x=>x!=i):[...S.fr,i];save();render();return}
  if(t=g('[data-ftrm]')){S.ft=S.ft.filter(x=>x!=t.dataset.ftrm);save();ui();return}
  if(t=g('[data-ft]')){const[r,m,n]=t.dataset.ft.split('|'),x=R.find(y=>y.id==r);if(x){setReciter(x,m);play(+n)}else toast('تعذر تحميل بيانات القارئ — تحقق من الإنترنت');return}
- if(g('[data-radio]')){playRadio();return}
+ if(t=g('[data-rad]')){playRadio(RDS[+t.dataset.rad]);return}
  if(t=g('[data-r]')){pickR(t.dataset.r);return}
  if(t=g('[data-n]')){play(+t.dataset.n);return}
  if(t=g('[data-tab]')){t.dataset.tab=='player'?openPl():go(t.dataset.tab);return}
@@ -612,7 +617,7 @@ if('serviceWorker' in navigator){
   return out}
  const jp=fetch('reciters.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
  let api=[];try{api=((await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(e){}
- const J0=await jp,cx=custom(J0);api=ovr(api,J0);try{const rj=J0&&J0.radio;if(rj&&/^https:\/\/\S+$/.test(rj.url||'')){RAD.url=rj.url;if(rj.name)RAD.name=String(rj.name)}}catch(e){}R=[...cx.x,...api.filter(r=>!cx.h.has(r.id))];
+ const J0=await jp,cx=custom(J0);api=ovr(api,J0);try{const L=(J0&&J0.radios||[]).filter(x=>x&&x.name&&/^https:\/\/\S+$/.test(x.url||'')).map(x=>({n:String(x.name),c:String(x.country||''),u:x.url}));if(Array.isArray(J0&&J0.radios))RDS=L}catch(e){}R=[...cx.x,...api.filter(r=>!cx.h.has(r.id))];
  R=R.filter(r=>r.moshaf&&r.moshaf.length);
  /* default reciter (first launch only): Abdul Basit Abdul Samad, al-Mushaf al-Mujawwad; falls back to al-Husary */
  const isMj=m=>nz(m.name).includes('مجود'),ab=R.find(x=>{const n=nz(x.name).replace(/\s/g,'');return n.includes('عبدالباسط')&&n.includes('عبدالصمد')&&x.moshaf.some(isMj)});
