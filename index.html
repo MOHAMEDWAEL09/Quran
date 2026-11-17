@@ -135,9 +135,12 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
 #rd{align-items:center;gap:12px;margin-bottom:14px}
 #rs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:18px 4px 4px}#rs[hidden]{display:none}
 #rs button{font-size:12.5px;padding:8px 14px;margin:0;border-radius:999px;white-space:nowrap;box-shadow:var(--sm)}#rs button.on{color:var(--acc);box-shadow:var(--in)}
-body.live #rs{margin:20px 0 0}
-body.live .ctl{justify-content:center;margin:34px 0 26px}
-body.live .vw{margin-top:34px}
+body.live #rs[hidden]{display:none}
+body.live #rs{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:300px;margin:26px auto 0}
+body.live #rs button{width:100%;padding:12px 8px;font-size:14px}
+body.live .ctl{justify-content:center;margin:30px 0 22px}
+body.live .vw{margin:auto auto 24px}
+body.live .ctl2{margin-bottom:auto}
 #rd b{flex:1;font-weight:600;min-width:0}#rd small{display:block;color:var(--mut);font-weight:400;font-size:12px}
 #rd .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);flex:none}
 body.playing.live #rd .dot{animation:lv 1.2s ease-in-out infinite}
@@ -364,7 +367,7 @@ function playRadio(st){
  ui();openPl()}
 function liveUI(){
  $$('.tt').forEach(e=>e.textContent=LV.name);$$('.rr').forEach(e=>e.textContent=LV.sub);
- const dn=$('#dn');dn.textContent='مباشر';dn.setAttribute('font-size',17);dn.setAttribute('y',106);
+ const dn=$('#dn');dn.textContent='●';dn.setAttribute('font-size',26);dn.setAttribute('y',110);
  const rs=$('#rs');rs.hidden=RDS.length<2;rs.innerHTML=RDS.map((x,i)=>`<button class="card${LV.url===x.u?' on':''}" data-rad="${i}">${E(x.c||x.n)}</button>`).join('');
  $('#mini').hidden=false;tbUpd();
  if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:LV.name,artist:LV.sub,album:'القرآن الكريم',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'}]})}
