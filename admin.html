@@ -38,6 +38,8 @@ textarea.inp{border-radius:20px;min-height:110px;resize:vertical;line-height:1.7
 .rowc{display:flex;align-items:center;gap:8px}.rowc b{flex:1;min-width:0;font-weight:600}
 .rowc small{display:block;color:var(--mut);font-weight:400;font-size:12px}
 .ib{width:38px;height:38px;padding:0;display:grid;place-items:center;flex:none;font-size:15px}
+.tg{margin:0 0 12px;padding:12px;border-radius:16px;box-shadow:var(--sm)}.tg b{display:block;margin-bottom:4px}.tg .res{margin:6px 0 0;white-space:pre-line}
+.tgl{font-size:13px;color:var(--mut);margin:6px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tgl button{padding:6px 12px;font-size:12px}
 .mo{padding:12px;margin:0 0 12px;border-radius:20px;box-shadow:var(--in)}
 .mo .inp{box-shadow:var(--sm)}
 .res{font-size:13px;margin:2px 6px 0;min-height:18px}.res.ok{color:var(--ok)}.res.no{color:var(--bad)}
@@ -114,11 +116,12 @@ function rssConvert(k){const x=$('#rsx'+k).value,res=$('#rsr'+k);const set=(t,c)
 const filesText=m=>m.files?Object.keys(m.files).map(Number).sort((a,b)=>a-b).map(n=>n+' '+m.files[n]).join('\n'):'';
 const range=ls=>{const o=[];for(let i=0;i<ls.length;){let j=i;while(j+1<ls.length&&ls[j+1]===ls[j]+1)j++;o.push(j>i?ls[i]+'-'+ls[j]:''+ls[i]);i=j+1}return o.join('، ')};
 
-var ra;let D={next:1000001,hidden:[],default:0,reciters:[]},dirty=false,tab=1,edit=null,API=null,em=0;const RDEF=[{name:'إذاعة القرآن الكريم من القاهرة',country:'مصر',url:'https://stream.radiojar.com/8s5u5tpdtwzuv'},{name:'إذاعة القرآن الكريم من الرياض',country:'السعودية',url:'https://stream.radiojar.com/0tpy1h0kxtzuv'},{name:'إذاعة الشارقة للقرآن الكريم',country:'الإمارات',url:'https://l3.itworkscdn.net/smcquranlive/quranradiolive/icecast.audio'},{name:'إذاعة القرآن الكريم من نابلس',country:'فلسطين',url:'https://quran-radio.org:8899/;?type=http&nocache=29'}];
+var ra;let D={next:1000001,hidden:[],default:0,reciters:[]},dirty=false,tab=1,edit=null,API=null,em=0;const RDEF=[{name:'إذاعة القرآن الكريم من القاهرة',country:'مصر',url:'https://stream.radiojar.com/8s5u5tpdtwzuv'},{name:'إذاعة القرآن الكريم من الرياض',country:'السعودية',url:'https://stream.radiojar.com/0tpy1h0kxtzuv'},{name:'إذاعة الشارقة للقرآن الكريم',country:'الإمارات',url:'https://l3.itworkscdn.net/smcquranlive/quranradiolive/icecast.audio'},{name:'إذاعة القرآن الكريم من نابلس',country:'فلسطين',url:'https://quran-radio.org:8080/;?type=http&nocache=29'}];
 try{const x=JSON.parse(localStorage.getItem('adm-draft')||'null');if(x&&Array.isArray(x.reciters)){D=x;dirty=true}}catch(e){}
+const vt=(o,m)=>{if(m.t&&typeof m.t==='object'){const t={};for(const k in m.t){const l=m.t[k];if(+k>=1&&+k<=114&&Array.isArray(l)&&l.length>=3&&l.every(Number.isFinite))t[k]=l}if(Object.keys(t).length)o.t=t}return o};
 function norm(J){const o={next:1000001,hidden:[],default:0,reciters:[]};if(!J||typeof J!=='object')return o;
  let mx=1000000;
- (J.reciters||[]).forEach(c=>{const ms=(c.moshaf||[]).map(m=>{if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}return{id:+m.id,name:String(m.name||'مرتل'),files:f}}return{id:+m.id,name:String(m.name||'مرتل'),server:String(m.server||''),surahs:String(m.surahs||'1-114')}});if(!c.name||!(+c.id>=1e6)||!ms.length)return;o.reciters.push({id:+c.id,name:String(c.name),moshaf:ms});mx=Math.max(mx,+c.id,...ms.map(m=>m.id))});
+ (J.reciters||[]).forEach(c=>{const ms=(c.moshaf||[]).map(m=>{if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}return vt({id:+m.id,name:String(m.name||'مرتل'),files:f},m)}return vt({id:+m.id,name:String(m.name||'مرتل'),server:String(m.server||''),surahs:String(m.surahs||'1-114')},m)});if(!c.name||!(+c.id>=1e6)||!ms.length)return;o.reciters.push({id:+c.id,name:String(c.name),moshaf:ms});mx=Math.max(mx,+c.id,...ms.map(m=>m.id))});
  o.hidden=(J.hidden||[]).map(Number).filter(Number.isFinite);o.default=+J.default||0;o.hm=(J.hm||[]).map(Number).filter(Number.isFinite);o.sx=J.sx&&typeof J.sx==='object'?J.sx:{};o.xf=J.xf&&typeof J.xf==='object'?J.xf:{};o.rx=J.rx&&typeof J.rx==='object'?J.rx:{};if(Array.isArray(J.radios))o.radios=J.radios.filter(x=>x&&x.name&&/^https:\/\/\S+$/.test(x.url||'')).map(x=>({name:String(x.name),country:String(x.country||''),url:x.url}));o.next=Math.max(+J.next||0,mx+1,1000001);return o}
 function mark(){dirty=true;try{localStorage.setItem('adm-draft',JSON.stringify(D))}catch(e){}$('#dirty').hidden=false}
 const fix=()=>{D.hm||=[];D.sx||={};D.xf||={};D.rx||={}};
@@ -149,7 +152,68 @@ function moBlock(m,k){return `<div class="mo" data-k="${k}"><label class="lb">ا
   <button class="acc" data-a="rssgo" data-k="${k}" style="margin-bottom:6px">تحويل إلى روابط السور</button><div class="res" id="rsr${k}"></div></div>
  <label class="lb">أو: رابط مجلد منظّم (https) — الملفات 001.mp3 … 114.mp3. لو كتبت روابط فوق، ده بيتجاهل.</label><input class="inp ltr" data-f="server" placeholder="https://…/" value="${E(m.server)}">
  <label class="lb">السور المتاحة (فاضي = كل السور، أو مثال: 1-10,18,36)</label><input class="inp ltr" data-f="surahs" value="${E(m.surahs==='1-114'?'':m.surahs)}">
+ <div class="tg" id="tg${k}"><b>توقيتات الآيات (للمتابعة والتفسير المتزامن)</b><div class="tgl"><span id="tgs${k}">${tgStat(m)}</span></div>
+  <label class="lb">بداية ملف السورة</label><select class="inp" id="tgp${k}"><option value="1">بسملة ثم الآيات</option><option value="2">استعاذة + بسملة ثم الآيات</option><option value="0">الآيات مباشرة</option></select>
+  <div class="bar" style="margin:8px 0 0"><button class="acc" data-a="tgl" data-k="${k}">توليد من الروابط</button><button data-a="tgo" data-k="${k}">من ملفات الجهاز</button>${m.t?`<button data-a="tgx" data-k="${k}">حذف التوقيتات</button>`:''}</div><input type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" multiple data-tgf="${k}" hidden>
+  <div class="res" id="tgr${k}"></div></div>
  <div class="bar" style="margin:0"><button data-a="test" data-k="${k}">اختبار الرابط</button>${edit.ms.length>1?`<button data-a="rmm" data-k="${k}">حذف الرواية</button>`:''}</div><div class="res" id="res${k}"></div></div>`}
+/* ayah alignment: weights (letters per item) + RMS envelope (20ms frames) -> boundaries (frames) */
+function alignEnv(env,W,opt){
+ const n=W.length,N=env.length;if(!n||N<10)return null;
+ const sorted=Float32Array.from(env).sort();const lvl=sorted[Math.floor(N*.9)]||0;if(lvl<=0)return null;
+ const thr=lvl*(opt&&opt.thr||.1),sil=i=>env[i]<thr;
+ let f0=0;while(f0<N&&sil(f0))f0++;let l1=N-1;while(l1>f0&&sil(l1))l1--;l1++;
+ if(l1-f0<n*3)return null;
+ const C=[{t:f0,q:1}];
+ for(let i=f0;i<l1;){if(!sil(i)){i++;continue}let j=i;while(j<l1&&sil(j))j++;const d=j-i;if(d>=5&&i>f0)C.push({t:Math.max((i+j)/2,j-8),q:Math.min(d,50)/50});i=j}
+ const sum=W.reduce((a,b)=>a+b,0),sc=(l1-f0)/sum;let cum=0;
+ for(let i=0;i<n-1;i++){cum+=W[i];const e=f0+cum*sc;if(!C.some(c=>Math.abs(c.t-e)<3))C.push({t:e,q:0})}
+ C.push({t:l1,q:1});C.sort((a,b)=>a.t-b.t);
+ const M=C.length,WD=45,INF=1e18,B=25;
+ const f=new Float64Array((n+1)*M).fill(INF),bk=new Int32Array((n+1)*M).fill(-1);
+ f[0]=0; // f[i*M+j]: first i items end at candidate j ; row 0 only j=0
+ for(let i=1;i<=n;i++){const ex=W[i-1]*sc,last=i===n;
+  for(let j=(last?M-1:1);j<=(last?M-1:M-2);j++){let best=INF,bj=-1;
+   for(let p=Math.max(0,j-WD);p<j;p++){const v=f[(i-1)*M+p];if(v>=INF)continue;const len=C[j].t-C[p].t;if(len<=0)continue;
+    const c=v+(len-ex)*(len-ex)/(ex+25)+(last?0:B*(1-C[j].q));if(c<best){best=c;bj=p}}
+   f[i*M+j]=best;bk[i*M+j]=bj}}
+ if(f[n*M+M-1]>=INF)return null;
+ const bd=new Array(n+1),qs=[];let j=M-1;for(let i=n;i>=1;i--){bd[i]=C[j].t;if(i<n)qs.push(C[j].q);j=bk[i*M+j]}bd[0]=C[0].t;
+ return{bd,N,f0,l1,snap:qs.length?qs.filter(q=>q>0).length/qs.length:1}}
+
+const tgStat=m=>{const n=m.t?Object.keys(m.t).length:0;return n?'✓ متوفرة لعدد '+n+' سورة':'غير متوفرة — اختار ملفات الصوت من جهازك وهو يحسبها تلقائيًا'};
+let QW=null,tga=null;
+async function quranW(){if(QW)return QW;const r=await fetch('https://api.alquran.cloud/v1/quran/quran-simple');if(!r.ok)throw new Error('quran');const j=await r.json();
+ const L=s=>s.replace(/[^\u0621-\u064A\u0671]/g,'').length,BS='بسماللهالرحمنالرحيم';
+ QW=j.data.surahs.map(su=>su.ayahs.map((x,i)=>{let t=x.text;if(i===0&&su.number!==1&&su.number!==9){const ws=t.split(/\s+/);if(ws[0]&&t.replace(/[^\u0621-\u064A\u0671]/g,'').startsWith(BS))t=ws.slice(4).join(' ')}return Math.max(2,L(t))}));return QW}
+async function envOf(file){
+ const AC=window.AudioContext||window.webkitAudioContext;let c;try{c=new AC({sampleRate:4000})}catch(e){c=new AC()}
+ const buf=await c.decodeAudioData(await file.arrayBuffer());const d=buf.getChannelData(0),sr=buf.sampleRate,fl=Math.round(sr*.02),N=Math.floor(d.length/fl),env=new Float32Array(N);
+ for(let i=0;i<N;i++){let s=0;const o=i*fl;for(let j=0;j<fl;j++){const v=d[o+j];s+=v*v}env[i]=Math.sqrt(s/fl)}
+ const dur=buf.duration;try{c.close()}catch(e){}return{env,dur}}
+function surahFromName(n){const m=n.replace(/\.[^.]+$/,'').match(/\d+/g);if(!m)return 0;for(const x of m){const v=+x;if(v>=1&&v<=114)return v}return 0}
+async function tgRun(k,files,links){
+ const res=$('#tgr'+k),set=t=>{res.textContent=t;res.className='res'};const pre=+$('#tgp'+k).value,m=edit.ms[k];m.t=m.t||{};
+ let W;try{set('جارٍ تحميل نص القرآن…');W=await quranW()}catch(e){res.textContent='محتاج إنترنت لتحميل نص القرآن (مرة واحدة).';res.className='res no';return}
+ const list=links?Object.keys(links).map(n=>({u:links[n],n:+n,f:{name:'سورة '+n}})):[...files].map(f=>({f,n:surahFromName(f.name)}));const bad=list.filter(x=>!x.n);const ok=list.filter(x=>x.n).sort((x,y)=>x.n-y.n);
+ let log=[];tgFiles[k]={};
+ for(let i=0;i<ok.length;i++){const {f,n,u}=ok[i];set('('+(i+1)+'/'+ok.length+') جارٍ تحليل سورة '+n+'…\n'+log.join('\n'));
+  try{let fb=f;if(u){try{const rs=await fetch(u);if(!rs.ok)throw 0;fb=await rs.blob()}catch(e){log.push('✗ سورة '+n+': الرابط مش بيسمح بالتحميل من المتصفح — اختار الملفات من جهازك بدل الروابط');break}}
+   const {env,dur}=await envOf(fb);const ay=W[n-1],items=[];
+   if(pre===2)items.push(14);if(pre>=1&&n!==1&&n!==9)items.push(19);const np=items.length;const all=[...items,...ay];
+   let r=alignEnv(env,all);if(!r||r.snap<.6){const r2=alignEnv(env,all,{thr:.2});if(r2&&(!r||r2.snap>r.snap))r=r2}
+   if(!r){log.push('✗ سورة '+n+': تعذّر التحليل (الصوت غير واضح؟)');continue}
+   const st=[];for(let a=1;a<=ay.length;a++){let v=Math.round(r.bd[np+a-1]*20);if(a===1&&np===0)v=0;if(st.length&&v<=st[st.length-1])v=st[st.length-1]+20;st.push(v)}
+   st.push(Math.max(Math.round(dur*1000),st[st.length-1]+20));m.t[n]=st;tgFiles[k][n]=fb;
+   log.push((r.snap>=.8?'✓':'⚠')+' سورة '+n+': '+ay.length+' آية'+(r.snap<.8?' (دقة أقل — راجعها بزرار تجربة)':''))}
+  catch(e){log.push('✗ سورة '+n+': الملف مش مقروء')}
+  await new Promise(r=>setTimeout(r))}
+ if(bad.length)log.push('تخطّيت (مفيش رقم سورة في الاسم): '+bad.map(x=>x.f.name).join('، '));
+ res.innerHTML='';res.className='res';res.textContent='خلصت. '+log.length+' نتيجة:\n'+log.join('\n')+'\nاضغط «حفظ» تحت عشان التوقيتات تتثبت، وبعدها نزّل reciters.json وارفعه.';
+ $('#tgs'+k).textContent=tgStat(m);
+ const lst=document.createElement('div');lst.className='tgl';Object.keys(tgFiles[k]).forEach(n=>{const b=document.createElement('button');b.textContent='تجربة سورة '+n;b.dataset.a='tgp';b.dataset.k=k;b.dataset.n=n;lst.appendChild(b)});res.parentNode.appendChild(lst)}
+const tgFiles={};
+function tgPlay(k,n){const f=tgFiles[k]&&tgFiles[k][n],t=edit.ms[k].t[n];if(!f)return;if(tga){tga.pause();URL.revokeObjectURL(tga.src)}tga=new Audio(URL.createObjectURL(f));const ay=Math.min(3,t.length-1);tga.currentTime=t[ay-1]/1000;tga.play();toast('يشغّل من بداية الآية '+ay+' — لازم تسمعها تبدأ بالظبط')}
 function drawForm(){
  $('#app').innerHTML=`<div class="card"><label class="lb" style="margin-top:0">اسم الشيخ</label><input class="inp" id="fname" value="${E(edit.name)}">`+edit.ms.map(moBlock).join('')+
  `<p class="mu" style="margin:0 6px 10px">الطريقة الأسهل: ارفع السور على catbox.moe (تقدر ترفع كذا ملف مرة واحدة) وانسخ الروابط بالترتيب، سطر لكل سورة. الروابط المرتّبة من الفاتحة مش محتاجة ترقيم. ولو بدأت من سورة تانية اكتب رقمها قبل الرابط، مثل: <span dir="ltr">18 https://…</span></p><div class="bar" style="margin:0"><button data-a="addm">+ رواية أخرى</button></div></div>
@@ -208,9 +272,9 @@ function rRead(){const L=[];document.querySelectorAll('#app [data-i]').forEach(c
 function save(){
  readForm();const name=edit.name.trim();if(!name){toast('اكتب اسم الشيخ');return}
  const ms=[];for(const m of edit.ms){
-  if(m.links&&m.links.trim()){const r=parseLinks(m.links);if(!r.files){toast(r.err||'اكتب الروابط');return}ms.push({id:m.id,name:m.name.trim()||'مرتل',files:r.files});continue}
+  if(m.links&&m.links.trim()){const r=parseLinks(m.links);if(!r.files){toast(r.err||'اكتب الروابط');return}ms.push(vt({id:m.id,name:m.name.trim()||'مرتل',files:r.files},m));continue}
   const s=srv(m.server);if(!/^https:\/\/[^\s]+$/i.test(s)){toast('اكتب روابط السور أو رابط مجلد لـ «'+(m.name||'الرواية')+'»');return}
-  if(!expand(m.surahs)){toast('صيغة السور غير صحيحة');return}ms.push({id:m.id,name:m.name.trim()||'مرتل',server:s,surahs:m.surahs.trim()?ar2en(m.surahs).trim():'1-114'})}
+  if(!expand(m.surahs)){toast('صيغة السور غير صحيحة');return}ms.push(vt({id:m.id,name:m.name.trim()||'مرتل',server:s,surahs:m.surahs.trim()?ar2en(m.surahs).trim():'1-114'},m))}
  const rid=edit.id||D.next++;ms.forEach(m=>{if(!m.id)m.id=D.next++});
  if(edit.id){const r=D.reciters.find(x=>x.id===edit.id);r.name=name;r.moshaf=ms}else D.reciters.push({id:rid,name,moshaf:ms});
  edit=null;mark();draw();toast('تم الحفظ — فاضل تنزّل الملف وترفعه')}
@@ -232,6 +296,10 @@ document.addEventListener('click',async e=>{
  if(a==='addm'){readForm();edit.ms.push({id:0,name:'',server:'',surahs:'',links:''});draw();return}
  if(a==='rmm'){readForm();edit.ms.splice(+t.dataset.k,1);draw();return}
  if(a==='test'){test(+t.dataset.k);return}
+ if(a==='tgl'){readForm();const m=edit.ms[+t.dataset.k];const r=m.links&&m.links.trim()?parseLinks(m.links):{};if(!r.files){toast('اكتب روابط السور الأول (تحت)');return}tgRun(+t.dataset.k,[],r.files);return}
+ if(a==='tgo'){document.querySelector('input[data-tgf="'+t.dataset.k+'"]').click();return}
+ if(a==='tgx'){readForm();delete edit.ms[+t.dataset.k].t;draw();return}
+ if(a==='tgp'){tgPlay(+t.dataset.k,+t.dataset.n);return}
  if(a==='rss'){const q=$('#rss'+t.dataset.k);q.hidden=!q.hidden;return}
  if(a==='rssfile'){document.querySelector('input[data-rf="'+t.dataset.k+'"]').click();return}
  if(a==='rssgo'){rssConvert(+t.dataset.k);return}
@@ -254,7 +322,7 @@ document.addEventListener('click',async e=>{
  if(a==='cancel'){edit=null;draw();return}
 });
 $('#fi').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{D=norm(JSON.parse(await f.text()));mark();edit=null;draw();toast('تم الاستيراد: '+D.reciters.length+' شيخ')}catch(x){toast('الملف مش صالح')}};
-document.addEventListener('change',async e=>{const t=e.target;if(t.matches&&t.matches('input[data-rf]')){const f=t.files[0],k=+t.dataset.rf;t.value='';if(!f)return;$('#rsx'+k).value=await f.text();rssConvert(k)}});
+document.addEventListener('change',async e=>{const t=e.target;if(t.matches&&t.matches('input[data-tgf]')){const k=+t.dataset.tgf;readForm();tgRun(k,[...t.files]);t.value='';return}if(t.matches&&t.matches('input[data-rf]')){const f=t.files[0],k=+t.dataset.rf;t.value='';if(!f)return;$('#rsx'+k).value=await f.text();rssConvert(k)}});
 document.addEventListener('input',e=>{const t=e.target;if(t.matches&&t.matches('textarea[data-f=links]'))cnt(t)});
 addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
 /* when hosted next to the app, start from the live file so nothing is lost */
