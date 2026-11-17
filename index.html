@@ -132,6 +132,13 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
 #ds{margin:0 0 14px;font-size:12px}
 #toast{position:fixed;left:0;right:0;margin:auto;width:max-content;max-width:calc(100% - 40px);top:calc(env(safe-area-inset-top) + 16px);z-index:40;padding:10px 18px;border-radius:999px;background:var(--fill);color:var(--bg);font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;text-align:center}
 #toast.show{opacity:1}
+#rd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+#rd b{flex:1;font-weight:600;min-width:0}#rd small{display:block;color:var(--mut);font-weight:400;font-size:12px}
+#rd .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);flex:none}
+#rd.on .dot{animation:lv 1.2s ease-in-out infinite}
+@keyframes lv{50%{opacity:.25}}
+body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live #fw,body.live #spb,body.live #mb2,body.live #tb,body.live #fv,body.live #dl,body.live #ds,body.live #wn{display:none!important}
+@media (prefers-reduced-motion:reduce){#rd.on .dot{animation:none}}
 </style>
 </head>
 <body>
@@ -144,6 +151,7 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
  </section>
  <section class="v" id="v-rec" hidden>
   <h1>القراء</h1>
+  <div class="card row" id="rd" data-radio tabindex="0" role="button"><span class="dot"></span><b>إذاعة القرآن الكريم<small>القاهرة · بث مباشر</small></b></div>
   <input class="inp" id="rq" placeholder="ابحث عن قارئ…" aria-label="بحث عن قارئ">
   <div id="rl"></div>
  </section>
@@ -232,6 +240,7 @@ const fmt=s=>{s=Math.max(0,s|0);return(s/60|0)+':'+String(s%60).padStart(2,'0')}
 let S={};try{S=JSON.parse(localStorage.getItem('q')||'{}')}catch(e){}
 S.fr||=[];S.ft||=[];S.hs||=[];S.sp||=1;S.vol??=1;S.dl||={};S.pos||={};S.ls||={};
 const save=()=>{try{localStorage.setItem('q',JSON.stringify(S))}catch(e){}};
+let LV=null,RAD={name:'إذاعة القرآن الكريم',sub:'القاهرة · بث مباشر',url:'https://stream.radiojar.com/8s5u5tpdtwzuv'};
 let R=[],cur={r:null,m:null,n:S.n||1},br={r:null,m:null},tab='home',MI=[]; // cur = what is actually loaded in the player, br = reciter being browsed
 const a=new Audio();a.preload='none';a.volume=S.vol;a.defaultPlaybackRate=a.playbackRate=S.sp;
 $('#spb').textContent='×'+S.sp;$('#vo').value=S.vol;$('#vo').style.setProperty('--p',S.vol*100+'%');
@@ -269,6 +278,7 @@ function stHTML(){const s=stats(),t=s.top,r=t&&R.find(x=>x.id==t[0]);
 /* playback (resumes from saved position unless fresh) */
 function play(n,fresh,same){
  if(!(same?cur.m:br.m))return;
+ if(LV){LV=null;document.body.classList.remove('live');$('#rd').classList.remove('on');if(same&&!cur.m)return}
  savePos();
  if(!same){cur.r=br.r;cur.m=br.m}
  S.r=cur.r.id;S.m=cur.m.id;
@@ -284,8 +294,8 @@ function play(n,fresh,same){
 async function localSrc(k,u){
  try{const r=await(await caches.open(AUD)).match(u);if(r)return URL.createObjectURL(await r.blob())}catch(e){}
  delete S.dl[k];save();dlUI();return u}
-const tog=()=>{if(!cur.m)return;if(!a.src)play(cur.n);else a.paused?a.play():a.pause()};
-function step(d){const av=[...avail(cur.m)].sort((x,y)=>x-y).filter(x=>d>0?x>cur.n:x<cur.n);if(!av.length)return false;play(d>0?av[0]:av[av.length-1],true,true);return true}
+const tog=()=>{if(LV){if(a.paused){a.src=LV.url;a.play().catch(()=>{})}else a.pause();return}if(!cur.m)return;if(!a.src)play(cur.n);else a.paused?a.play():a.pause()};
+function step(d){if(LV)return false;const av=[...avail(cur.m)].sort((x,y)=>x-y).filter(x=>d>0?x>cur.n:x<cur.n);if(!av.length)return false;play(d>0?av[0]:av[av.length-1],true,true);return true}
 function showSaved(){
  if(a.src||!cur.m)return;const p=S.pos[key()],c=p?p[0]:0,d=p?p[1]:0;
  $('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');
@@ -338,7 +348,21 @@ function dlBtn(){
  dlAsk()}
 
 const DC=[['#ff7a00','#e05a00'],['#e8553a','#c4411f'],['#7d8f62','#5f7046']]; // disc label colour per surah: orange / burnt red / olive
+function playRadio(){
+ if(LV&&!a.paused){openPl();return}
+ savePos();pk=null;lc=null;seekTo=null;ptok++;LV={url:RAD.url};
+ if(!/^https:\/\//.test(RAD.url)){LV=null;toast('رابط الإذاعة غير صالح');return}
+ document.body.classList.add('live');$('#rd').classList.add('on');
+ a.defaultPlaybackRate=a.playbackRate=1;const old=blobU;blobU=null;a.src=RAD.url;if(old)URL.revokeObjectURL(old);a.play().catch(()=>{});
+ ui();openPl()}
+function liveUI(){
+ $$('.tt').forEach(e=>e.textContent=RAD.name);$$('.rr').forEach(e=>e.textContent=RAD.sub);
+ const dn=$('#dn');dn.textContent='مباشر';dn.setAttribute('font-size',17);dn.setAttribute('y',106);
+ $('#rd').classList.add('on');$('#mini').hidden=false;tbUpd();
+ if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:RAD.name,artist:RAD.sub,album:'القرآن الكريم',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'}]})}
+ render()}
 function ui(){
+ if(LV){liveUI();return}
  if(!cur.r)return;
  const nm='سورة '+N[cur.n-1],rn=cur.r.name;
  $$('.tt').forEach(e=>e.textContent=nm);
@@ -414,6 +438,7 @@ document.addEventListener('click',e=>{
  if(t=g('[data-fr]')){const i=+t.dataset.fr;S.fr=S.fr.includes(i)?S.fr.filter(x=>x!=i):[...S.fr,i];save();render();return}
  if(t=g('[data-ftrm]')){S.ft=S.ft.filter(x=>x!=t.dataset.ftrm);save();ui();return}
  if(t=g('[data-ft]')){const[r,m,n]=t.dataset.ft.split('|'),x=R.find(y=>y.id==r);if(x){setReciter(x,m);play(+n)}else toast('تعذر تحميل بيانات القارئ — تحقق من الإنترنت');return}
+ if(g('[data-radio]')){playRadio();return}
  if(t=g('[data-r]')){pickR(t.dataset.r);return}
  if(t=g('[data-n]')){play(+t.dataset.n);return}
  if(t=g('[data-tab]')){t.dataset.tab=='player'?openPl():go(t.dataset.tab);return}
@@ -429,13 +454,13 @@ a.onplay=()=>{document.body.classList.add('playing');lc=a.currentTime};
 a.onpause=()=>{document.body.classList.remove('playing');lc=null;savePos();save();if(newVer)setTimeout(()=>location.reload(),300)};
 a.onloadedmetadata=()=>{if(seekTo!=null){if(seekTo<a.duration-5)a.currentTime=seekTo;seekTo=null}lc=a.currentTime;prog()};
 a.onseeking=()=>{lc=null};a.onseeked=()=>{lc=a.currentTime};
-a.onerror=()=>toast(S.dl[pk]?'تعذر تشغيل الملف المحمّل':'تعذر التشغيل — تحقق من الإنترنت أو نزّل السورة للاستماع بدون نت');
+a.onerror=()=>toast(LV?'تعذر تشغيل الإذاعة — تحقق من الإنترنت':S.dl[pk]?'تعذر تشغيل الملف المحمّل':'تعذر التشغيل — تحقق من الإنترنت أو نزّل السورة للاستماع بدون نت');
 addEventListener('visibilitychange',()=>{if(document.hidden){acc();savePos();save()}});
 addEventListener('pagehide',()=>{savePos();save()});
 function prog(){const d=isFinite(a.duration)?a.duration:0,c=a.currentTime||0;$('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');$('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)}
 a.ondurationchange=()=>{prog();if(wnOn)wnSync();if(msOn)msSync()};
 a.ontimeupdate=()=>{prog();acc();if(wnOn)wnSync();if(msOn)msSync();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save();if(tab==='hist'&&$('#st'))$('#st').innerHTML=stHTML()}};
-a.onended=()=>{delete S.pos[pk];save();if(slEnd){sleep(0);return}step(1)};
+a.onended=()=>{if(LV)return;delete S.pos[pk];save();if(slEnd){sleep(0);return}step(1)};
 $('#sk').oninput=e=>{a.currentTime=+e.target.value};
 $('#vo').oninput=e=>{S.vol=+e.target.value;a.volume=S.vol;e.target.style.setProperty('--p',S.vol*100+'%');save()};
 $('#pv').onclick=()=>step(-1);$('#nx').onclick=()=>step(1);
@@ -546,7 +571,7 @@ async function tbUpd(){
 
 /* media session */
 if('mediaSession' in navigator){const m=navigator.mediaSession,h=(k,f)=>{try{m.setActionHandler(k,f)}catch(e){}};
- h('play',()=>a.play());h('pause',()=>a.pause());h('previoustrack',()=>step(-1));h('nexttrack',()=>step(1));
+ h('play',()=>LV?tog():a.play());h('pause',()=>a.pause());h('previoustrack',()=>step(-1));h('nexttrack',()=>step(1));
  h('seekbackward',()=>a.currentTime-=10);h('seekforward',()=>a.currentTime+=10)}
 
 /* install + sw */
@@ -563,19 +588,31 @@ if('serviceWorker' in navigator){
 /* extra reciters + hidden ones come from reciters.json (made with admin.html); the app works normally without it.
  A moshaf is either {server,surahs} (a folder of 001.mp3…) or {files:{"1":"https://…mp3",…}} (one link per surah, e.g. Catbox) */
  const SX=t=>{t=String(t||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).trim();if(!t)t='1-114';const o=new Set();for(const p of t.split(/[,،\s]+/).filter(Boolean)){const m=p.match(/^(\d+)(?:-(\d+))?$/);if(!m)continue;const a=+m[1],b=m[2]?+m[2]:a;for(let i=Math.max(1,a);i<=Math.min(114,b);i++)o.add(i)}return[...o].sort((x,y)=>x-y).join(',')};
+ const mk=m=>{const o={id:+m.id,name:String(m.name||'مرتل'),server:''};
+  if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}o.files=f;o.surah_list=Object.keys(f).map(Number).sort((a,b)=>a-b).join(',')}
+  else{o.server=String(m.server||'');o.surah_list=/^https:\/\//.test(o.server)?SX(m.surahs):''}
+  return o};
+ /* edits to mp3quran reciters: hm = hidden riwayat, sx = keep only these surahs, xf = extra/replacement links per surah, rx = riwayat added to a reciter */
+ function ovr(A,J){
+  if(!J||typeof J!=='object')return A;const hm=new Set((J.hm||[]).map(Number)),sx=J.sx||{},xf=J.xf||{},rx=J.rx||{};
+  return A.map(r=>{
+   const ms=r.moshaf.filter(m=>!hm.has(m.id)).map(m=>{const s=sx[m.id],x=xf[m.id];if(!s&&!x)return m;
+    let l=new Set(String(m.surah_list||'').split(',').map(Number));
+    if(s){const k=new Set(SX(s).split(',').map(Number));l=new Set([...l].filter(n=>k.has(n)))}
+    const o={...m};if(x&&typeof x==='object'){const f={};for(const k in x){const n=+k,u=String(x[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u)){f[n]=u;l.add(n)}}o.files=f}
+    o.surah_list=[...l].sort((a,b)=>a-b).join(',');return o}).filter(m=>m.surah_list);
+   const ad=rx[r.id];if(Array.isArray(ad))ad.forEach(c=>{const m=mk(c);if(m.id>=1e6&&m.surah_list)ms.push(m)});
+   return{...r,moshaf:ms}})}
  function custom(J){
   const out={x:[],h:new Set(),d:0};if(!J||typeof J!=='object')return out;
   try{(J.reciters||[]).forEach(c=>{const id=+c.id;if(!(id>=1e6)||!c.name)return;
-    const ms=(c.moshaf||[]).map(m=>{const o={id:+m.id,name:String(m.name||'مرتل'),server:''};
-      if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}o.files=f;o.surah_list=Object.keys(f).map(Number).sort((a,b)=>a-b).join(',')}
-      else{o.server=String(m.server||'');o.surah_list=/^https:\/\//.test(o.server)?SX(m.surahs):''}
-      return o}).filter(m=>m.id>=1e6&&m.surah_list);
+    const ms=(c.moshaf||[]).map(mk).filter(m=>m.id>=1e6&&m.surah_list);
     if(ms.length)out.x.push({id,name:String(c.name),moshaf:ms})});
    (J.hidden||[]).forEach(x=>out.h.add(+x));out.d=+J.default||0}catch(e){}
   return out}
  const jp=fetch('reciters.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
  let api=[];try{api=((await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(e){}
- const cx=custom(await jp);R=[...cx.x,...api.filter(r=>!cx.h.has(r.id))];
+ const J0=await jp,cx=custom(J0);api=ovr(api,J0);try{const rj=J0&&J0.radio;if(rj&&/^https:\/\/\S+$/.test(rj.url||'')){RAD.url=rj.url;if(rj.name)RAD.name=String(rj.name)}}catch(e){}R=[...cx.x,...api.filter(r=>!cx.h.has(r.id))];
  R=R.filter(r=>r.moshaf&&r.moshaf.length);
  /* default reciter (first launch only): Abdul Basit Abdul Samad, al-Mushaf al-Mujawwad; falls back to al-Husary */
  const isMj=m=>nz(m.name).includes('مجود'),ab=R.find(x=>{const n=nz(x.name).replace(/\s/g,'');return n.includes('عبدالباسط')&&n.includes('عبدالصمد')&&x.moshaf.some(isMj)});
