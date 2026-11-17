@@ -1,6 +1,6 @@
 {
  "v": 1,
- "next": 1000007,
+ "next": 1000009,
  "default": 259,
  "hidden": [],
  "reciters": [
@@ -252,6 +252,30 @@
       "112": "https://archive.org/download/a250927aaaaaa/112%20-%20%D8%A7%D9%84%D8%A5%D8%AE%D9%84%D8%A7%D8%B5.mp3",
       "113": "https://archive.org/download/a250927aaaaaa/113%20-%20%D8%A7%D9%84%D9%81%D9%84%D9%82.mp3",
       "114": "https://archive.org/download/a250927aaaaaa/114%20-%20%D8%A7%D9%84%D9%86%D8%A7%D8%B3.mp3"
+     }
+    }
+   ]
+  },
+  {
+   "id": 1000007,
+   "name": "عبدالرحمن مسعد",
+   "moshaf": [
+    {
+     "id": 1000008,
+     "name": "حفص عن عاصم-مرتل",
+     "files": {
+      "10": "https://archive.org/download/010_20221110/010.mp3",
+      "19": "https://archive.org/download/010_20221110/019.mp3",
+      "23": "https://archive.org/download/010_20221110/023.mp3",
+      "29": "https://archive.org/download/010_20221110/029.mp3",
+      "32": "https://archive.org/download/010_20221110/032.mp3",
+      "49": "https://archive.org/download/010_20221110/049.mp3",
+      "73": "https://archive.org/download/010_20221110/073.mp3",
+      "78": "https://archive.org/download/010_20221110/078.mp3",
+      "87": "https://archive.org/download/010_20221110/087.mp3",
+      "88": "https://archive.org/download/010_20221110/088.mp3",
+      "100": "https://archive.org/download/010_20221110/100.mp3",
+      "107": "https://archive.org/download/010_20221110/107.mp3"
      }
     }
    ]
