@@ -623,7 +623,9 @@ if('serviceWorker' in navigator){
   return out}
  const jp=fetch('reciters.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
  let api=[];try{api=((await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(e){}
- const J0=await jp,cx=custom(J0);api=ovr(api,J0);try{const L=(J0&&J0.radios||[]).filter(x=>x&&x.name&&/^https:\/\/\S+$/.test(x.url||'')).map(x=>({n:String(x.name),c:String(x.country||''),u:x.url}));if(Array.isArray(J0&&J0.radios))RDS=L}catch(e){}R=[...cx.x,...api.filter(r=>!cx.h.has(r.id))];
+ const J0=await jp,cx=custom(J0);api=ovr(api,J0);try{const L=(J0&&J0.radios||[]).filter(x=>x&&x.name&&/^https:\/\/\S+$/.test(x.url||'')).map(x=>({n:String(x.name),c:String(x.country||''),u:x.url}));if(Array.isArray(J0&&J0.radios))RDS=L}catch(e){}R=api.filter(r=>!cx.h.has(r.id));
+ /* owner-added reciters are slotted in alphabetically among the mp3quran ones (not pinned on top or bottom) */
+ for(const c of cx.x){const k=nz(c.name).trim();let i=R.findIndex(r=>nz(r.name).trim().localeCompare(k,'ar')>0);R.splice(i<0?R.length:i,0,c)}
  R=R.filter(r=>r.moshaf&&r.moshaf.length);
  /* default reciter (first launch only): Abdul Basit Abdul Samad, al-Mushaf al-Mujawwad; falls back to al-Husary */
  const isMj=m=>nz(m.name).includes('مجود'),ab=R.find(x=>{const n=nz(x.name).replace(/\s/g,'');return n.includes('عبدالباسط')&&n.includes('عبدالصمد')&&x.moshaf.some(isMj)});
