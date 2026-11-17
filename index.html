@@ -250,7 +250,7 @@ let S={};try{S=JSON.parse(localStorage.getItem('q')||'{}')}catch(e){}
 S.fr||=[];S.ft||=[];S.hs||=[];S.sp||=1;S.vol??=1;S.dl||={};S.pos||={};S.ls||={};
 const save=()=>{try{localStorage.setItem('q',JSON.stringify(S))}catch(e){}};
 let LV=null,QR=null,QRp=null; // LV = live station being played; QR = mp3quran reciter radios (loaded when the list opens)
-let RDS=[{n:'إذاعة القرآن الكريم من القاهرة',c:'مصر',u:'https://stream.radiojar.com/8s5u5tpdtwzuv'},{n:'إذاعة القرآن الكريم من الرياض',c:'السعودية',u:'https://stream.radiojar.com/0tpy1h0kxtzuv'},{n:'إذاعة الشارقة للقرآن الكريم',c:'الإمارات',u:'https://l3.itworkscdn.net/smcquranlive/quranradiolive/icecast.audio'},{n:'إذاعة القرآن الكريم من نابلس',c:'فلسطين',u:'https://quran-radio.org:8899/;?type=http&nocache=29'}];
+let RDS=[{n:'إذاعة القرآن الكريم من القاهرة',c:'مصر',u:'https://stream.radiojar.com/8s5u5tpdtwzuv'},{n:'إذاعة القرآن الكريم من الرياض',c:'السعودية',u:'https://stream.radiojar.com/0tpy1h0kxtzuv'},{n:'إذاعة الشارقة للقرآن الكريم',c:'الإمارات',u:'https://l3.itworkscdn.net/smcquranlive/quranradiolive/icecast.audio'},{n:'إذاعة القرآن الكريم من نابلس',c:'فلسطين',u:'https://quran-radio.org:8080/;?type=http&nocache=29',f:['https://quran-radio.org:8899/;?type=http&nocache=29']}];
 let R=[],cur={r:null,m:null,n:S.n||1},br={r:null,m:null},tab='home',MI=[]; // cur = what is actually loaded in the player, br = reciter being browsed
 const a=new Audio();a.preload='none';a.volume=S.vol;a.defaultPlaybackRate=a.playbackRate=S.sp;
 $('#spb').textContent='×'+S.sp;$('#vo').value=S.vol;$('#vo').style.setProperty('--p',S.vol*100+'%');
@@ -361,14 +361,14 @@ const DC=[['#ff7a00','#e05a00'],['#e8553a','#c4411f'],['#7d8f62','#5f7046']]; //
 function playRadio(st){
  if(!st||!/^https:\/\//.test(st.u)){toast('رابط الإذاعة غير صالح');return}
  if(LV&&LV.url===st.u&&!a.paused){openPl();return}
- savePos();pk=null;lc=null;seekTo=null;ptok++;LV={url:st.u,name:st.n,sub:(st.c?st.c+' · ':'')+'بث مباشر'};
+ savePos();pk=null;lc=null;seekTo=null;ptok++;LV={url:st.u,alt:(st.f||[]).slice(),name:st.n,sub:(st.c?st.c+' · ':'')+'بث مباشر'};
  document.body.classList.add('live');
  a.defaultPlaybackRate=a.playbackRate=1;const old=blobU;blobU=null;a.src=st.u;if(old)URL.revokeObjectURL(old);a.play().catch(()=>{});
  ui();openPl()}
 function liveUI(){
  $$('.tt').forEach(e=>e.textContent=LV.name);$$('.rr').forEach(e=>e.textContent=LV.sub);
  const dn=$('#dn');dn.textContent='●';dn.setAttribute('font-size',26);dn.setAttribute('y',110);
- const rs=$('#rs');rs.hidden=RDS.length<2;rs.innerHTML=RDS.map((x,i)=>`<button class="card${LV.url===x.u?' on':''}" data-rad="${i}">${E(x.c||x.n)}</button>`).join('');
+ const rs=$('#rs');rs.hidden=RDS.length<2;rs.innerHTML=RDS.map((x,i)=>`<button class="card${LV.name===x.n?' on':''}" data-rad="${i}">${E(x.c||x.n)}</button>`).join('');
  $('#mini').hidden=false;tbUpd();
  if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:LV.name,artist:LV.sub,album:'القرآن الكريم',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'}]})}
  render()}
@@ -465,7 +465,7 @@ a.onplay=()=>{document.body.classList.add('playing');lc=a.currentTime};
 a.onpause=()=>{document.body.classList.remove('playing');lc=null;savePos();save();if(newVer)setTimeout(()=>location.reload(),300)};
 a.onloadedmetadata=()=>{if(seekTo!=null){if(seekTo<a.duration-5)a.currentTime=seekTo;seekTo=null}lc=a.currentTime;prog()};
 a.onseeking=()=>{lc=null};a.onseeked=()=>{lc=a.currentTime};
-a.onerror=()=>toast(LV?'تعذر تشغيل الإذاعة — تحقق من الإنترنت':S.dl[pk]?'تعذر تشغيل الملف المحمّل':'تعذر التشغيل — تحقق من الإنترنت أو نزّل السورة للاستماع بدون نت');
+a.onerror=()=>{if(LV&&LV.alt&&LV.alt.length){LV.url=LV.alt.shift();a.src=LV.url;a.play().catch(()=>{});return}toast(LV?'تعذر تشغيل الإذاعة — تحقق من الإنترنت':S.dl[pk]?'تعذر تشغيل الملف المحمّل':'تعذر التشغيل — تحقق من الإنترنت أو نزّل السورة للاستماع بدون نت')};
 addEventListener('visibilitychange',()=>{if(document.hidden){acc();savePos();save()}});
 addEventListener('pagehide',()=>{savePos();save()});
 function prog(){const d=isFinite(a.duration)?a.duration:0,c=a.currentTime||0;$('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');$('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)}
@@ -546,8 +546,10 @@ function tfClose(){tfTok++;msA=0;$('#ms').classList.remove('tfo');$$('#mb .ay.se
 let RD=null,WR=0,wnOn=0,wnPin=0,wnA=0,wnN=0,wnKey='';const TM={};
 const nu=u=>String(u||'').replace(/^https?:\/\//i,'').replace(/\/+$/,'').toLowerCase();
 function readsGet(){return RD||(RD=fetch('https://mp3quran.net/api/v3/ayat_timing/reads').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const l=Array.isArray(j)?j:(j.reads||j.data||[]),m=new Map();l.forEach(x=>{if(x&&x.folder_url&&x.id!=null)m.set(nu(x.folder_url),x.id)});return m}).catch(e=>{RD=null;throw e}))}
-async function readFor(m){try{return(await readsGet()).get(nu(m&&m.server))||0}catch(e){return 0}}
+const CT={};
+async function readFor(m){if(m&&m.t){CT['c'+m.id]=m.t;return 'c'+m.id}try{return(await readsGet()).get(nu(m&&m.server))||0}catch(e){return 0}}
 function tmGet(rd,n){const k=rd+'|'+n;
+ if(String(rd)[0]==='c'){const t=(CT[rd]||{})[n];if(!t||t.length<3)return Promise.reject(0);const l=[];for(let i=0;i<t.length-1;i++)l.push({a:i+1,s:t[i],e:t[i+1]});return Promise.resolve(l)}
  return TM[k]||(TM[k]=fetch(`https://mp3quran.net/api/v3/ayat_timing?surah=${n}&read=${rd}`).then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const l=(Array.isArray(j)?j:(j.ayat||j.data||[])).map(x=>({a:+x.ayah,s:+x.start_time,e:+x.end_time})).filter(x=>x.a>0&&isFinite(x.s)&&isFinite(x.e)).sort((x,y)=>x.s-y.s);if(!l.length)throw 0;return l}).catch(e=>{delete TM[k];throw e}))}
 /* unit is not documented (looks like ms): detect it from the audio length, and refuse timings that don't fit the file */
 function tmFactor(l){const d=a.duration;if(!isFinite(d)||d<=0)return 0;const last=l[l.length-1].e,f=last/d>50?1e3:1,r=last/f/d;return(r>1.25||r<.6)?-1:f}
@@ -600,6 +602,7 @@ if('serviceWorker' in navigator){
  A moshaf is either {server,surahs} (a folder of 001.mp3…) or {files:{"1":"https://…mp3",…}} (one link per surah, e.g. Catbox) */
  const SX=t=>{t=String(t||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).trim();if(!t)t='1-114';const o=new Set();for(const p of t.split(/[,،\s]+/).filter(Boolean)){const m=p.match(/^(\d+)(?:-(\d+))?$/);if(!m)continue;const a=+m[1],b=m[2]?+m[2]:a;for(let i=Math.max(1,a);i<=Math.min(114,b);i++)o.add(i)}return[...o].sort((x,y)=>x-y).join(',')};
  const mk=m=>{const o={id:+m.id,name:String(m.name||'مرتل'),server:''};
+  if(m.t&&typeof m.t==='object'){const t={};for(const k in m.t){const l=m.t[k];if(+k>=1&&+k<=114&&Array.isArray(l)&&l.length>=3&&l.every(Number.isFinite))t[k]=l}if(Object.keys(t).length)o.t=t}
   if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}o.files=f;o.surah_list=Object.keys(f).map(Number).sort((a,b)=>a-b).join(',')}
   else{o.server=String(m.server||'');o.surah_list=/^https:\/\//.test(o.server)?SX(m.surahs):''}
   return o};
