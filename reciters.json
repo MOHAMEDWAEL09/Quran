@@ -1,6 +1,6 @@
 {
  "v": 1,
- "next": 1000011,
+ "next": 1000013,
  "default": 259,
  "hidden": [],
  "reciters": [
@@ -400,6 +400,26 @@
       "112": "https://archive.org/download/a250926aaaaaaaa/112%20-%20%D8%A7%D9%84%D8%A5%D8%AE%D9%84%D8%A7%D8%B5.mp3",
       "113": "https://archive.org/download/a250926aaaaaaaa/113%20-%20%D8%A7%D9%84%D9%81%D9%84%D9%82.mp3",
       "114": "https://archive.org/download/a250926aaaaaaaa/114%20-%20%D8%A7%D9%84%D9%86%D8%A7%D8%B3.mp3"
+     }
+    }
+   ]
+  },
+  {
+   "id": 1000011,
+   "name": "سعد أوزيت",
+   "moshaf": [
+    {
+     "id": 1000012,
+     "name": "حفص عن عاصم-مرتل",
+     "files": {
+      "1": "https://archive.org/download/038_rrrrrrrrr20200330r/001.mp3",
+      "2": "https://archive.org/download/038_rrrrrrrrr20200330r/038.mp3",
+      "3": "https://archive.org/download/038_rrrrrrrrr20200330r/062.mp3",
+      "4": "https://archive.org/download/038_rrrrrrrrr20200330r/063.mp3",
+      "5": "https://archive.org/download/038_rrrrrrrrr20200330r/069.mp3",
+      "6": "https://archive.org/download/038_rrrrrrrrr20200330r/076.mp3",
+      "7": "https://archive.org/download/038_rrrrrrrrr20200330r/079.mp3",
+      "8": "https://archive.org/download/038_rrrrrrrrr20200330r/085.mp3"
      }
     }
    ]
