@@ -591,7 +591,7 @@ if('mediaSession' in navigator){const m=navigator.mediaSession,h=(k,f)=>{try{m.s
 /* install + sw */
 $('#dv').onclick=()=>{const u='https://wa.me/201021611067?text='+encodeURIComponent('السلام عليكم، عندي استفسار بخصوص تطبيق القرآن الكريم');if(!window.open(u,'_blank','noopener'))location.href=u};
 let dp,pi=false;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;pi=true;$('#ins').hidden=false;$('#apk').hidden=true});
-/* Android APK button: only for Android phones that don't offer the normal install (no install event after 4s), when the app isn't already installed */
+/* APK button: only for Android phones that don't offer the normal install (no install event after 4s), when the app isn't already installed. Sits next to "contact the developer". */
 const isSA=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 const fl=(k,v)=>{try{if(v!=null)localStorage.setItem(k,v);return localStorage.getItem(k)}catch(e){return null}};
 if(isSA)fl('qi','1');
