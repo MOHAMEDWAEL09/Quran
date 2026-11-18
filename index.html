@@ -153,7 +153,7 @@ body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live 
 <body>
 <main>
  <section class="v" id="v-home">
-  <h1><span>القرآن الكريم</span><span class="hd"><button id="dv" class="sm">تواصل مع المطور</button><button id="ins" class="sm" hidden>تثبيت التطبيق</button><button class="ib" id="th" aria-label="تبديل الثيم"></button></span></h1>
+  <h1><span>القرآن الكريم</span><span class="hd"><button id="dv" class="sm">تواصل مع المطور</button><button id="apk" class="sm" hidden>تحميل نسخة أندرويد</button><button id="ins" class="sm" hidden>تثبيت التطبيق</button><button class="ib" id="th" aria-label="تبديل الثيم"></button></span></h1>
   <div class="card row" id="cr" data-tab="rec" tabindex="0"></div>
   <input class="inp" id="q" placeholder="ابحث عن سورة…" aria-label="بحث">
   <div id="sl"></div>
@@ -590,7 +590,14 @@ if('mediaSession' in navigator){const m=navigator.mediaSession,h=(k,f)=>{try{m.s
 
 /* install + sw */
 $('#dv').onclick=()=>{const u='https://wa.me/201021611067?text='+encodeURIComponent('السلام عليكم، عندي استفسار بخصوص تطبيق القرآن الكريم');if(!window.open(u,'_blank','noopener'))location.href=u};
-let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#ins').hidden=false});
+let dp,pi=false;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;pi=true;$('#ins').hidden=false;$('#apk').hidden=true});
+/* Android APK button: only for Android phones that don't offer the normal install (no install event after 4s), when the app isn't already installed */
+const isSA=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+const fl=(k,v)=>{try{if(v!=null)localStorage.setItem(k,v);return localStorage.getItem(k)}catch(e){return null}};
+if(isSA)fl('qi','1');
+addEventListener('appinstalled',()=>{fl('qi','1');$('#ins').hidden=true;$('#apk').hidden=true});
+if(!isSA&&/Android/.test(navigator.userAgent)&&fl('qi')!=='1'&&fl('qa')!=='1')setTimeout(()=>{if(!pi)$('#apk').hidden=false},4000);
+$('#apk').onclick=()=>menu('تحميل نسخة أندرويد',[['١. اضغط «تحميل الآن» ثم افتح الملف بعد انتهاء التحميل',()=>{}],['٢. لو ظهر تحذير، اختر «السماح بالتثبيت من هذا المصدر» (الملف من موقع التطبيق نفسه)',()=>{}],['تحميل الآن',()=>{const a=document.createElement('a');a.href='quran.apk';a.download='quran.apk';document.body.appendChild(a);a.click();a.remove();fl('qa','1');$('#apk').hidden=true}]]);
 $('#ins').onclick=()=>{dp&&dp.prompt();$('#ins').hidden=true};
 let newVer=false;
 if('serviceWorker' in navigator){
