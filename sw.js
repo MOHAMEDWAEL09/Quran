@@ -11,7 +11,7 @@ async function fresh(r){
 }
 self.addEventListener('fetch',e=>{
   const r=e.request,u=new URL(r.url);
-  if(r.method!=='GET'||r.headers.has('range')||r.destination==='audio')return; // audio streams straight from the network
+  if(r.method!=='GET'||r.headers.has('range')||r.destination==='audio'||u.pathname.endsWith('.apk'))return; // audio streams straight from the network
   const isApi=API.some(h=>(u.host+u.pathname).startsWith(h));
   if(u.origin===location.origin){
     e.respondWith(fresh(r));

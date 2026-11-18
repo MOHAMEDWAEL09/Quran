@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.quran_mauve_delta.twa",
+        "sha256_cert_fingerprints": ["7E:80:A3:A2:56:E4:41:1C:72:DC:93:F7:E2:F5:3F:D7:53:EA:76:28:CD:BB:BF:17:FA:E3:25:92:B2:DC:D6:FF"]
+      }
+    }]
