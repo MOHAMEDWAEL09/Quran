@@ -1,6 +1,6 @@
 {
  "v": 1,
- "next": 1000015,
+ "next": 1000013,
  "default": 259,
  "hidden": [],
  "reciters": [
@@ -420,69 +420,6 @@
       "76": "https://archive.org/download/038_rrrrrrrrr20200330r/076.mp3",
       "79": "https://archive.org/download/038_rrrrrrrrr20200330r/079.mp3",
       "85": "https://archive.org/download/038_rrrrrrrrr20200330r/085.mp3"
-     }
-    }
-   ]
-  },
-  {
-   "id": 1000013,
-   "name": "عمر بن ضياء الدين",
-   "moshaf": [
-    {
-     "id": 1000014,
-     "name": "حفص عن عاصم-مرتل",
-     "files": {
-      "2": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/2.mp3",
-      "3": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/3.mp3",
-      "4": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/4.mp3",
-      "5": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/5.mp3",
-      "6": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/6.mp3",
-      "8": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/8.mp3",
-      "9": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/9.mp3",
-      "10": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/10.mp3",
-      "12": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/12.mp3",
-      "15": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/15.mp3",
-      "17": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/17.mp3",
-      "18": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/18.mp3",
-      "19": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/19.mp3",
-      "20": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/20.mp3",
-      "23": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/23.mp3",
-      "24": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/24.mp3",
-      "25": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/25.mp3",
-      "29": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/29.mp3",
-      "31": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/31.mp3",
-      "32": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/32.mp3",
-      "33": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/33.mp3",
-      "34": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/34.mp3",
-      "35": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/35.mp3",
-      "40": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/40.mp3",
-      "44": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/44.mp3",
-      "47": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/47.mp3",
-      "49": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/49.mp3",
-      "50": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/50.mp3",
-      "53": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/53.mp3",
-      "55": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/55.mp3",
-      "56": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/56.mp3",
-      "57": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/57.mp3",
-      "58": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/58.mp3",
-      "59": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/59.mp3",
-      "60": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/60.mp3",
-      "62": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/62.mp3",
-      "63": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/63.mp3",
-      "64": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/64.mp3",
-      "66": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/66.mp3",
-      "67": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/67.mp3",
-      "68": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/68.mp3",
-      "69": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/69.mp3",
-      "70": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/70.mp3",
-      "71": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/71.mp3",
-      "72": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/72.mp3",
-      "73": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/73.mp3",
-      "74": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/74.mp3",
-      "75": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/75.mp3",
-      "76": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/76.mp3",
-      "77": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/77.mp3",
-      "78": "https://way2quran.com/api/podcast/listen/omar-diaa-al-din/hafs-an-asim/78.mp3"
      }
     }
    ]
