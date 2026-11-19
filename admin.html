@@ -173,13 +173,14 @@ function rssItems(x){const out=[];
 function rssConvert(k){const x=$('#rsx'+k).value,res=$('#rsr'+k);const set=(t,c)=>{res.textContent=t;res.className='res '+(c||'')};
  if(!x.trim()){set('الصق محتوى الملف الأول','no');return}
  const it=rssItems(x);if(!it.length){set('مفيش عناصر (item) في الملف ده. تأكد إنك نسخت الملف كله.','no');return}
- const files={},dup=[],bad=[];let http=0;
- for(const e of it){let u=e.u;if(/^http:\/\//i.test(u)){u=u.replace(/^http:/i,'https:');http++}if(!/^https:\/\/\S+$/.test(u)){bad.push(e.t||'(بدون عنوان)');continue}
+ const files={},dup=[],bad=[];let http=0,w2=0;
+ for(const e of it){let u=e.u;if(/^http:\/\//i.test(u)){u=u.replace(/^http:/i,'https:');http++}
+  {const w=u.match(/^https:\/\/(?:www\.)?way2quran\.com\/api\/podcast\/listen\/([^\/?#]+)\/([^\/?#]+)\/(\d{1,3})\.mp3(?:[?#].*)?$/i);if(w){u='https://media.way2quran.com/'+w[1]+'/'+w[2]+'/'+pad(+w[3])+'.mp3';w2++}}if(!/^https:\/\/\S+$/.test(u)){bad.push(e.t||'(بدون عنوان)');continue}
   const n=surahOf(e.t,u);if(!n){bad.push(e.t||u);continue}if(files[n]){dup.push(n);continue}files[n]=u}
  const ls=Object.keys(files).map(Number).sort((a,b)=>a-b);if(!ls.length){set('معرفتش أربط ولا سورة. ابعتلي أول 5 عناوين من الملف.','no');return}
  $('textarea[data-f=links][data-k="'+k+'"]').value=ls.map(n=>n+' '+files[n]).join('\n');cnt($('textarea[data-f=links][data-k="'+k+'"]'));
  const miss=[];for(let i=1;i<=114;i++)if(!files[i])miss.push(i);
- set('✓ اتربط '+ls.length+' سورة من '+it.length+' عنصر.'+(miss.length&&miss.length<=60?' ناقص: '+range(miss)+'.':miss.length?' ناقص '+miss.length+' سورة.':'')+(dup.length?' مكرر (اتجاهل): '+range([...new Set(dup)].sort((a,b)=>a-b))+'.':'')+(bad.length?' عناوين ما اتعرفتش: '+bad.slice(0,3).join(' / ')+(bad.length>3?'…':'')+'.':'')+(http?' (روابط http اتحوّلت لـ https).':'')+' راجع الروابط تحت واختبر أول رابط.','ok')}
+ set('✓ اتربط '+ls.length+' سورة من '+it.length+' عنصر.'+(miss.length&&miss.length<=60?' ناقص: '+range(miss)+'.':miss.length?' ناقص '+miss.length+' سورة.':'')+(dup.length?' مكرر (اتجاهل): '+range([...new Set(dup)].sort((a,b)=>a-b))+'.':'')+(bad.length?' عناوين ما اتعرفتش: '+bad.slice(0,3).join(' / ')+(bad.length>3?'…':'')+'.':'')+(http?' (روابط http اتحوّلت لـ https).':'')+(w2?' (روابط way2quran اتحوّلت لروابط الملفات المباشرة).':'')+' راجع الروابط تحت واختبر أول رابط.','ok')}
 const filesText=m=>m.files?Object.keys(m.files).map(Number).sort((a,b)=>a-b).map(n=>n+' '+m.files[n]).join('\n'):'';
 const range=ls=>{const o=[];for(let i=0;i<ls.length;){let j=i;while(j+1<ls.length&&ls[j+1]===ls[j]+1)j++;o.push(j>i?ls[i]+'-'+ls[j]:''+ls[i]);i=j+1}return o.join('، ')};
 
