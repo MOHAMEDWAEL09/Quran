@@ -1,5 +1,5 @@
-const V='quran-v5',AUD='quran-audio',SHELL=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable.png'];
-const API=['www.mp3quran.net/api','mp3quran.net/api','api.alquran.cloud','fonts.googleapis.com','fonts.gstatic.com'];
+const V='quran-v6',AUD='quran-audio',SHELL=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable.png'];
+const API=['mp3q/api','www.mp3quran.net/api','mp3quran.net/api','api.alquran.cloud','fonts.googleapis.com','fonts.gstatic.com'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL.map(u=>new Request(u,{cache:'reload'})))).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V&&x!==AUD).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 // app files: network first (so updates show up immediately), cache as offline fallback
@@ -12,8 +12,8 @@ async function fresh(r){
 self.addEventListener('fetch',e=>{
   const r=e.request,u=new URL(r.url);
   if(r.method!=='GET'||r.headers.has('range')||r.destination==='audio'||u.pathname.endsWith('.apk'))return; // audio streams straight from the network
-  const isApi=API.some(h=>(u.host+u.pathname).startsWith(h));
-  if(u.origin===location.origin){
+  const isApi=API.some(h=>(u.host+u.pathname).startsWith(h))||u.pathname.startsWith('/mp3q/');
+  if(u.origin===location.origin&&!u.pathname.startsWith('/mp3q/')){
     e.respondWith(fresh(r));
   }else if(isApi){
     e.respondWith(caches.open(V).then(async c=>{
