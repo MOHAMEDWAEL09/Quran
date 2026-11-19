@@ -377,8 +377,12 @@ async function loadVis(){
  vd=null;vs='loading';if(tab===4)drawVis();
  try{const now=new Date(),b={since:ymd(new Date(now-(vr-1)*864e5)),until:ymd(now)};
   const g=(by)=>vq(c,'visits/aggregate',{...b,by,limit:8});
-  const [day,tot,co,dv,pg,rf]=await Promise.all([vq(c,'visits/aggregate',{...b,by:'day'}),vq(c,'visits/aggregate',b).catch(()=>null),g('country'),g('deviceType'),g('requestPath'),g('referrerHostname')]);
-  vd={b,day:day.data||[],tot:tot&&tot.data,co:co.data||[],dv:dv.data||[],pg:pg.data||[],rf:rf.data||[],at:new Date()};vs='ok'}
+  const names=['day','total','country','deviceType','requestPath','referrerHostname'];
+  const rs=await Promise.allSettled([vq(c,'visits/aggregate',{...b,by:'day'}),vq(c,'visits/aggregate',b),g('country'),g('deviceType'),g('requestPath'),g('referrerHostname')]);
+  const bad=[];rs.forEach((r,i)=>{if(r.status==='rejected'&&i!==1)bad.push(names[i]+': '+(r.reason instanceof TypeError?'cors':r.reason.message))});
+  const ok=i=>rs[i].status==='fulfilled'?(rs[i].value.data||[]):[];
+  if(rs[0].status==='rejected'&&rs[2].status==='rejected')throw rs[0].reason;
+  vd={b,day:ok(0),tot:rs[1].status==='fulfilled'?rs[1].value.data:null,co:ok(2),dv:ok(3),pg:ok(4),rf:ok(5),at:new Date(),bad};vs='ok'}
  catch(e){vs='err:'+(e instanceof TypeError?'cors':e.message)}
  if(tab===4)drawVis()}
 function drawVis(){
@@ -406,7 +410,7 @@ function drawVis(){
  A.innerHTML=hd+`<div class="vk"><div class="card"><span class="mu">الزوار</span><b class="vn">${nf(tv)}</b></div><div class="card"><span class="mu">مرات فتح الصفحات</span><b class="vn">${nf(tp)}</b></div></div>
  <div class="card"><h3>الزوار يوميًا</h3>${bars}</div>
  <div class="vg">${lst('الدول',D0.co,'country',k=>k?(rn?rn.of(k)||k:k):'غير معروف')}${lst('الأجهزة',D0.dv,'deviceType',k=>dvn[String(k).toLowerCase()]||k||'غير معروف')}${lst('أكتر الصفحات',D0.pg,'requestPath',k=>k||'/')}${lst('مصادر الزيارات',D0.rf,'referrerHostname',k=>k||'مباشر')}</div>
- <p class="mu c" style="margin:6px 0 0">آخر تحديث ${D0.at.toLocaleTimeString('ar-EG')} · المدى حسب خطة Vercel عندك</p>`}
+ ${D0.bad&&D0.bad.length?`<div class="card"><h3 class="acc">جزء من الأرقام ما اتحمّلش</h3><p class="mu" dir="ltr" style="margin:8px 0 0;line-height:1.9;text-align:left">${D0.bad.map(E).join('<br>')}</p></div>`:''}<p class="mu c" style="margin:6px 0 0">آخر تحديث ${D0.at.toLocaleTimeString('ar-EG')} · المدى حسب خطة Vercel عندك</p>`}
 function drawRadio(){
  const L=D.radios||RDEF;
  $('#app').innerHTML=`<div class="card"><h3>الإذاعات (بث مباشر)</h3><p class="mu" style="margin:6px 0 0">دي الإذاعات اللي بتظهر في التطبيق (فوقها بتتضاف تلقائيًا إذاعات القراء من mp3quran). أضف إذاعة من أي دولة بالاسم والدولة ورابط البث https. لو إذاعة وقفت امسحها أو غيّر رابطها.</p></div>`+L.map((x,i)=>`<div class="card" data-i="${i}"><label class="lb" style="margin-top:0">الاسم</label><input class="inp" data-rx="name" value="${E(x.name)}"><label class="lb">الدولة</label><input class="inp" data-rx="country" value="${E(x.country||'')}"><label class="lb">رابط البث (https)</label><input class="inp ltr" data-rx="url" value="${E(x.url)}"><div class="bar" style="margin:0"><button data-a="rtest" data-i="${i}">تجربة</button><button data-a="rdel" data-i="${i}">حذف</button></div><div class="res"></div></div>`).join('')+`<button data-a="radd" style="width:100%;margin-bottom:12px">+ إضافة إذاعة</button><div class="bar"><button class="acc" data-a="rsave">حفظ</button><button data-a="rdef">رجوع للقائمة الافتراضية</button></div>`}
