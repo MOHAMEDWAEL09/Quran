@@ -11,7 +11,7 @@
 --out:8px 8px 18px rgba(0,0,0,.13),-8px -8px 18px rgba(255,255,255,.95);
 --sm:4px 4px 10px rgba(0,0,0,.12),-4px -4px 10px rgba(255,255,255,.9);
 --in:inset 4px 4px 9px rgba(0,0,0,.14),inset -4px -4px 9px rgba(255,255,255,.9);--bd:rgba(0,0,0,.25);color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:#2b302d;--ink:#e9ebe7;--mut:#8f9893;--bad:#e8553a;--ok:#9bbf7a;
+@media (prefers-color-scheme:dark) and (max-width:1023.98px){:root{--bg:#2b302d;--ink:#e9ebe7;--mut:#8f9893;--bad:#e8553a;--ok:#9bbf7a;
 --out:8px 8px 18px rgba(0,0,0,.45),-6px -6px 16px rgba(255,255,255,.035);
 --sm:4px 4px 10px rgba(0,0,0,.42),-3px -3px 9px rgba(255,255,255,.035);
 --in:inset 4px 4px 9px rgba(0,0,0,.5),inset -3px -3px 8px rgba(255,255,255,.04);--bd:rgba(0,0,0,.55);color-scheme:dark}}
@@ -34,12 +34,17 @@ textarea.inp{border-radius:20px;min-height:110px;resize:vertical;line-height:1.7
 .bar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
 .bar button{flex:1;min-width:120px}
 .acc{color:var(--acc)}
-.seg{display:flex;gap:10px;margin:14px 0}.seg button{flex:1}
+.seg{display:flex;gap:8px;margin:14px 0}.seg button{flex:1;min-width:0;padding:10px 4px;font-size:13.5px;line-height:1.35}
 .rowc{display:flex;align-items:center;gap:8px}.rowc b{flex:1;min-width:0;font-weight:600}
 .rowc small{display:block;color:var(--mut);font-weight:400;font-size:12px}
 .ib{width:38px;height:38px;padding:0;display:grid;place-items:center;flex:none;font-size:15px}
 .tg{margin:0 0 12px;padding:12px;border-radius:16px;box-shadow:var(--sm)}.tg b{display:block;margin-bottom:4px}.tg .res{margin:6px 0 0;white-space:pre-line}
 .tgl{font-size:13px;color:var(--mut);margin:6px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tgl button{padding:6px 12px;font-size:12px}
+.tv{margin-top:10px}.tv audio{width:100%;margin-bottom:6px}
+.tvr{max-height:340px;overflow:auto;border-radius:14px;box-shadow:var(--in);padding:4px 10px}
+.tr{display:flex;align-items:center;gap:5px;font-size:12px;padding:6px 0;border-bottom:1px solid rgba(128,128,128,.15)}
+.tr b{flex:1;min-width:0;font-weight:600;font-size:12.5px}.tr small{color:var(--mut);font-weight:400;display:block;direction:ltr;text-align:right}
+.tr button{padding:5px 8px;font-size:11px;box-shadow:var(--sm)}.tr.on{color:var(--acc)}.tr.sus b::after{content:' ⚠';color:var(--bad)}
 .mo{padding:12px;margin:0 0 12px;border-radius:20px;box-shadow:var(--in)}
 .mo .inp{box-shadow:var(--sm)}
 .res{font-size:13px;margin:2px 6px 0;min-height:18px}.res.ok{color:var(--ok)}.res.no{color:var(--bad)}
@@ -48,21 +53,83 @@ textarea.inp{border-radius:20px;min-height:110px;resize:vertical;line-height:1.7
 #dirty span{flex:1}#dirty[hidden]{display:none}
 #toast{position:fixed;left:0;right:0;margin:auto;width:max-content;max-width:calc(100% - 40px);top:calc(env(safe-area-inset-top) + 14px);padding:10px 18px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;text-align:center}
 #toast.show{opacity:1}
+.vh{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:0 0 16px}.vh .seg button{padding:8px 16px;flex:none}
+.vk{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.vk .card{margin:0}.vn{display:block;font-size:30px;font-weight:600;margin-top:4px}
+.vbars{display:flex;align-items:flex-end;gap:3px;height:130px;margin-top:14px;padding:0 2px}.vbars i{flex:1;min-width:2px;background:linear-gradient(180deg,#ff9a3c,#ff6a00);border-radius:6px 6px 2px 2px}
+.vax{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);direction:ltr;margin-top:6px}
+.vg{display:grid;gap:14px;grid-template-columns:1fr}.vg .card{margin:0}
+.vl{position:relative;display:flex;justify-content:space-between;gap:10px;padding:8px 2px;font-size:13.5px;border-bottom:1px solid rgba(128,128,128,.13)}.vl span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vl b{font-weight:600}
+.vl i{position:absolute;right:0;bottom:-1px;height:2px;background:var(--acc);border-radius:2px;opacity:.7}
+@media (min-width:1024px){.vg{grid-template-columns:1fr 1fr;gap:18px}.vk{gap:18px}.vn{font-size:36px}#app.wide{max-width:1000px}}
+/* ---- phone: new wrappers are invisible, the page looks exactly as before ---- */
+.brand,.stats,.seg i,.sidenote{display:none}
+/* ---- laptop: dashboard layout (light theme only) ---- */
+@media (min-width:1024px){
+ html{background:radial-gradient(900px 520px at 88% -6%,rgba(255,122,0,.14),transparent 62%),radial-gradient(760px 520px at 4% 104%,rgba(255,122,0,.09),transparent 62%),var(--bg) fixed}
+ body{background:transparent;max-width:1440px;padding:28px 32px 90px}
+ .shell{display:grid;grid-template-columns:268px minmax(0,1fr);grid-template-rows:auto auto auto 1fr;column-gap:28px;row-gap:22px;align-items:start}
+ .side{grid-column:1;grid-row:1/5;position:sticky;top:28px;height:calc(100vh - 56px);display:flex;flex-direction:column;gap:6px;padding:22px 16px;border-radius:30px;background:var(--bg);box-shadow:var(--out)}
+ .brand{display:flex;align-items:center;gap:12px;padding:2px 8px 20px;margin-bottom:6px;border-bottom:1px solid rgba(0,0,0,.07)}
+ .brand .lg{width:46px;height:46px;border-radius:16px;background:linear-gradient(145deg,#ff9a3c,#ff6a00);display:grid;place-items:center;color:#fff;box-shadow:var(--sm);flex:none}
+ .brand b{display:block;font-size:16px;font-weight:600;line-height:1.3}.brand small{color:var(--mut);font-size:12px}
+ .side .seg{flex-direction:column;margin:6px 0 0;gap:10px}
+ .side .seg button{flex:none;display:flex;align-items:center;justify-content:flex-start;gap:13px;border-radius:18px;padding:13px 16px;text-align:right;font-size:15px}
+ .side .seg button i{display:grid;place-items:center;width:22px;height:22px;flex:none;color:var(--mut)}
+ .side .seg button.on{background:linear-gradient(135deg,rgba(255,122,0,.17),rgba(255,122,0,.05)),var(--bg);color:var(--acc);font-weight:600}
+ .side .seg button.on i{color:var(--acc)}
+ .hi{grid-column:2;grid-row:1}.hi h1{font-size:26px;margin:2px 4px 4px}
+ .hi p{max-width:560px;line-height:1.7}
+ #actions{grid-column:2;grid-row:2;margin:0;justify-self:start;flex-wrap:nowrap}
+ #actions button{flex:none;min-width:0;white-space:nowrap}
+ .sidenote{display:block;margin-top:auto;padding:14px 16px;border-radius:20px;box-shadow:var(--in);font-size:12.5px;line-height:1.8;color:var(--mut)}
+ .sidenote b{display:block;color:var(--ink);font-size:13px;margin-bottom:2px}
+ .stats[hidden]{display:none}
+ .stats{grid-column:2;grid-row:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+ .sc{display:flex;align-items:center;gap:15px;padding:18px 20px;border-radius:26px;background:var(--bg);box-shadow:var(--out)}
+ .sc .ic{width:54px;height:54px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,#ff9a3c,#ff6a00);box-shadow:var(--sm)}
+ .sc div{min-width:0}.sc span{display:block;color:var(--mut);font-size:13px}
+ .sc b{display:block;font-size:28px;font-weight:600;line-height:1.15;margin:2px 0 1px}
+ .sc small{display:block;color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #app{grid-column:2;grid-row:4;min-width:0}
+ #app.one{max-width:900px}
+ #app.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px;align-items:start}
+ #app.grid>.card{margin:0}
+ #app.grid>#add{width:auto!important;justify-self:start;padding:12px 30px;margin:0!important;grid-column:1/-1}
+ #app.grid>p{grid-column:1/-1}
+ .card{border-radius:28px;padding:18px 20px}
+ #dirty{max-width:440px;transform:translateX(-148px)}
+}
+@media (min-width:1200px){
+ .hi{margin-inline-end:470px}
+ #actions{grid-row:1;justify-self:end;align-self:center}
+ .stats{grid-row:2;grid-template-columns:repeat(4,minmax(0,1fr))}
+ .shell{grid-template-rows:auto auto 1fr}
+ .side{grid-row:1/4}
+ #app{grid-row:3}
+}
 </style>
 </head>
 <body>
-<h1>منشئ قائمة الشيوخ</h1>
-<p class="mu" style="margin:0 4px 6px">بتجهّز ملف <b>reciters.json</b> للتطبيق: تضيف شيوخك، وتخفي من قراء mp3quran، وتختار القارئ الافتراضي.</p>
+<div class="shell">
+<div class="hi"><h1>منشئ قائمة الشيوخ</h1>
+<p class="mu" style="margin:0 4px 6px">بتجهّز ملف <b>reciters.json</b> للتطبيق: تضيف شيوخك، وتخفي من قراء mp3quran، وتختار القارئ الافتراضي.</p></div>
 
-<div class="bar">
+<div class="bar" id="actions">
  <button id="imp">استيراد ملف</button>
  <button id="dl" class="acc">تحميل reciters.json</button>
  <button id="cp">نسخ المحتوى</button>
 </div>
 <input type="file" id="fi" accept=".json,application/json" hidden>
 
-<div class="seg"><button id="t1" class="on">شيوخي</button><button id="t2">قراء mp3quran</button><button id="t3">الإذاعة</button></div>
+<aside class="side">
+ <div class="brand"><span class="lg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.3 5.2 8 4.7 4 4.7v13c4 0 6.3.5 8 1.8 1.7-1.3 4-1.8 8-1.8v-13c-4 0-6.3.5-8 1.8z"/><path d="M12 6.5v13"/></svg></span><div><b>القرآن الكريم</b><small>لوحة التحكم</small></div></div>
+ <div class="seg"><button id="t1" class="on"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14a3.5 3.5 0 0 0 3.5-3.5v-5a3.5 3.5 0 0 0-7 0v5A3.5 3.5 0 0 0 12 14z"/><path d="M5.5 10.5a6.5 6.5 0 0 0 13 0M12 17v3.5"/></svg></i><span>شيوخي</span></button><button id="t2"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.4-3.3 2.6-5 5.5-5s5.1 1.7 5.5 5M16 5.2a3.2 3.2 0 0 1 0 5.6M18.5 14.3c1.5.7 2.6 2.2 3 4.7"/></svg></i><span>قراء mp3quran</span></button><button id="t3"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2"/></svg></i><span>الإذاعة</span></button><button id="t4"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></i><span>الزوار</span></button></div>
+ <div class="sidenote"><b>بعد أي تعديل</b>نزّل <span dir="ltr">reciters.json</span> وارفعه على GitHub مكان القديم.</div>
+</aside>
+
+<div class="stats" id="stats"></div>
 <div id="app"></div>
+</div>
 
 <div id="dirty" hidden><span>فيه تعديلات لسه ما اتنزلتش</span><button id="dl2" class="acc">تحميل</button></div>
 <div id="toast" role="status"></div>
@@ -123,7 +190,14 @@ function norm(J){const o={next:1000001,hidden:[],default:0,reciters:[]};if(!J||t
  let mx=1000000;
  (J.reciters||[]).forEach(c=>{const ms=(c.moshaf||[]).map(m=>{if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}return vt({id:+m.id,name:String(m.name||'مرتل'),files:f},m)}return vt({id:+m.id,name:String(m.name||'مرتل'),server:String(m.server||''),surahs:String(m.surahs||'1-114')},m)});if(!c.name||!(+c.id>=1e6)||!ms.length)return;o.reciters.push({id:+c.id,name:String(c.name),moshaf:ms});mx=Math.max(mx,+c.id,...ms.map(m=>m.id))});
  o.hidden=(J.hidden||[]).map(Number).filter(Number.isFinite);o.default=+J.default||0;o.hm=(J.hm||[]).map(Number).filter(Number.isFinite);o.sx=J.sx&&typeof J.sx==='object'?J.sx:{};o.xf=J.xf&&typeof J.xf==='object'?J.xf:{};o.rx=J.rx&&typeof J.rx==='object'?J.rx:{};if(Array.isArray(J.radios))o.radios=J.radios.filter(x=>x&&x.name&&/^https:\/\/\S+$/.test(x.url||'')).map(x=>({name:String(x.name),country:String(x.country||''),url:x.url}));o.next=Math.max(+J.next||0,mx+1,1000001);return o}
-function mark(){dirty=true;try{localStorage.setItem('adm-draft',JSON.stringify(D))}catch(e){}$('#dirty').hidden=false}
+/* summary cards (laptop layout only; hidden on the phone) — numbers come straight from the data already in the file */
+const ICO={a:'<path d="M12 14a3.5 3.5 0 0 0 3.5-3.5v-5a3.5 3.5 0 0 0-7 0v5A3.5 3.5 0 0 0 12 14z"/><path d="M5.5 10.5a6.5 6.5 0 0 0 13 0M12 17v3.5"/>',b:'<path d="M12 6.5C10.3 5.2 8 4.7 4 4.7v13c4 0 6.3.5 8 1.8 1.7-1.3 4-1.8 8-1.8v-13c-4 0-6.3.5-8 1.8z"/><path d="M12 6.5v13"/>',c:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',d:'<circle cx="12" cy="12" r="2"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2"/>'};
+function stats(){
+ const R=D.reciters||[];let nm=0,nt=0,ns=0;R.forEach(r=>(r.moshaf||[]).forEach(m=>{nm++;if(m.t)nt+=Object.keys(m.t).length;ns+=m.files?Object.keys(m.files).length:(expand(m.surahs||'')||[]).length}));
+ const nr=(D.radios||RDEF).length,nh=(D.hidden||[]).length;
+ const C=[['a','الشيوخ المضافون',R.length,D.default&&R.some(r=>r.id===D.default)?'فيهم قارئ افتراضي':'بدون قارئ افتراضي'],['b','الروايات',nm,ns+' سورة متاحة'],['c','سور بتوقيتات آيات',nt,nt?'متابعة وتفسير متزامن':'لسه ما اتحسبتش'],['d','الإذاعات',nr,nh?nh+' قارئ مخفي من mp3quran':'بث مباشر في التطبيق']];
+ $('#stats').hidden=!!(edit||em||tab===4);$('#stats').innerHTML=C.map(c=>`<div class="sc"><span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[c[0]]}</svg></span><div><span>${c[1]}</span><b>${c[2]}</b><small>${E(c[3])}</small></div></div>`).join('')}
+function mark(){dirty=true;try{localStorage.setItem('adm-draft',JSON.stringify(D))}catch(e){}$('#dirty').hidden=false;stats()}
 const fix=()=>{D.hm||=[];D.sx||={};D.xf||={};D.rx||={}};
 const out=()=>{fix();const o={v:1,next:D.next,default:D.default,hidden:D.hidden,reciters:D.reciters};
  if(D.hm.length)o.hm=D.hm;if(Object.keys(D.sx).length)o.sx=D.sx;if(Object.keys(D.xf).length)o.xf=D.xf;
@@ -133,8 +207,9 @@ const out=()=>{fix();const o={v:1,next:D.next,default:D.default,hidden:D.hidden,
 const cmp=l=>{const o=[];for(let i=0;i<l.length;){let j=i;while(j+1<l.length&&l[j+1]===l[j]+1)j++;o.push(j>i?l[i]+'-'+l[j]:''+l[i]);i=j+1}return o.join(',')};
 
 function draw(){
- fix();$('#t3').classList.toggle('on',tab===3);
+ fix();stats();$('#app').className=tab===1&&!edit?'grid':tab===4?'wide':'one';$('#t3').classList.toggle('on',tab===3);$('#t4').classList.toggle('on',tab===4);
  $('#t1').classList.toggle('on',tab===1);$('#t2').classList.toggle('on',tab===2);$('#dirty').hidden=!dirty;
+ if(tab===4)return drawVis();
  if(tab===3)return drawRadio();
  if(tab===2)return em?drawEm():drawHide();
  if(edit)return drawForm();
@@ -153,6 +228,7 @@ function moBlock(m,k){return `<div class="mo" data-k="${k}"><label class="lb">ا
  <label class="lb">أو: رابط مجلد منظّم (https) — الملفات 001.mp3 … 114.mp3. لو كتبت روابط فوق، ده بيتجاهل.</label><input class="inp ltr" data-f="server" placeholder="https://…/" value="${E(m.server)}">
  <label class="lb">السور المتاحة (فاضي = كل السور، أو مثال: 1-10,18,36)</label><input class="inp ltr" data-f="surahs" value="${E(m.surahs==='1-114'?'':m.surahs)}">
  <div class="tg" id="tg${k}"><b>توقيتات الآيات (للمتابعة والتفسير المتزامن)</b><div class="tgl"><span id="tgs${k}">${tgStat(m)}</span></div>
+  <label class="lb">قارئ مرجعي لتحسين الدقة (اختياري — اختار قارئ بنفس سرعة وأسلوب شيخك تقريبًا)</label><div class="tgl" style="margin:0 0 8px"><button data-a="tgq" data-k="${k}">تحميل قراء المرجع</button><select class="inp" id="tgq${k}" style="flex:1;margin:0;min-width:0"><option value="">بدون (حسب عدد الحروف)</option></select></div>
   <label class="lb">بداية ملف السورة</label><select class="inp" id="tgp${k}"><option value="1">بسملة ثم الآيات</option><option value="2">استعاذة + بسملة ثم الآيات</option><option value="0">الآيات مباشرة</option></select>
   <div class="bar" style="margin:8px 0 0"><button class="acc" data-a="tgl" data-k="${k}">توليد من الروابط</button><button data-a="tgo" data-k="${k}">من ملفات الجهاز</button>${m.t?`<button data-a="tgx" data-k="${k}">حذف التوقيتات</button>`:''}</div><input type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" multiple data-tgf="${k}" hidden>
   <div class="res" id="tgr${k}"></div></div>
@@ -185,7 +261,7 @@ const tgStat=m=>{const n=m.t?Object.keys(m.t).length:0;return n?'✓ متوفر�
 let QW=null,tga=null;
 async function quranW(){if(QW)return QW;const r=await fetch('https://api.alquran.cloud/v1/quran/quran-simple');if(!r.ok)throw new Error('quran');const j=await r.json();
  const L=s=>s.replace(/[^\u0621-\u064A\u0671]/g,'').length,BS='بسماللهالرحمنالرحيم';
- QW=j.data.surahs.map(su=>su.ayahs.map((x,i)=>{let t=x.text;if(i===0&&su.number!==1&&su.number!==9){const ws=t.split(/\s+/);if(ws[0]&&t.replace(/[^\u0621-\u064A\u0671]/g,'').startsWith(BS))t=ws.slice(4).join(' ')}return Math.max(2,L(t))}));return QW}
+ QW=j.data.surahs.map(su=>su.ayahs.map((x,i)=>{let t=x.text;if(i===0&&su.number!==1&&su.number!==9){const ws=t.split(/\s+/);if(ws[0]&&t.replace(/[^\u0621-\u064A\u0671]/g,'').replace(/\u0671/g,'ا').startsWith(BS))t=ws.slice(4).join(' ')}return Math.max(2,L(t))}));return QW}
 async function envOf(file){
  const AC=window.AudioContext||window.webkitAudioContext;let c;try{c=new AC({sampleRate:4000})}catch(e){c=new AC()}
  const buf=await c.decodeAudioData(await file.arrayBuffer());const d=buf.getChannelData(0),sr=buf.sampleRate,fl=Math.round(sr*.02),N=Math.floor(d.length/fl),env=new Float32Array(N);
@@ -199,20 +275,44 @@ async function tgRun(k,files,links){
  let log=[];tgFiles[k]={};
  for(let i=0;i<ok.length;i++){const {f,n,u}=ok[i];set('('+(i+1)+'/'+ok.length+') جارٍ تحليل سورة '+n+'…\n'+log.join('\n'));
   try{let fb=f;if(u){try{const rs=await fetch(u);if(!rs.ok)throw 0;fb=await rs.blob()}catch(e){log.push('✗ سورة '+n+': الرابط مش بيسمح بالتحميل من المتصفح — اختار الملفات من جهازك بدل الروابط');break}}
-   const {env,dur}=await envOf(fb);const ay=W[n-1],items=[];
+   const {env,dur}=await envOf(fb);let ay=W[n-1];const items=[];const rid=$('#tgq'+k).value;if(rid){const rw=await refW(rid,n);if(rw&&rw.length===ay.length){const tot=ay.reduce((x,y)=>x+y,0),rs=rw.reduce((x,y)=>x+y,0);if(rs>0)ay=ay.map((x,i)=>.25*x+.75*Math.max(rw[i],1)*tot/rs)}}
    if(pre===2)items.push(14);if(pre>=1&&n!==1&&n!==9)items.push(19);const np=items.length;const all=[...items,...ay];
    let r=alignEnv(env,all);if(!r||r.snap<.6){const r2=alignEnv(env,all,{thr:.2});if(r2&&(!r||r2.snap>r.snap))r=r2}
    if(!r){log.push('✗ سورة '+n+': تعذّر التحليل (الصوت غير واضح؟)');continue}
    const st=[];for(let a=1;a<=ay.length;a++){let v=Math.round(r.bd[np+a-1]*20);if(a===1&&np===0)v=0;if(st.length&&v<=st[st.length-1])v=st[st.length-1]+20;st.push(v)}
    st.push(Math.max(Math.round(dur*1000),st[st.length-1]+20));m.t[n]=st;tgFiles[k][n]=fb;
-   log.push((r.snap>=.8?'✓':'⚠')+' سورة '+n+': '+ay.length+' آية'+(r.snap<.8?' (دقة أقل — راجعها بزرار تجربة)':''))}
+   const sc=(r.l1-r.f0)/all.reduce((x,y)=>x+y,0),sus=[];for(let a=1;a<=ay.length;a++){const len=r.bd[np+a]-r.bd[np+a-1],ex=ay[a-1]*sc;if(len<ex*.4||len>ex*2.5)sus.push(a)}
+   (tgSus[k]=tgSus[k]||{})[n]=sus;const warn=r.snap<.8||sus.length;log.push((warn?'⚠':'✓')+' سورة '+n+': '+ay.length+' آية'+(sus.length?' — راجع الآيات: '+sus.slice(0,12).join('، ')+(sus.length>12?'…':'')+' (طولها غير متوقع، يمكن وقفة في نص الآية أو إعادة)':r.snap<.8?' (دقة أقل — راجعها بزرار المراجعة)':''))}
   catch(e){log.push('✗ سورة '+n+': الملف مش مقروء')}
   await new Promise(r=>setTimeout(r))}
  if(bad.length)log.push('تخطّيت (مفيش رقم سورة في الاسم): '+bad.map(x=>x.f.name).join('، '));
  res.innerHTML='';res.className='res';res.textContent='خلصت. '+log.length+' نتيجة:\n'+log.join('\n')+'\nاضغط «حفظ» تحت عشان التوقيتات تتثبت، وبعدها نزّل reciters.json وارفعه.';
  $('#tgs'+k).textContent=tgStat(m);
- const lst=document.createElement('div');lst.className='tgl';Object.keys(tgFiles[k]).forEach(n=>{const b=document.createElement('button');b.textContent='تجربة سورة '+n;b.dataset.a='tgp';b.dataset.k=k;b.dataset.n=n;lst.appendChild(b)});res.parentNode.appendChild(lst)}
-const tgFiles={};
+ const lst=document.createElement('div');lst.className='tgl rv';Object.keys(tgFiles[k]).forEach(n=>{const b=document.createElement('button');b.textContent='مراجعة سورة '+n;b.dataset.a='tgv';b.dataset.k=k;b.dataset.n=n;lst.appendChild(b)});res.parentNode.querySelectorAll('.rv').forEach(x=>x.remove());res.parentNode.appendChild(lst);if(!$('#tgv'+k)){const d=document.createElement('div');d.className='tv';d.id='tgv'+k;res.parentNode.appendChild(d)}}
+const tgFiles={},tgSus={};
+let RDX=null;
+async function refList(){if(RDX)return RDX;
+ const [rd,rc]=await Promise.all([fetch('https://mp3quran.net/api/v3/ayat_timing/reads').then(r=>r.json()),fetch('https://mp3quran.net/api/v3/reciters?language=ar').then(r=>r.json())]);
+ const un=u=>String(u||'').replace(/^https?:\/\//i,'').replace(/\/+$/,'').toLowerCase(),L=Array.isArray(rd)?rd:(rd.reads||rd.data||[]),mp=new Map();L.forEach(x=>{if(x&&x.folder_url&&x.id!=null)mp.set(un(x.folder_url),x.id)});
+ const o=[];(rc.reciters||[]).forEach(r=>(r.moshaf||[]).forEach(m=>{const id=mp.get(un(m.server));if(id)o.push({id,n:r.name+' — '+m.name})}));RDX=o;return o}
+const RTM={};
+async function refW(id,n){const k=id+'|'+n;if(!RTM[k])RTM[k]=fetch(`https://mp3quran.net/api/v3/ayat_timing?surah=${n}&read=${id}`).then(r=>r.json()).then(j=>{const l=(Array.isArray(j)?j:(j.ayat||j.data||[])).map(x=>({a:+x.ayah,s:+x.start_time,e:+x.end_time})).filter(x=>x.a>0&&isFinite(x.s)&&isFinite(x.e)).sort((x,y)=>x.a-y.a);if(!l.length)return null;return l.map((x,i)=>i<l.length-1?l[i+1].s-x.s:x.e-x.s)}).catch(()=>null);return RTM[k]}
+const fmt=ms=>{const s=ms/1000,m=Math.floor(s/60);return m+':'+(s-m*60).toFixed(1).padStart(4,'0')};
+function tgReview(k,n){
+ const f=tgFiles[k]&&tgFiles[k][n],m=edit.ms[k],t=m.t[n],box=$('#tgv'+k);if(!f||!t)return;
+ const sus=new Set((tgSus[k]||{})[n]||[]);
+ box.innerHTML=`<b>مراجعة سورة ${n}</b><p class="mu" style="margin:0 0 6px">شغّل الصوت: الآية الحالية بتتلوّن. لو سمعت إن آية بدأت في وقت غير اللي مكتوب، اضغط «ضبط هنا» لحظة ما تبدأ بالظبط، أو استخدم أزرار التقديم/التأخير. الآيات اللي عليها ⚠ مشكوك فيها.</p><audio controls src="${URL.createObjectURL(f)}"></audio><div class="tvr" id="tvr${k}"></div>`;
+ const au=box.querySelector('audio'),rows=box.querySelector('.tvr');
+ const draw=()=>{rows.innerHTML=t.slice(0,-1).map((v,i)=>`<div class="tr${sus.has(i+1)?' sus':''}" data-i="${i}"><b>آية ${i+1}<small>${fmt(v)}</small></b><button data-i="${i}" data-w="p">▶</button><button dir="ltr" data-i="${i}" data-w="-500">−.5</button><button dir="ltr" data-i="${i}" data-w="-100">−.1</button><button dir="ltr" data-i="${i}" data-w="100">+.1</button><button dir="ltr" data-i="${i}" data-w="500">+.5</button><button data-i="${i}" data-w="h" class="acc">ضبط هنا</button></div>`).join('')};
+ draw();
+ const set=(i,v)=>{v=Math.round(v);const lo=i?t[i-1]+50:0,hi=t[i+1]-50;if(v<lo||v>hi){toast('الوقت لازم يكون بين الآية اللي قبلها واللي بعدها');return}t[i]=v;sus.delete(i+1);const y=rows.scrollTop;draw();rows.scrollTop=y;mark()};
+ rows.onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i,w=b.dataset.w;
+  if(w==='p'){au.currentTime=Math.max(0,t[i]/1000-.4);au.play();return}
+  if(w==='h'){set(i,au.currentTime*1000);return}
+  set(i,t[i]+(+w))};
+ au.ontimeupdate=()=>{const ms=au.currentTime*1000;let c=-1;for(let i=0;i<t.length-1;i++){if(t[i]<=ms)c=i;else break}
+  rows.querySelectorAll('.tr').forEach((r,i)=>r.classList.toggle('on',i===c));const r=rows.children[c];if(r&&!au.paused){const top=r.offsetTop-rows.offsetTop;if(top<rows.scrollTop||top>rows.scrollTop+rows.clientHeight-40)rows.scrollTop=top-60}};
+ box.scrollIntoView({block:'nearest'})}
 function tgPlay(k,n){const f=tgFiles[k]&&tgFiles[k][n],t=edit.ms[k].t[n];if(!f)return;if(tga){tga.pause();URL.revokeObjectURL(tga.src)}tga=new Audio(URL.createObjectURL(f));const ay=Math.min(3,t.length-1);tga.currentTime=t[ay-1]/1000;tga.play();toast('يشغّل من بداية الآية '+ay+' — لازم تسمعها تبدأ بالظبط')}
 function drawForm(){
  $('#app').innerHTML=`<div class="card"><label class="lb" style="margin-top:0">اسم الشيخ</label><input class="inp" id="fname" value="${E(edit.name)}">`+edit.ms.map(moBlock).join('')+
@@ -265,6 +365,48 @@ function emRead(final){
    rx.push({id:old.id||D.next++,name:nm||'مرتل',files:p.files})}
   else if(!final)rx.push({id:old.id||D.next++,name:nm,files:{}})}
  D.rx[em]=rx;return true}
+/* ---- visitors: the same numbers Vercel Web Analytics shows, read through Vercel's official API (the token never leaves this browser) ---- */
+const VC=()=>{try{return JSON.parse(localStorage.getItem('adm-vc')||'null')||{}}catch(e){return{}}};
+let vr=30,vd=null,vs='';
+const nf=n=>Number(n||0).toLocaleString('en');
+const ymd=d=>d.toISOString().slice(0,10);
+function vq(c,path,q){const u=new URL('https://api.vercel.com/v1/query/web-analytics/'+path);u.searchParams.set('projectId',c.p);if(c.m)u.searchParams.set(/^team_/.test(c.m)?'teamId':'slug',c.m);for(const k in q)u.searchParams.set(k,q[k]);
+ return fetch(u,{headers:{Authorization:'Bearer '+c.t}}).then(async r=>{if(!r.ok){let m='';try{const j=await r.json();m=(j.error&&j.error.message)||''}catch(e){}throw new Error(r.status+(m?' — '+m:''))}return r.json()})}
+async function loadVis(){
+ const c=VC();if(!c.t||!c.p){drawVis();return}
+ vd=null;vs='loading';if(tab===4)drawVis();
+ try{const now=new Date(),b={since:ymd(new Date(now-(vr-1)*864e5)),until:ymd(now)};
+  const g=(by)=>vq(c,'visits/aggregate',{...b,by,limit:8});
+  const [day,tot,co,dv,pg,rf]=await Promise.all([vq(c,'visits/aggregate',{...b,by:'day'}),vq(c,'visits/aggregate',b).catch(()=>null),g('country'),g('deviceType'),g('requestPath'),g('referrerHostname')]);
+  vd={b,day:day.data||[],tot:tot&&tot.data,co:co.data||[],dv:dv.data||[],pg:pg.data||[],rf:rf.data||[],at:new Date()};vs='ok'}
+ catch(e){vs='err:'+(e instanceof TypeError?'cors':e.message)}
+ if(tab===4)drawVis()}
+function drawVis(){
+ const c=VC(),A=$('#app');
+ const cfg=`<div class="card"><h3>ربط Vercel</h3><p class="mu" style="margin:6px 0 12px">الأرقام دي نفس اللي في لوحة Vercel، بتتقرا من الـ API الرسمي. الإعدادات بتتحفظ في متصفحك بس، وبتروح لـ Vercel مباشرة ومتتحطش في ملف reciters.json ولا بتترفع على GitHub.</p>
+  <label class="lb" style="margin-top:0">Token (من vercel.com/account/tokens ← Create)</label><input class="inp ltr" id="vct" type="password" autocomplete="off" value="${E(c.t||'')}">
+  <label class="lb">رقم المشروع Project ID (من المشروع ← Settings ← General)</label><input class="inp ltr" id="vcp" placeholder="prj_…" value="${E(c.p||'')}">
+  <label class="lb">Team ID أو الـslug (لو المشروع تحت فريق، وإلا سيبه فاضي)</label><input class="inp ltr" id="vcm" placeholder="team_… أو slug" value="${E(c.m||'')}">
+  <div class="bar" style="margin:4px 0 0"><button class="acc" data-a="vsave">حفظ وعرض الإحصائيات</button>${c.t?'<button data-a="vclr">مسح الإعدادات</button>':''}</div></div>`;
+ if(!c.t||!c.p){A.innerHTML=cfg;return}
+ const rg=[[1,'اليوم'],[7,'7 أيام'],[30,'30 يوم']].map(x=>`<button data-a="vr" data-r="${x[0]}"${vr===x[0]?' class="on"':''}>${x[1]}</button>`).join('');
+ const hd=`<div class="vh"><div class="seg" style="margin:0">${rg}</div><button data-a="vref">تحديث</button></div>`;
+ if(vs==='loading'||(!vd&&!vs.startsWith('err'))){A.innerHTML=hd+'<p class="mu c" style="margin-top:36px">جارٍ التحميل…</p>';return}
+ if(vs.startsWith('err')){const m=vs.slice(4);A.innerHTML=hd+`<div class="card"><h3 class="acc">تعذّر تحميل الأرقام</h3><p class="mu" style="margin:8px 0 0;line-height:1.9">${m==='cors'?'المتصفح منع الاتصال بـ Vercel من الصفحة دي (أو مفيش إنترنت). لو إنترنتك شغال يبقى لازم وسيط صغير، قولي وأعمله.':'Vercel رد بـ: <b dir="ltr">'+E(m)+'</b><br>راجع الـ Token ورقم المشروع (ولو تحت فريق راجع الـ Team ID).'}</p></div>`+cfg;return}
+ const D0=vd,dm={};D0.day.forEach(r=>{dm[String(r.timestamp||'').slice(0,10)]=r});
+ const days=[];for(let i=vr-1;i>=0;i--){const k=ymd(new Date(Date.now()-i*864e5)),r=dm[k]||{};days.push({k,v:+r.visitors||0,p:+r.pageviews||0})}
+ const sv=days.reduce((a,x)=>a+x.v,0),sp=days.reduce((a,x)=>a+x.p,0);
+ let tt=D0.tot;if(Array.isArray(tt))tt=tt[0];const tv=tt&&tt.visitors!=null?+tt.visitors:sv,tp=tt&&tt.pageviews!=null?+tt.pageviews:sp;
+ const mx=Math.max(1,...days.map(x=>x.v));
+ const bars=`<div class="vbars">${days.map(x=>`<i style="height:${Math.max(2,Math.round(x.v/mx*100))}%" title="${x.k}: ${x.v} زائر"></i>`).join('')}</div><div class="vax"><span>${days[0].k}</span><span>${days[days.length-1].k}</span></div>`;
+ let rn=null;try{rn=new Intl.DisplayNames(['ar'],{type:'region'})}catch(e){}
+ const dvn={mobile:'موبايل',desktop:'كمبيوتر',tablet:'تابلت'};
+ const lst=(t,rows,dim,fmt)=>{const L=rows.map(r=>({k:fmt(r[dim]),v:+r.visitors||0})).filter(x=>x.v>0),m=Math.max(1,...L.map(x=>x.v));
+  return `<div class="card"><h3>${t}</h3>${L.length?L.map(x=>`<div class="vl"><span>${E(x.k)}</span><b>${nf(x.v)}</b><i style="width:${Math.round(x.v/m*100)}%"></i></div>`).join(''):'<p class="mu" style="margin:8px 0 0">لسه مفيش بيانات</p>'}</div>`};
+ A.innerHTML=hd+`<div class="vk"><div class="card"><span class="mu">الزوار</span><b class="vn">${nf(tv)}</b></div><div class="card"><span class="mu">مرات فتح الصفحات</span><b class="vn">${nf(tp)}</b></div></div>
+ <div class="card"><h3>الزوار يوميًا</h3>${bars}</div>
+ <div class="vg">${lst('الدول',D0.co,'country',k=>k?(rn?rn.of(k)||k:k):'غير معروف')}${lst('الأجهزة',D0.dv,'deviceType',k=>dvn[String(k).toLowerCase()]||k||'غير معروف')}${lst('أكتر الصفحات',D0.pg,'requestPath',k=>k||'/')}${lst('مصادر الزيارات',D0.rf,'referrerHostname',k=>k||'مباشر')}</div>
+ <p class="mu c" style="margin:6px 0 0">آخر تحديث ${D0.at.toLocaleTimeString('ar-EG')} · المدى حسب خطة Vercel عندك</p>`}
 function drawRadio(){
  const L=D.radios||RDEF;
  $('#app').innerHTML=`<div class="card"><h3>الإذاعات (بث مباشر)</h3><p class="mu" style="margin:6px 0 0">دي الإذاعات اللي بتظهر في التطبيق (فوقها بتتضاف تلقائيًا إذاعات القراء من mp3quran). أضف إذاعة من أي دولة بالاسم والدولة ورابط البث https. لو إذاعة وقفت امسحها أو غيّر رابطها.</p></div>`+L.map((x,i)=>`<div class="card" data-i="${i}"><label class="lb" style="margin-top:0">الاسم</label><input class="inp" data-rx="name" value="${E(x.name)}"><label class="lb">الدولة</label><input class="inp" data-rx="country" value="${E(x.country||'')}"><label class="lb">رابط البث (https)</label><input class="inp ltr" data-rx="url" value="${E(x.url)}"><div class="bar" style="margin:0"><button data-a="rtest" data-i="${i}">تجربة</button><button data-a="rdel" data-i="${i}">حذف</button></div><div class="res"></div></div>`).join('')+`<button data-a="radd" style="width:100%;margin-bottom:12px">+ إضافة إذاعة</button><div class="bar"><button class="acc" data-a="rsave">حفظ</button><button data-a="rdef">رجوع للقائمة الافتراضية</button></div>`}
@@ -282,6 +424,11 @@ function save(){
 document.addEventListener('click',async e=>{
  const t=e.target.closest('button');if(!t)return;const a=t.dataset.a,i=+t.dataset.i;
  if(t.id==='t1'){tab=1;draw();return}if(t.id==='t2'){tab=2;edit=null;em=0;draw();return}if(t.id==='t3'){tab=3;edit=null;draw();return}
+ if(t.id==='t4'){tab=4;edit=null;em=0;draw();if(VC().t&&!vd&&vs!=='loading')loadVis();return}
+ if(a==='vsave'){const c={t:$('#vct').value.trim(),p:$('#vcp').value.trim(),m:$('#vcm').value.trim()};if(!c.t||!c.p){toast('اكتب الـ Token ورقم المشروع');return}try{localStorage.setItem('adm-vc',JSON.stringify(c))}catch(x){toast('المتصفح مش بيسمح بحفظ الإعدادات');return}loadVis();return}
+ if(a==='vclr'){try{localStorage.removeItem('adm-vc')}catch(x){}vd=null;vs='';draw();return}
+ if(a==='vref'){loadVis();return}
+ if(a==='vr'){vr=+t.dataset.r;loadVis();return}
  if(t.id==='imp'){$('#fi').click();return}
  if(t.id==='dl'||t.id==='dl2'){const b=new Blob([out()],{type:'application/json'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='reciters.json';l.click();setTimeout(()=>URL.revokeObjectURL(l.href),2e3);dirty=false;try{localStorage.removeItem('adm-draft')}catch(x){}draw();toast('اترفع الملف؟ ارفعه على GitHub مكان القديم');return}
  if(t.id==='cp'){try{await navigator.clipboard.writeText(out());toast('تم النسخ — الصقه في GitHub')}catch(x){toast('تعذر النسخ، استخدم التحميل')}return}
@@ -299,7 +446,8 @@ document.addEventListener('click',async e=>{
  if(a==='tgl'){readForm();const m=edit.ms[+t.dataset.k];const r=m.links&&m.links.trim()?parseLinks(m.links):{};if(!r.files){toast('اكتب روابط السور الأول (تحت)');return}tgRun(+t.dataset.k,[],r.files);return}
  if(a==='tgo'){document.querySelector('input[data-tgf="'+t.dataset.k+'"]').click();return}
  if(a==='tgx'){readForm();delete edit.ms[+t.dataset.k].t;draw();return}
- if(a==='tgp'){tgPlay(+t.dataset.k,+t.dataset.n);return}
+ if(a==='tgv'){tgReview(+t.dataset.k,+t.dataset.n);return}
+ if(a==='tgq'){const k=+t.dataset.k,s=$('#tgq'+k);t.disabled=true;t.textContent='جارٍ التحميل…';try{(await refList()).sort((x,y)=>x.n.localeCompare(y.n,'ar')).forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.n;s.appendChild(o)});t.remove()}catch(x){t.disabled=false;t.textContent='تحميل قراء المرجع';toast('تعذر التحميل — تحقق من الإنترنت')}return}
  if(a==='rss'){const q=$('#rss'+t.dataset.k);q.hidden=!q.hidden;return}
  if(a==='rssfile'){document.querySelector('input[data-rf="'+t.dataset.k+'"]').click();return}
  if(a==='rssgo'){rssConvert(+t.dataset.k);return}
