@@ -546,12 +546,12 @@ function tfClose(){tfTok++;msA=0;$('#ms').classList.remove('tfo');$$('#mb .ay.se
 /* live tafsir window: follows the ayah being recited. Only for reciters whose files have mp3quran ayah timings */
 let RD=null,WR=0,wnOn=0,wnPin=0,wnA=0,wnN=0,wnKey='';const TM={};
 const nu=u=>String(u||'').replace(/^https?:\/\//i,'').replace(/\/+$/,'').toLowerCase();
-function readsGet(){return RD||(RD=fetch('https://mp3quran.net/api/v3/ayat_timing/reads').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const l=Array.isArray(j)?j:(j.reads||j.data||[]),m=new Map();l.forEach(x=>{if(x&&x.folder_url&&x.id!=null)m.set(nu(x.folder_url),x.id)});return m}).catch(e=>{RD=null;throw e}))}
+function readsGet(){return RD||(RD=fetch('https://www.mp3quran.net/api/v3/ayat_timing/reads').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const l=Array.isArray(j)?j:(j.reads||j.data||[]),m=new Map();l.forEach(x=>{if(x&&x.folder_url&&x.id!=null)m.set(nu(x.folder_url),x.id)});return m}).catch(e=>{RD=null;throw e}))}
 const CT={};
 async function readFor(m){if(m&&m.t){CT['c'+m.id]=m.t;return 'c'+m.id}try{return(await readsGet()).get(nu(m&&m.server))||0}catch(e){return 0}}
 function tmGet(rd,n){const k=rd+'|'+n;
  if(String(rd)[0]==='c'){const t=(CT[rd]||{})[n];if(!t||t.length<3)return Promise.reject(0);const l=[];for(let i=0;i<t.length-1;i++)l.push({a:i+1,s:t[i],e:t[i+1]});return Promise.resolve(l)}
- return TM[k]||(TM[k]=fetch(`https://mp3quran.net/api/v3/ayat_timing?surah=${n}&read=${rd}`).then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const l=(Array.isArray(j)?j:(j.ayat||j.data||[])).map(x=>({a:+x.ayah,s:+x.start_time,e:+x.end_time})).filter(x=>x.a>0&&isFinite(x.s)&&isFinite(x.e)).sort((x,y)=>x.s-y.s);if(!l.length)throw 0;return l}).catch(e=>{delete TM[k];throw e}))}
+ return TM[k]||(TM[k]=fetch(`https://www.mp3quran.net/api/v3/ayat_timing?surah=${n}&read=${rd}`).then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const l=(Array.isArray(j)?j:(j.ayat||j.data||[])).map(x=>({a:+x.ayah,s:+x.start_time,e:+x.end_time})).filter(x=>x.a>0&&isFinite(x.s)&&isFinite(x.e)).sort((x,y)=>x.s-y.s);if(!l.length)throw 0;return l}).catch(e=>{delete TM[k];throw e}))}
 /* unit is not documented (looks like ms): detect it from the audio length, and refuse timings that don't fit the file */
 function tmFactor(l){const d=a.duration;if(!isFinite(d)||d<=0)return 0;const last=l[l.length-1].e,f=last/d>50?1e3:1,r=last/f/d;return(r>1.25||r<.6)?-1:f}
 function tmAt(l,f,t){t*=f;let r=0;for(const x of l){if(t>=x.s)r=x.a;else break}return r}
@@ -634,7 +634,10 @@ if('serviceWorker' in navigator){
    (J.hidden||[]).forEach(x=>out.h.add(+x));out.d=+J.default||0}catch(e){}
   return out}
  const jp=fetch('reciters.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
- let api=[];try{api=((await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(e){}
+ let api=[];
+ for(const u of['https://www.mp3quran.net/api/v3/reciters?language=ar','https://mp3quran.net/api/v3/reciters?language=ar']){
+  try{const rs=await fetch(u);if(!rs.ok)continue;const l=((await rs.json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length);if(l.length){api=l;try{localStorage.setItem('q_rc',JSON.stringify(l))}catch(e){}break}}catch(e){}}
+ if(!api.length){try{api=JSON.parse(localStorage.getItem('q_rc')||'[]')}catch(e){}if(api.length)toast('تعذّر تحديث قائمة القراء — تم استخدام النسخة المحفوظة')}
  const J0=await jp,cx=custom(J0);api=ovr(api,J0);try{const L=(J0&&J0.radios||[]).filter(x=>x&&x.name&&/^https:\/\/\S+$/.test(x.url||'')).map(x=>({n:String(x.name),c:String(x.country||''),u:x.url}));if(Array.isArray(J0&&J0.radios))RDS=L}catch(e){}R=api.filter(r=>!cx.h.has(r.id));
  /* owner-added reciters are slotted in alphabetically among the mp3quran ones (not pinned on top or bottom) */
  for(const c of cx.x){const k=nz(c.name).trim();let i=R.findIndex(r=>nz(r.name).trim().localeCompare(k,'ar')>0);R.splice(i<0?R.length:i,0,c)}
