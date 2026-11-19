@@ -371,7 +371,7 @@ let vr=30,vd=null,vs='';
 const nf=n=>Number(n||0).toLocaleString('en');
 const ymd=d=>d.toISOString().slice(0,10);
 function vq(c,path,q){const u=new URL('https://api.vercel.com/v1/query/web-analytics/'+path);u.searchParams.set('projectId',c.p);if(c.m)u.searchParams.set(/^team_/.test(c.m)?'teamId':'slug',c.m);for(const k in q)u.searchParams.set(k,q[k]);
- return fetch(u,{headers:{Authorization:'Bearer '+c.t}}).then(async r=>{if(!r.ok){let m='';try{const j=await r.json();m=(j.error&&j.error.message)||''}catch(e){}throw new Error(r.status+(m?' — '+m:''))}return r.json()})}
+ return fetch(u,{headers:{Authorization:'Bearer '+c.t},signal:AbortSignal.timeout(30000)}).then(async r=>{if(!r.ok){let m='';try{const j=await r.json();m=(j.error&&j.error.message)||''}catch(e){}throw new Error(r.status+(m?' — '+m:''))}return r.json()})}
 async function loadVis(){
  const c=VC();if(!c.t||!c.p){drawVis();return}
  vd=null;vs='loading';if(tab===4)drawVis();
@@ -383,8 +383,8 @@ async function loadVis(){
   const ok=i=>rs[i].status==='fulfilled'?(rs[i].value.data||[]):[];
   if(rs[0].status==='rejected'&&rs[2].status==='rejected')throw rs[0].reason;
   vd={b,day:ok(0),tot:rs[1].status==='fulfilled'?rs[1].value.data:null,co:ok(2),dv:ok(3),pg:ok(4),rf:ok(5),at:new Date(),bad};vs='ok'}
- catch(e){vs='err:'+(e instanceof TypeError?'cors':e.message)}
- if(tab===4)drawVis()}
+ catch(e){vs='err:'+(e.name==='TimeoutError'?'Vercel took too long to answer (30s)':e instanceof TypeError?'cors':e.message)}
+ if(tab===4)try{drawVis()}catch(e){$('#app').innerHTML='<div class="card"><h3 class="acc">حصل خطأ في عرض الأرقام</h3><p class="mu" dir="ltr" style="margin:8px 0 0;text-align:left">'+E(e.message)+'</p></div>'}}
 function drawVis(){
  const c=VC(),A=$('#app');
  const cfg=`<div class="card"><h3>ربط Vercel</h3><p class="mu" style="margin:6px 0 12px">الأرقام دي نفس اللي في لوحة Vercel، بتتقرا من الـ API الرسمي. الإعدادات بتتحفظ في متصفحك بس، وبتروح لـ Vercel مباشرة ومتتحطش في ملف reciters.json ولا بتترفع على GitHub.</p>
@@ -404,12 +404,12 @@ function drawVis(){
  const mx=Math.max(1,...days.map(x=>x.v));
  const bars=`<div class="vbars">${days.map(x=>`<i style="height:${Math.max(2,Math.round(x.v/mx*100))}%" title="${x.k}: ${x.v} زائر"></i>`).join('')}</div><div class="vax"><span>${days[0].k}</span><span>${days[days.length-1].k}</span></div>`;
  let rn=null;try{rn=new Intl.DisplayNames(['ar'],{type:'region'})}catch(e){}
- const dvn={mobile:'موبايل',desktop:'كمبيوتر',tablet:'تابلت'};
+ const dvn={mobile:'موبايل',desktop:'كمبيوتر',tablet:'تابلت',others:'أخرى'};
  const lst=(t,rows,dim,fmt)=>{const L=rows.map(r=>({k:fmt(r[dim]),v:+r.visitors||0})).filter(x=>x.v>0),m=Math.max(1,...L.map(x=>x.v));
   return `<div class="card"><h3>${t}</h3>${L.length?L.map(x=>`<div class="vl"><span>${E(x.k)}</span><b>${nf(x.v)}</b><i style="width:${Math.round(x.v/m*100)}%"></i></div>`).join(''):'<p class="mu" style="margin:8px 0 0">لسه مفيش بيانات</p>'}</div>`};
  A.innerHTML=hd+`<div class="vk"><div class="card"><span class="mu">الزوار</span><b class="vn">${nf(tv)}</b></div><div class="card"><span class="mu">مرات فتح الصفحات</span><b class="vn">${nf(tp)}</b></div></div>
  <div class="card"><h3>الزوار يوميًا</h3>${bars}</div>
- <div class="vg">${lst('الدول',D0.co,'country',k=>k?(rn?rn.of(k)||k:k):'غير معروف')}${lst('الأجهزة',D0.dv,'deviceType',k=>dvn[String(k).toLowerCase()]||k||'غير معروف')}${lst('أكتر الصفحات',D0.pg,'requestPath',k=>k||'/')}${lst('مصادر الزيارات',D0.rf,'referrerHostname',k=>k||'مباشر')}</div>
+ <div class="vg">${lst('الدول',D0.co,'country',k=>{if(!k)return 'غير معروف';if(k==='Others')return 'أخرى';try{return rn?rn.of(k)||k:k}catch(e){return k}})}${lst('الأجهزة',D0.dv,'deviceType',k=>dvn[String(k).toLowerCase()]||k||'غير معروف')}${lst('أكتر الصفحات',D0.pg,'requestPath',k=>k||'/')}${lst('مصادر الزيارات',D0.rf,'referrerHostname',k=>k||'مباشر')}</div>
  ${D0.bad&&D0.bad.length?`<div class="card"><h3 class="acc">جزء من الأرقام ما اتحمّلش</h3><p class="mu" dir="ltr" style="margin:8px 0 0;line-height:1.9;text-align:left">${D0.bad.map(E).join('<br>')}</p></div>`:''}<p class="mu c" style="margin:6px 0 0">آخر تحديث ${D0.at.toLocaleTimeString('ar-EG')} · المدى حسب خطة Vercel عندك</p>`}
 function drawRadio(){
  const L=D.radios||RDEF;
