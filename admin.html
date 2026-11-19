@@ -298,11 +298,11 @@ async function tgRun(k,files,links){
 const tgFiles={},tgSus={};
 let RDX=null;
 async function refList(){if(RDX)return RDX;
- const [rd,rc]=await Promise.all([fetch('https://mp3quran.net/api/v3/ayat_timing/reads').then(r=>r.json()),fetch('https://mp3quran.net/api/v3/reciters?language=ar').then(r=>r.json())]);
+ const [rd,rc]=await Promise.all([fetch('https://www.mp3quran.net/api/v3/ayat_timing/reads').then(r=>r.json()),fetch('https://www.mp3quran.net/api/v3/reciters?language=ar').then(r=>r.json())]);
  const un=u=>String(u||'').replace(/^https?:\/\//i,'').replace(/\/+$/,'').toLowerCase(),L=Array.isArray(rd)?rd:(rd.reads||rd.data||[]),mp=new Map();L.forEach(x=>{if(x&&x.folder_url&&x.id!=null)mp.set(un(x.folder_url),x.id)});
  const o=[];(rc.reciters||[]).forEach(r=>(r.moshaf||[]).forEach(m=>{const id=mp.get(un(m.server));if(id)o.push({id,n:r.name+' — '+m.name})}));RDX=o;return o}
 const RTM={};
-async function refW(id,n){const k=id+'|'+n;if(!RTM[k])RTM[k]=fetch(`https://mp3quran.net/api/v3/ayat_timing?surah=${n}&read=${id}`).then(r=>r.json()).then(j=>{const l=(Array.isArray(j)?j:(j.ayat||j.data||[])).map(x=>({a:+x.ayah,s:+x.start_time,e:+x.end_time})).filter(x=>x.a>0&&isFinite(x.s)&&isFinite(x.e)).sort((x,y)=>x.a-y.a);if(!l.length)return null;return l.map((x,i)=>i<l.length-1?l[i+1].s-x.s:x.e-x.s)}).catch(()=>null);return RTM[k]}
+async function refW(id,n){const k=id+'|'+n;if(!RTM[k])RTM[k]=fetch(`https://www.mp3quran.net/api/v3/ayat_timing?surah=${n}&read=${id}`).then(r=>r.json()).then(j=>{const l=(Array.isArray(j)?j:(j.ayat||j.data||[])).map(x=>({a:+x.ayah,s:+x.start_time,e:+x.end_time})).filter(x=>x.a>0&&isFinite(x.s)&&isFinite(x.e)).sort((x,y)=>x.a-y.a);if(!l.length)return null;return l.map((x,i)=>i<l.length-1?l[i+1].s-x.s:x.e-x.s)}).catch(()=>null);return RTM[k]}
 const fmt=ms=>{const s=ms/1000,m=Math.floor(s/60);return m+':'+(s-m*60).toFixed(1).padStart(4,'0')};
 function tgReview(k,n){
  const f=tgFiles[k]&&tgFiles[k][n],m=edit.ms[k],t=m.t[n],box=$('#tgv'+k);if(!f||!t)return;
@@ -443,7 +443,7 @@ document.addEventListener('click',async e=>{
  if(t.id==='dl'||t.id==='dl2'){const b=new Blob([out()],{type:'application/json'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='reciters.json';l.click();setTimeout(()=>URL.revokeObjectURL(l.href),2e3);dirty=false;try{localStorage.removeItem('adm-draft')}catch(x){}draw();toast('اترفع الملف؟ ارفعه على GitHub مكان القديم');return}
  if(t.id==='cp'){try{await navigator.clipboard.writeText(out());toast('تم النسخ — الصقه في GitHub')}catch(x){toast('تعذر النسخ، استخدم التحميل')}return}
  if(t.id==='add'){edit={id:0,name:'',ms:[{id:0,name:'مرتل',server:'',surahs:'',links:''}]};draw();return}
- if(t.id==='load'){t.disabled=true;t.textContent='جارٍ التحميل…';try{API=((await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(x){toast('تعذر تحميل القائمة — تحقق من الإنترنت')}draw();return}
+ if(t.id==='load'){t.disabled=true;t.textContent='جارٍ التحميل…';try{API=((await(await fetch('https://www.mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(x){toast('تعذر تحميل القائمة — تحقق من الإنترنت')}draw();return}
  if(a==='up'||a==='dn'){const j=a==='up'?i-1:i+1,L=D.reciters;[L[i],L[j]]=[L[j],L[i]];mark();draw();return}
  if(a==='df'){const r=D.reciters[i];D.default=D.default===r.id?0:r.id;mark();draw();return}
  if(a==='dfa'){D.default=D.default===i?0:i;mark();listHide();return}
