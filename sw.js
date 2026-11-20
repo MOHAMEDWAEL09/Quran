@@ -1,4 +1,4 @@
-const V='quran-v6',AUD='quran-audio',SHELL=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable.png'];
+const V='quran-v7',AUD='quran-audio',SHELL=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable.png'];
 const API=['mp3q/api','www.mp3quran.net/api','mp3quran.net/api','api.alquran.cloud','fonts.googleapis.com','fonts.gstatic.com'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL.map(u=>new Request(u,{cache:'reload'})))).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V&&x!==AUD).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
