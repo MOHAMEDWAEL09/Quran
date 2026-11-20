@@ -175,9 +175,19 @@ const W2RE=/^https?:\/\/(?:www\.)?way2quran\.com\/api\/podcast\/listen\/([^\/?#]
 const probe=u=>new Promise(r=>{const a=new Audio();let d=false;const f=v=>{if(!d){d=true;a.removeAttribute('src');r(v)}};a.preload='metadata';a.onloadedmetadata=()=>f(true);a.oncanplay=()=>f(true);a.onerror=()=>f(false);setTimeout(()=>f(false),8000);a.src=u});
 async function rssConvert(k){const x=$('#rsx'+k).value,res=$('#rsr'+k);const set=(t,c)=>{res.textContent=t;res.className='res '+(c||'')};
  if(!x.trim()){set('الصق محتوى الملف الأول','no');return}
- const it=rssItems(x);if(!it.length){set('مفيش عناصر (item) في الملف ده. تأكد إنك نسخت الملف كله.','no');return}
+ let it=rssItems(x);if(!it.length){set('مفيش عناصر (item) في الملف ده. تأكد إنك نسخت الملف كله.','no');return}
+ let rnote='';
+ {const sl=e=>{const m=String(e.u).match(W2RE);return m?m[2]:''};
+  const cnt={};it.forEach(e=>{const g=sl(e);if(g)cnt[g]=(cnt[g]||0)+1});const gs=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]);
+  const want=($('#rsf'+k)||{value:''}).value.trim();
+  if(want){if(!cnt[want]){set('مفيش رواية اسمها «'+want+'» في الملف. الموجود: '+(gs.join('، ')||'—'),'no');return}it=it.filter(e=>sl(e)===want);rnote=' الرواية: '+want+'.'}
+  else if(gs.length>1){const top=gs[0];it=it.filter(e=>sl(e)===top);rnote=' الملف فيه أكتر من رواية ('+gs.map(g=>g+' '+cnt[g]).join('، ')+')، فاستوردت «'+top+'» بس. لباقي الروايات اعمل استيراد منفصل واكتب اسمها في خانة الرواية.'}
+  /* "ما تيسر" = short excerpts, not whole surahs: leave them out so a surah never plays as a few minutes only */
+  const ex=it.filter(e=>/ما\s*تيسر/.test(e.t||'')),keepEx=!!($('#rsm'+k)&&$('#rsm'+k).checked);
+  if(ex.length){if(keepEx)rnote+=' اتضافت '+ex.length+' مقتطف «ما تيسر» (مش سور كاملة)، وروابطها ممكن تكون بصيغة مختلفة فاختبرها.';else{it=it.filter(e=>!ex.includes(e));rnote+=' اتجاهلت '+ex.length+' مقتطف «ما تيسر» لأنها مش سور كاملة (فعّل الخيار اللي تحت لو عايزها).'}}
+  if(!it.length){set('مفيش سور كاملة في الرواية دي (كلها مقتطفات «ما تيسر»).'+rnote,'no');return}}
  let w2pad=true,w2note='';
- {const f=it.map(e=>String(e.u).match(W2RE)).find(Boolean);if(f){set('جارٍ فحص صيغة ملفات الشيخ على الموقع…');const mk=p=>'https://media.way2quran.com/'+f[1]+'/'+f[2]+'/'+(p?pad(+f[3]):String(+f[3]))+'.mp3';if(await probe(mk(true)))w2pad=true;else if(await probe(mk(false)))w2pad=false;else w2note=' ⚠ ما قدرتش أتأكد إن روابط way2quran بتشتغل — اختبر أول رابط قبل ما تكمّل.'}}
+ {const f=(it.filter(e=>!/ما\s*تيسر/.test(e.t||'')).map(e=>String(e.u).match(W2RE)).find(Boolean))||it.map(e=>String(e.u).match(W2RE)).find(Boolean);if(f){set('جارٍ فحص صيغة ملفات الشيخ على الموقع…');const mk=p=>'https://media.way2quran.com/'+f[1]+'/'+f[2]+'/'+(p?pad(+f[3]):String(+f[3]))+'.mp3';if(await probe(mk(true)))w2pad=true;else if(await probe(mk(false)))w2pad=false;else w2note=' ⚠ ما قدرتش أتأكد إن روابط way2quran بتشتغل — اختبر أول رابط قبل ما تكمّل.'}}
  const files={},dup=[],bad=[];let http=0,w2=0;
  for(const e of it){let u=e.u;if(/^http:\/\//i.test(u)){u=u.replace(/^http:/i,'https:');http++}
   {const w=u.match(W2RE);if(w){u='https://media.way2quran.com/'+w[1]+'/'+w[2]+'/'+(w2pad?pad(+w[3]):String(+w[3]))+'.mp3';w2++}}if(!/^https:\/\/\S+$/.test(u)){bad.push(e.t||'(بدون عنوان)');continue}
@@ -185,7 +195,7 @@ async function rssConvert(k){const x=$('#rsx'+k).value,res=$('#rsr'+k);const set
  const ls=Object.keys(files).map(Number).sort((a,b)=>a-b);if(!ls.length){set('معرفتش أربط ولا سورة. ابعتلي أول 5 عناوين من الملف.','no');return}
  $('textarea[data-f=links][data-k="'+k+'"]').value=ls.map(n=>n+' '+files[n]).join('\n');cnt($('textarea[data-f=links][data-k="'+k+'"]'));
  const miss=[];for(let i=1;i<=114;i++)if(!files[i])miss.push(i);
- set('✓ اتربط '+ls.length+' سورة من '+it.length+' عنصر.'+(miss.length&&miss.length<=60?' ناقص: '+range(miss)+'.':miss.length?' ناقص '+miss.length+' سورة.':'')+(dup.length?' مكرر (اتجاهل): '+range([...new Set(dup)].sort((a,b)=>a-b))+'.':'')+(bad.length?' عناوين ما اتعرفتش: '+bad.slice(0,3).join(' / ')+(bad.length>3?'…':'')+'.':'')+(http?' (روابط http اتحوّلت لـ https).':'')+(w2?' (روابط way2quran اتحوّلت لروابط الملفات المباشرة'+(w2pad?'':'، من غير أصفار قبل رقم السورة')+').':'')+w2note+' راجع الروابط تحت واختبر أول رابط.','ok')}
+ set('✓ اتربط '+ls.length+' سورة من '+it.length+' عنصر.'+(miss.length&&miss.length<=60?' ناقص: '+range(miss)+'.':miss.length?' ناقص '+miss.length+' سورة.':'')+(dup.length?' مكرر (اتجاهل): '+range([...new Set(dup)].sort((a,b)=>a-b))+'.':'')+(bad.length?' عناوين ما اتعرفتش: '+bad.slice(0,3).join(' / ')+(bad.length>3?'…':'')+'.':'')+(http?' (روابط http اتحوّلت لـ https).':'')+rnote+(w2?' (روابط way2quran اتحوّلت لروابط الملفات المباشرة'+(w2pad?'':'، من غير أصفار قبل رقم السورة')+').':'')+w2note+' راجع الروابط تحت واختبر أول رابط.','ok')}
 const filesText=m=>m.files?Object.keys(m.files).map(Number).sort((a,b)=>a-b).map(n=>n+' '+m.files[n]).join('\n'):'';
 const range=ls=>{const o=[];for(let i=0;i<ls.length;){let j=i;while(j+1<ls.length&&ls[j+1]===ls[j]+1)j++;o.push(j>i?ls[i]+'-'+ls[j]:''+ls[i]);i=j+1}return o.join('، ')};
 
@@ -230,6 +240,8 @@ function moBlock(m,k){return `<div class="mo" data-k="${k}"><label class="lb">ا
  <div class="rssp" id="rss${k}" hidden><label class="lb" style="margin-top:0">رابط ملف RSS (اختياري، لو المتصفح منع الجلب استخدم اللصق)</label><input class="inp ltr" id="rsu${k}" placeholder="https://…/feed.xml">
   <div class="bar" style="margin:0 0 10px"><button data-a="rssfetch" data-k="${k}">جلب من الرابط</button><button data-a="rssfile" data-k="${k}">اختيار ملف</button></div><input type="file" accept=".xml,.rss,text/xml,application/xml,application/rss+xml,text/plain" data-rf="${k}" hidden>
   <label class="lb">أو الصق محتوى الملف هنا (افتح الرابط في المتصفح، حدّد الكل، انسخ)</label><textarea class="inp ltr" id="rsx${k}" rows="4" placeholder="&lt;rss …&gt;"></textarea>
+  <label class="lb">الرواية (اختياري — لو الملف فيه أكتر من رواية، اكتب اسمها زي ما هي في الرابط، مثل warsh-an-nafi. لو سيبتها فاضية باخد الرواية الأكبر)</label><input class="inp ltr" id="rsf${k}" placeholder="hafs-an-asim">
+  <label style="display:flex;align-items:center;gap:10px;margin:12px 4px 4px;cursor:pointer"><input type="checkbox" id="rsm${k}" style="width:18px;height:18px;accent-color:var(--acc)"><span>إضافة مقتطفات «ما تيسر» كمان (مش سور كاملة — مقفول كبداية)</span></label>
   <button class="acc" data-a="rssgo" data-k="${k}" style="margin-bottom:6px">تحويل إلى روابط السور</button><div class="res" id="rsr${k}"></div></div>
  <label class="lb">أو: رابط مجلد منظّم (https) — الملفات 001.mp3 … 114.mp3. لو كتبت روابط فوق، ده بيتجاهل.</label><input class="inp ltr" data-f="server" placeholder="https://…/" value="${E(m.server)}">
  <label class="lb">السور المتاحة (فاضي = كل السور، أو مثال: 1-10,18,36)</label><input class="inp ltr" data-f="surahs" value="${E(m.surahs==='1-114'?'':m.surahs)}">
@@ -298,11 +310,11 @@ async function tgRun(k,files,links){
 const tgFiles={},tgSus={};
 let RDX=null;
 async function refList(){if(RDX)return RDX;
- const [rd,rc]=await Promise.all([fetch('https://www.mp3quran.net/api/v3/ayat_timing/reads').then(r=>r.json()),fetch('https://www.mp3quran.net/api/v3/reciters?language=ar').then(r=>r.json())]);
+ const [rd,rc]=await Promise.all([fetch('https://mp3quran.net/api/v3/ayat_timing/reads').then(r=>r.json()),fetch('https://mp3quran.net/api/v3/reciters?language=ar').then(r=>r.json())]);
  const un=u=>String(u||'').replace(/^https?:\/\//i,'').replace(/\/+$/,'').toLowerCase(),L=Array.isArray(rd)?rd:(rd.reads||rd.data||[]),mp=new Map();L.forEach(x=>{if(x&&x.folder_url&&x.id!=null)mp.set(un(x.folder_url),x.id)});
  const o=[];(rc.reciters||[]).forEach(r=>(r.moshaf||[]).forEach(m=>{const id=mp.get(un(m.server));if(id)o.push({id,n:r.name+' — '+m.name})}));RDX=o;return o}
 const RTM={};
-async function refW(id,n){const k=id+'|'+n;if(!RTM[k])RTM[k]=fetch(`https://www.mp3quran.net/api/v3/ayat_timing?surah=${n}&read=${id}`).then(r=>r.json()).then(j=>{const l=(Array.isArray(j)?j:(j.ayat||j.data||[])).map(x=>({a:+x.ayah,s:+x.start_time,e:+x.end_time})).filter(x=>x.a>0&&isFinite(x.s)&&isFinite(x.e)).sort((x,y)=>x.a-y.a);if(!l.length)return null;return l.map((x,i)=>i<l.length-1?l[i+1].s-x.s:x.e-x.s)}).catch(()=>null);return RTM[k]}
+async function refW(id,n){const k=id+'|'+n;if(!RTM[k])RTM[k]=fetch(`https://mp3quran.net/api/v3/ayat_timing?surah=${n}&read=${id}`).then(r=>r.json()).then(j=>{const l=(Array.isArray(j)?j:(j.ayat||j.data||[])).map(x=>({a:+x.ayah,s:+x.start_time,e:+x.end_time})).filter(x=>x.a>0&&isFinite(x.s)&&isFinite(x.e)).sort((x,y)=>x.a-y.a);if(!l.length)return null;return l.map((x,i)=>i<l.length-1?l[i+1].s-x.s:x.e-x.s)}).catch(()=>null);return RTM[k]}
 const fmt=ms=>{const s=ms/1000,m=Math.floor(s/60);return m+':'+(s-m*60).toFixed(1).padStart(4,'0')};
 function tgReview(k,n){
  const f=tgFiles[k]&&tgFiles[k][n],m=edit.ms[k],t=m.t[n],box=$('#tgv'+k);if(!f||!t)return;
@@ -443,7 +455,7 @@ document.addEventListener('click',async e=>{
  if(t.id==='dl'||t.id==='dl2'){const b=new Blob([out()],{type:'application/json'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='reciters.json';l.click();setTimeout(()=>URL.revokeObjectURL(l.href),2e3);dirty=false;try{localStorage.removeItem('adm-draft')}catch(x){}draw();toast('اترفع الملف؟ ارفعه على GitHub مكان القديم');return}
  if(t.id==='cp'){try{await navigator.clipboard.writeText(out());toast('تم النسخ — الصقه في GitHub')}catch(x){toast('تعذر النسخ، استخدم التحميل')}return}
  if(t.id==='add'){edit={id:0,name:'',ms:[{id:0,name:'مرتل',server:'',surahs:'',links:''}]};draw();return}
- if(t.id==='load'){t.disabled=true;t.textContent='جارٍ التحميل…';try{API=((await(await fetch('https://www.mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(x){toast('تعذر تحميل القائمة — تحقق من الإنترنت')}draw();return}
+ if(t.id==='load'){t.disabled=true;t.textContent='جارٍ التحميل…';try{API=((await(await fetch('https://mp3quran.net/api/v3/reciters?language=ar')).json()).reciters||[]).filter(r=>r.moshaf&&r.moshaf.length)}catch(x){toast('تعذر تحميل القائمة — تحقق من الإنترنت')}draw();return}
  if(a==='up'||a==='dn'){const j=a==='up'?i-1:i+1,L=D.reciters;[L[i],L[j]]=[L[j],L[i]];mark();draw();return}
  if(a==='df'){const r=D.reciters[i];D.default=D.default===r.id?0:r.id;mark();draw();return}
  if(a==='dfa'){D.default=D.default===i?0:i;mark();listHide();return}
