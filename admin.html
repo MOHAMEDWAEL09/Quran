@@ -184,13 +184,13 @@ async function rssConvert(k){const x=$('#rsx'+k).value,res=$('#rsr'+k);const set
   else if(gs.length>1){const top=gs[0];it=it.filter(e=>sl(e)===top);rnote=' الملف فيه أكتر من رواية ('+gs.map(g=>g+' '+cnt[g]).join('، ')+')، فاستوردت «'+top+'» بس. لباقي الروايات اعمل استيراد منفصل واكتب اسمها في خانة الرواية.'}
   /* "ما تيسر" = short excerpts, not whole surahs: leave them out so a surah never plays as a few minutes only */
   const ex=it.filter(e=>/ما\s*تيسر/.test(e.t||'')),keepEx=!!($('#rsm'+k)&&$('#rsm'+k).checked);
-  if(ex.length){if(keepEx)rnote+=' اتضافت '+ex.length+' مقتطف «ما تيسر» وهتظهر في التطبيق باسم «ما تيسر من سورة …». روابطها ممكن تكون بصيغة مختلفة فاختبرها.';else{it=it.filter(e=>!ex.includes(e));rnote+=' اتجاهلت '+ex.length+' مقتطف «ما تيسر» لأنها مش سور كاملة (فعّل الخيار اللي تحت لو عايزها).'}}
+  if(ex.length){if(keepEx)rnote+=' اتضافت '+ex.length+' مقتطف «ما تيسر» وهتظهر في التطبيق باسم «ما تيسر من سورة …». روابطها بصيغة 002-001.mp3 — اختبر واحد منها.';else{it=it.filter(e=>!ex.includes(e));rnote+=' اتجاهلت '+ex.length+' مقتطف «ما تيسر» لأنها مش سور كاملة (فعّل الخيار اللي تحت لو عايزها).'}}
   if(!it.length){set('مفيش سور كاملة في الرواية دي (كلها مقتطفات «ما تيسر»).'+rnote,'no');return}}
  let w2pad=true,w2note='';
  {const f=(it.filter(e=>!/ما\s*تيسر/.test(e.t||'')).map(e=>String(e.u).match(W2RE)).find(Boolean))||it.map(e=>String(e.u).match(W2RE)).find(Boolean);if(f){set('جارٍ فحص صيغة ملفات الشيخ على الموقع…');const mk=p=>'https://media.way2quran.com/'+f[1]+'/'+f[2]+'/'+(p?pad(+f[3]):String(+f[3]))+'.mp3';if(await probe(mk(true)))w2pad=true;else if(await probe(mk(false)))w2pad=false;else w2note=' ⚠ ما قدرتش أتأكد إن روابط way2quran بتشتغل — اختبر أول رابط قبل ما تكمّل.'}}
  const files={},dup=[],bad=[],exN=new Set();let http=0,w2=0;
  for(const e of it){let u=e.u;if(/^http:\/\//i.test(u)){u=u.replace(/^http:/i,'https:');http++}
-  {const w=u.match(W2RE);if(w){u='https://media.way2quran.com/'+w[1]+'/'+w[2]+'/'+(w2pad?pad(+w[3]):String(+w[3]))+'.mp3';w2++}}if(!/^https:\/\/\S+$/.test(u)){bad.push(e.t||'(بدون عنوان)');continue}
+  {const w=u.match(W2RE);if(w){const sn=w2pad?pad(+w[3]):String(+w[3]);/* "ما تيسر (1)" excerpts are stored as SSS-PPP.mp3 (PPP = the part number in brackets) */const xm=/ما\s*تيسر/.test(e.t||'')?String(e.t).match(/ما\s*تيسر\s*\(\s*(\d+)\s*\)/):null,ex=/ما\s*تيسر/.test(e.t||'');u='https://media.way2quran.com/'+w[1]+'/'+w[2]+'/'+sn+(ex?'-'+pad(xm?+xm[1]:1):'')+'.mp3';w2++}}if(!/^https:\/\/\S+$/.test(u)){bad.push(e.t||'(بدون عنوان)');continue}
   const n=surahOf(e.t,u);if(!n){bad.push(e.t||u);continue}if(files[n]){dup.push(n);continue}files[n]=u;if(/ما\s*تيسر/.test(e.t||''))exN.add(n)}
  const ls=Object.keys(files).map(Number).sort((a,b)=>a-b);if(!ls.length){set('معرفتش أربط ولا سورة. ابعتلي أول 5 عناوين من الملف.','no');return}
  $('textarea[data-f=links][data-k="'+k+'"]').value=ls.map(n=>n+' '+files[n]).join('\n');cnt($('textarea[data-f=links][data-k="'+k+'"]'));
