@@ -1,6 +1,6 @@
 {
  "v": 1,
- "next": 1000017,
+ "next": 1000019,
  "default": 259,
  "hidden": [],
  "reciters": [
@@ -529,6 +529,87 @@
       "113": "https://media.way2quran.com/yousef-bin-muhammad-al-saqir/hafs-an-asim/113.mp3",
       "114": "https://media.way2quran.com/yousef-bin-muhammad-al-saqir/hafs-an-asim/114.mp3"
      }
+    }
+   ]
+  },
+  {
+   "id": 1000017,
+   "name": "بلال سيف",
+   "moshaf": [
+    {
+     "id": 1000018,
+     "name": "حفص عن عاصم-مرتل",
+     "files": {
+      "2": "https://media.way2quran.com/bilal-saif/hafs-an-asim/002-001.mp3",
+      "3": "https://media.way2quran.com/bilal-saif/hafs-an-asim/003-001.mp3",
+      "4": "https://media.way2quran.com/bilal-saif/hafs-an-asim/004-001.mp3",
+      "5": "https://media.way2quran.com/bilal-saif/hafs-an-asim/005-001.mp3",
+      "6": "https://media.way2quran.com/bilal-saif/hafs-an-asim/006-001.mp3",
+      "7": "https://media.way2quran.com/bilal-saif/hafs-an-asim/007-001.mp3",
+      "11": "https://media.way2quran.com/bilal-saif/hafs-an-asim/011-001.mp3",
+      "12": "https://media.way2quran.com/bilal-saif/hafs-an-asim/012.mp3",
+      "14": "https://media.way2quran.com/bilal-saif/hafs-an-asim/014-001.mp3",
+      "15": "https://media.way2quran.com/bilal-saif/hafs-an-asim/015.mp3",
+      "17": "https://media.way2quran.com/bilal-saif/hafs-an-asim/017-001.mp3",
+      "18": "https://media.way2quran.com/bilal-saif/hafs-an-asim/018-001.mp3",
+      "19": "https://media.way2quran.com/bilal-saif/hafs-an-asim/019-001.mp3",
+      "20": "https://media.way2quran.com/bilal-saif/hafs-an-asim/020-001.mp3",
+      "21": "https://media.way2quran.com/bilal-saif/hafs-an-asim/021-001.mp3",
+      "22": "https://media.way2quran.com/bilal-saif/hafs-an-asim/022-001.mp3",
+      "23": "https://media.way2quran.com/bilal-saif/hafs-an-asim/023-001.mp3",
+      "27": "https://media.way2quran.com/bilal-saif/hafs-an-asim/027-001.mp3",
+      "28": "https://media.way2quran.com/bilal-saif/hafs-an-asim/028-001.mp3",
+      "29": "https://media.way2quran.com/bilal-saif/hafs-an-asim/029-001.mp3",
+      "33": "https://media.way2quran.com/bilal-saif/hafs-an-asim/033-001.mp3",
+      "35": "https://media.way2quran.com/bilal-saif/hafs-an-asim/035-001.mp3",
+      "36": "https://media.way2quran.com/bilal-saif/hafs-an-asim/036-001.mp3",
+      "38": "https://media.way2quran.com/bilal-saif/hafs-an-asim/038-001.mp3",
+      "39": "https://media.way2quran.com/bilal-saif/hafs-an-asim/039-001.mp3",
+      "40": "https://media.way2quran.com/bilal-saif/hafs-an-asim/040-001.mp3",
+      "41": "https://media.way2quran.com/bilal-saif/hafs-an-asim/041-001.mp3",
+      "42": "https://media.way2quran.com/bilal-saif/hafs-an-asim/042-001.mp3",
+      "45": "https://media.way2quran.com/bilal-saif/hafs-an-asim/045.mp3",
+      "49": "https://media.way2quran.com/bilal-saif/hafs-an-asim/049.mp3",
+      "53": "https://media.way2quran.com/bilal-saif/hafs-an-asim/053.mp3",
+      "58": "https://media.way2quran.com/bilal-saif/hafs-an-asim/058-001.mp3",
+      "67": "https://media.way2quran.com/bilal-saif/hafs-an-asim/067.mp3",
+      "69": "https://media.way2quran.com/bilal-saif/hafs-an-asim/069.mp3",
+      "71": "https://media.way2quran.com/bilal-saif/hafs-an-asim/071.mp3",
+      "75": "https://media.way2quran.com/bilal-saif/hafs-an-asim/075.mp3",
+      "76": "https://media.way2quran.com/bilal-saif/hafs-an-asim/076.mp3",
+      "87": "https://media.way2quran.com/bilal-saif/hafs-an-asim/087.mp3",
+      "89": "https://media.way2quran.com/bilal-saif/hafs-an-asim/089-001.mp3"
+     },
+     "ex": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      11,
+      14,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      27,
+      28,
+      29,
+      33,
+      35,
+      36,
+      38,
+      39,
+      40,
+      41,
+      42,
+      58,
+      89
+     ]
     }
    ]
   }
