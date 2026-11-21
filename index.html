@@ -129,6 +129,9 @@ button:disabled{opacity:.35;box-shadow:var(--sm);cursor:default}
 .st small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
 .dlb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 16px;margin:18px 0 6px;font-size:14px}
 .dlb.on{color:var(--acc)}
+#dlm{margin:6px 0 14px}
+#mx{align-items:center;gap:12px;margin-bottom:14px}#mx b{flex:1;font-weight:600;min-width:0}#mx small{display:block;color:var(--mut);font-weight:400;font-size:12px}
+#mx.cur .n{background:var(--acc);color:#fff;box-shadow:none}#mx.cur .n .i{color:#fff}
 #ds{margin:0 0 14px;font-size:12px}
 #toast{position:fixed;left:0;right:0;margin:auto;width:max-content;max-width:calc(100% - 40px);top:calc(env(safe-area-inset-top) + 16px);z-index:40;padding:10px 18px;border-radius:999px;background:var(--fill);color:var(--bg);font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;text-align:center}
 #toast.show{opacity:1}
@@ -145,7 +148,7 @@ body.live .ctl2{margin-bottom:auto}
 #rd .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);flex:none}
 body.playing.live #rd .dot{animation:lv 1.2s ease-in-out infinite}
 @keyframes lv{50%{opacity:.25}}
-body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live #fw,body.live #spb,body.live #mb2,body.live #tb,body.live #fv,body.live #dl,body.live #ds,body.live #wn{display:none!important}
+body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live #fw,body.live #spb,body.live #mb2,body.live #tb,body.live #fv,body.live #dl,body.live #dlm,body.live #ds,body.live #wn{display:none!important}
 @media (prefers-reduced-motion:reduce){body.live #rd .dot{animation:none!important}}
 </style>
 <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
@@ -161,6 +164,7 @@ body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live 
  <section class="v" id="v-rec" hidden>
   <h1>القراء</h1>
   <div class="card row" id="rd" data-rad="0" tabindex="0" role="button"><span class="dot"></span><b>إذاعة القرآن الكريم<small>القاهرة · بث مباشر</small></b></div>
+  <div class="card row" id="mx" tabindex="0" role="button"><span class="n" data-ic="shuf"></span><b>المصحف بأصوات مختلفة<small>كل سورة بصوت قارئ مختلف، بالترتيب</small></b></div>
   <input class="inp" id="rq" placeholder="ابحث عن قارئ…" aria-label="بحث عن قارئ">
   <div id="rl"></div>
  </section>
@@ -216,6 +220,7 @@ body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live 
  </div>
  <div class="ctl2"><button id="mb2" aria-label="نص السورة">ق</button><button id="tb" data-ic="msg" aria-label="تفسير الآية الحالية" hidden></button><span data-ic="vol" class="i2"></span><input type="range" id="vo" min="0" max="1" step=".01" aria-label="الصوت"></div>
  <button class="dlb" id="dl"></button>
+ <button class="dlb" id="dlm"></button>
  <p class="mu c" id="ds"></p>
 </section>
 
@@ -233,6 +238,7 @@ const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"
 const N='الفاتحة|البقرة|آل عمران|النساء|المائدة|الأنعام|الأعراف|الأنفال|التوبة|يونس|هود|يوسف|الرعد|إبراهيم|الحجر|النحل|الإسراء|الكهف|مريم|طه|الأنبياء|الحج|المؤمنون|النور|الفرقان|الشعراء|النمل|القصص|العنكبوت|الروم|لقمان|السجدة|الأحزاب|سبأ|فاطر|يس|الصافات|ص|الزمر|غافر|فصلت|الشورى|الزخرف|الدخان|الجاثية|الأحقاف|محمد|الفتح|الحجرات|ق|الذاريات|الطور|النجم|القمر|الرحمن|الواقعة|الحديد|المجادلة|الحشر|الممتحنة|الصف|الجمعة|المنافقون|التغابن|الطلاق|التحريم|الملك|القلم|الحاقة|المعارج|نوح|الجن|المزمل|المدثر|القيامة|الإنسان|المرسلات|النبأ|النازعات|عبس|التكوير|الانفطار|المطففين|الانشقاق|البروج|الطارق|الأعلى|الغاشية|الفجر|البلد|الشمس|الليل|الضحى|الشرح|التين|العلق|القدر|البينة|الزلزلة|العاديات|القارعة|التكاثر|العصر|الهمزة|الفيل|قريش|الماعون|الكوثر|الكافرون|النصر|المسد|الإخلاص|الفلق|الناس'.split('|');
 const fxm=(r,id)=>r&&r.moshaf&&r.moshaf.find(z=>z.id==id),sNm=(m,n)=>(m&&m.ex&&m.ex.includes(+n)?'ما تيسر من ':'')+'سورة '+N[n-1];
 const IC={list:'M4 6h16M4 12h16M4 18h10',users:'M15.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM4 21c0-3.6 3.6-5.5 8-5.5s8 1.9 8 5.5',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',disc:'M18 13a7 7 0 1 1-14 0 7 7 0 0 1 14 0zM13 13a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM21.5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM20.5 5l-5 7.5',clock:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2',sun:'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',moon:'M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z',prev:'M17 5v14M5 5l9 7-9 7z',next:'M7 5v14M19 5l-9 7 9 7z',x:'M6 6l12 12M18 6L6 18',vol:'M4 9v6h4l5 4V5L8 9zM16.5 9a4 4 0 0 1 0 6',dl:'M12 4v11M7 11l5 5 5-5M5 20h14',check:'M5 12l5 5 9-10',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',cl:'M15 6l-6 6 6 6',cr:'M9 6l6 6-6 6',msg:'M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4 4v-4H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM8 9h8M8 12h5'};
+IC.shuf='M18 4l3 3-3 3M18 20l3-3-3-3M3 7h3a5 5 0 0 1 5 5 5 5 0 0 0 5 5h5M21 7h-5a5 5 0 0 0-3 1M8 16a5 5 0 0 1-2 1H3';
 const ic=n=>`<svg class="i" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 $$('[data-ic]').forEach(e=>e.innerHTML=ic(e.dataset.ic));
 function applyTh(t){document.documentElement.dataset.theme=t;$('#th').innerHTML=ic(t==='dark'?'sun':'moon');const m=$('meta[name=theme-color]');if(m)m.content=t==='dark'?'#2b302d':'#e9e9eb'}
@@ -259,7 +265,8 @@ $('#spb').textContent='×'+S.sp;$('#vo').value=S.vol;$('#vo').style.setProperty(
 
 const avail=m=>new Set(((m&&m.surah_list)||'').split(',').map(Number));
 const key=()=>`${cur.r.id}|${cur.m.id}|${cur.n}`;
-const url=n=>{const f=cur.m.files&&cur.m.files[n];if(f&&/^https:\/\//.test(f))return f;const v=String(cur.m.server||'');return(/^https:\/\//.test(v)?v.replace(/\/?$/,'/'):'about:blank#')+String(n).padStart(3,'0')+'.mp3'};
+const urlM=(m,n)=>{const f=m.files&&m.files[n];if(f&&/^https:\/\//.test(f))return f;const v=String(m.server||'');return(/^https:\/\//.test(v)?v.replace(/\/?$/,'/'):'about:blank#')+String(n).padStart(3,'0')+'.mp3'};
+const url=n=>urlM(cur.m,n);
 
 function setReciter(r,mid){if(!r)return;br.r=r;br.m=r.moshaf.find(m=>m.id==mid)||r.moshaf[0];if(!a.src){cur.r=br.r;cur.m=br.m;S.r=r.id;S.m=br.m.id;save()}ui()}
 const AUD='quran-audio';
@@ -290,6 +297,7 @@ function stHTML(){const s=stats(),t=s.top,r=t&&R.find(x=>x.id==t[0]);
 /* playback (resumes from saved position unless fresh) */
 function play(n,fresh,same){
  if(!(same?cur.m:br.m))return;
+ if(MX&&!MXI){MX=null;mxUI()}
  if(LV){LV=null;document.body.classList.remove('live');$('#rs').hidden=true;if(same&&!cur.m)return}
  savePos();
  if(!same){cur.r=br.r;cur.m=br.m}
@@ -307,7 +315,7 @@ async function localSrc(k,u){
  try{const r=await(await caches.open(AUD)).match(u);if(r)return URL.createObjectURL(await r.blob())}catch(e){}
  delete S.dl[k];save();dlUI();return u}
 const tog=()=>{if(LV){if(a.paused){a.src=LV.url;a.play().catch(()=>{})}else a.pause();return}if(!cur.m)return;if(!a.src)play(cur.n);else a.paused?a.play():a.pause()};
-function step(d){if(LV)return false;const av=[...avail(cur.m)].sort((x,y)=>x-y).filter(x=>d>0?x>cur.n:x<cur.n);if(!av.length)return false;play(d>0?av[0]:av[av.length-1],true,true);return true}
+function step(d){if(LV)return false;if(MX){mxGo(Math.max(1,cur.n+d));return true}const av=[...avail(cur.m)].sort((x,y)=>x-y).filter(x=>d>0?x>cur.n:x<cur.n);if(!av.length)return false;play(d>0?av[0]:av[av.length-1],true,true);return true}
 function showSaved(){
  if(a.src||!cur.m)return;const p=S.pos[key()],c=p?p[0]:0,d=p?p[1]:0;
  $('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');
@@ -320,7 +328,7 @@ function dlUI(){
  if(DJ&&DJ.k===k)h=ic('x')+`<span>جارٍ التنزيل ${DJ.txt} · إلغاء</span>`;
  else if(S.dl[k]){h=ic('check')+`<span>محمّلة · ${mb(S.dl[k].s)} · حذف</span>`;on=true}
  else h=ic('dl')+'<span>تنزيل للاستماع بدون إنترنت</span>';
- b.innerHTML=h;b.classList.toggle('on',on)}
+ b.innerHTML=h;b.classList.toggle('on',on);dlmUI()}
 async function updStorage(){
  const el=$('#ds');if(!el)return;
  let t='التنزيلات على جهازك: <bdi>'+mb(Object.values(S.dl).reduce((s,o)=>s+o.s,0))+'</bdi>';
@@ -332,7 +340,7 @@ async function dlAsk(){
  const k=key(),u=url(cur.n),nm=sNm(cur.m,cur.n);let sz=0;
  try{sz=+(await fetch(u,{method:'HEAD'})).headers.get('content-length')||0}catch(e){}
  if(sz>=30e6)menu('تنزيل '+nm+'؟',[['تنزيل ('+mb(sz)+')',()=>dlStart(k,u)],['إلغاء',()=>{}]]);else dlStart(k,u)}
-async function dlStart(k,u){
+async function dlStart(k,u,q){
  if(!window.caches){toast('المتصفح لا يدعم التنزيل');return}
  if(DJ){toast('يوجد تنزيل جارٍ بالفعل');return}
  const ctl=new AbortController();DJ={k,ctl,txt:'0%'};dlUI();
@@ -348,11 +356,67 @@ async function dlStart(k,u){
   await c.put(u,new Response(res.body.pipeThrough(ts),{headers:{'Content-Type':'audio/mpeg'}}));
   S.dl[k]={u,s:got,t:Date.now()};save();
   if(WR&&key()===k){const sn=+k.split('|')[2];tmGet(WR,sn).catch(()=>{});tfGet(S.tf,sn).catch(()=>{})} // so the live tafsir also works offline for this surah
-  toast('تم التنزيل — متاحة بدون إنترنت ✓')
+  if(!q)toast('تم التنزيل — متاحة بدون إنترنت ✓')
  }catch(e){
   if(window.caches)caches.open(AUD).then(c=>c.delete(u)).catch(()=>{});
   toast(ctl.signal.aborted?'تم إلغاء التنزيل':(e==='space'||(e&&e.name==='QuotaExceededError'))?'المساحة المتاحة على الجهاز لا تكفي':'تعذر التنزيل — تحقق من الإنترنت')}
  DJ=null;dlUI();if(tab==='fav')render();updStorage()}
+let BJ=null;
+const AY=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6]; // ayah counts per surah, only used to estimate the total size
+const mqs=()=>cur.m?[...avail(cur.m)].filter(n=>n>=1&&n<=114).sort((x,y)=>x-y):[];
+const dlk=(m,n)=>`${cur.r.id}|${m.id}|${n}`;
+function dlmUI(){
+ const b=$('#dlm');if(!b||!cur.m)return;
+ const L=mqs(),have=L.filter(n=>S.dl[dlk(cur.m,n)]).length;let h,on=false;
+ if(BJ)h=ic('x')+`<span>جارٍ تنزيل المصحف ${BJ.done}/${BJ.tot} · إلغاء</span>`;
+ else if(L.length&&have===L.length){h=ic('check')+'<span>المصحف محمّل كامل · حذف</span>';on=true}
+ else h=ic('dl')+'<span>'+(have?`تحميل باقي المصحف (${L.length-have} سورة)`:'تحميل المصحف كامل')+'</span>';
+ b.innerHTML=h;b.classList.toggle('on',on)}
+async function dlmBtn(){
+ if(!cur.m)return;
+ if(BJ){BJ.stop=1;if(DJ)DJ.ctl.abort();return}
+ const L=mqs(),todo=L.filter(n=>!S.dl[dlk(cur.m,n)]);
+ if(!L.length)return;
+ if(!todo.length){menu('حذف تنزيلات المصحف لهذا القارئ؟',[['نعم، احذف',()=>{L.forEach(n=>dlDel(dlk(cur.m,n)));dlUI();updStorage();if(tab==='fav')render()}],['إلغاء',()=>{}]]);return}
+ if(!navigator.onLine){toast('لا يوجد اتصال بالإنترنت');return}
+ if(DJ){toast('يوجد تنزيل جارٍ بالفعل');return}
+ const m=cur.m,r=cur.r;let est=0;
+ /* estimate: size of the two longest surahs left, scaled by ayah count */
+ try{const smp=[...todo].sort((x,y)=>AY[y-1]-AY[x-1]).slice(0,2);
+  const rs=(await Promise.all(smp.map(n=>fetch(urlM(m,n),{method:'HEAD'}).then(x=>({n,b:+x.headers.get('content-length')||0})).catch(()=>({n,b:0}))))).filter(x=>x.b);
+  if(rs.length){const rate=rs.reduce((t,x)=>t+x.b/AY[x.n-1],0)/rs.length;est=rate*todo.reduce((t,n)=>t+AY[n-1],0)}}catch(e){}
+ try{const e=await navigator.storage.estimate();if(est&&e.quota&&est>e.quota-e.usage){toast('المساحة المتاحة لا تكفي — يلزم حوالي '+mb(est));return}}catch(e){}
+ menu('تنزيل المصحف كامل؟',[[`تنزيل ${todo.length} سورة`+(est?` (حوالي ${mb(est)})`:''),()=>dlmRun(r,m,todo)],['إلغاء',()=>{}]])}
+async function dlmRun(r,m,todo){
+ if(BJ||DJ)return;
+ BJ={done:0,tot:todo.length,stop:0};dlmUI();let ok=0;
+ for(const n of todo){
+  if(BJ.stop)break;
+  const k=`${r.id}|${m.id}|${n}`;
+  if(!S.dl[k]){await dlStart(k,urlM(m,n),1);if(!S.dl[k])break}
+  BJ.done++;ok++;dlmUI()}
+ BJ=null;dlmUI();
+ toast(ok===todo.length?'تم تنزيل المصحف كامل ✓':'تم تنزيل '+ok+' من '+todo.length+' سورة — اضغط الزر للمتابعة')}
+
+/* mix mode: surahs in order, each one by a random reciter (Hafs recitations only, no teaching-mode files) */
+let MX=null,MXI=0,MXE=0;
+function mxPick(n,ex){
+ const c=[];
+ for(const r of R){const ms=r.moshaf.filter(m=>/حفص/.test(m.name)&&!/معلم/.test(m.name)&&!(m.ex&&m.ex.includes(n))&&avail(m).has(n));if(ms.length)c.push([r,ms])}
+ if(!c.length)return null;
+ let p=c.filter(x=>x[0].id!=ex);if(!p.length)p=c;
+ const x=p[Math.random()*p.length|0];return[x[0],x[1][Math.random()*x[1].length|0]]}
+function mxGo(n){
+ for(;n<=114;n++){const x=mxPick(n,cur.r&&cur.r.id);if(!x)continue;
+  cur.r=x[0];cur.m=x[1];MXI=1;try{play(n,true,true)}finally{MXI=0}return true}
+ MX=null;mxUI();toast('انتهى المصحف');return false}
+function mxUI(){
+ const b=$('#mx');if(b){b.classList.toggle('cur',!!MX);const t=b.querySelector('small');if(t)t.textContent=MX?'شغّال الآن — اضغط للإيقاف':'كل سورة بصوت قارئ مختلف، بالترتيب'}
+ if(!LV&&cur.r)ui()}
+function mxStart(){
+ if(!R.length){toast('قائمة القراء لم تُحمَّل بعد');return}
+ MX={};MXE=0;if(mxGo(1)){mxUI();openPl()}}
+function mxStop(){MX=null;mxUI();toast('تم إيقاف وضع القراء المتعددين')}
 function dlBtn(){
  if(!cur.m)return;const k=key();
  if(DJ&&DJ.k===k){DJ.ctl.abort();return}
@@ -363,7 +427,7 @@ const DC=[['#ff7a00','#e05a00'],['#e8553a','#c4411f'],['#7d8f62','#5f7046']]; //
 function playRadio(st){
  if(!st||!/^https:\/\//.test(st.u)){toast('رابط الإذاعة غير صالح');return}
  if(LV&&LV.url===st.u&&!a.paused){openPl();return}
- savePos();pk=null;lc=null;seekTo=null;ptok++;LV={url:st.u,alt:(st.f||[]).slice(),name:st.n,sub:(st.c?st.c+' · ':'')+'بث مباشر'};
+ if(MX){MX=null;mxUI()}savePos();pk=null;lc=null;seekTo=null;ptok++;LV={url:st.u,alt:(st.f||[]).slice(),name:st.n,sub:(st.c?st.c+' · ':'')+'بث مباشر'};
  document.body.classList.add('live');
  a.defaultPlaybackRate=a.playbackRate=1;const old=blobU;blobU=null;a.src=st.u;if(old)URL.revokeObjectURL(old);a.play().catch(()=>{});
  ui();openPl()}
@@ -377,7 +441,7 @@ function liveUI(){
 function ui(){
  if(LV){liveUI();return}
  if(!cur.r)return;
- const nm=sNm(cur.m,cur.n),rn=cur.r.name;
+ const nm=sNm(cur.m,cur.n),rn=cur.r.name+(MX?' · قراء متعددون':'');
  $$('.tt').forEach(e=>e.textContent=nm);
  const pc=DC[(cur.n-1)%3];$$('.lb').forEach(c=>{c.setAttribute('fill',pc[0]);if(c.hasAttribute('stroke'))c.setAttribute('stroke',pc[1])});
  const dn=$('#dn');dn.textContent=cur.n.toLocaleString('ar-EG');dn.setAttribute('font-size',cur.n>99?24:30);dn.setAttribute('y',cur.n>99?108:110);
@@ -445,7 +509,9 @@ document.addEventListener('click',e=>{
  if(g('#dlall')){menu('حذف كل التنزيلات؟',[['نعم، احذف الكل',()=>{Object.keys(S.dl).forEach(dlDel);render();dlUI();updStorage()}],['إلغاء',()=>{}]]);return}
  if(t=g('[data-dlrm]')){dlDel(t.dataset.dlrm);render();dlUI();updStorage();return}
  if(t=g('[data-dl]')){const[r,m,n]=t.dataset.dl.split('|'),x=R.find(y=>y.id==r);if(x){setReciter(x,m);play(+n)}else toast('تعذر تحميل بيانات القارئ — تحقق من الإنترنت');return}
- if(g('#dl')){dlBtn();return}
+ if(g('#dlm')){dlmBtn();return}
+  if(g('#dl')){dlBtn();return}
+  if(g('#mx')){MX?mxStop():mxStart();return}
  if(t=g('[data-hrm]')){S.hs=S.hs.filter(x=>x.k!==t.dataset.hrm);save();render();return}
  if(t=g('[data-hs]')){const[r,m,n]=t.dataset.hs.split('|'),x=R.find(y=>y.id==r);if(x){setReciter(x,m);play(+n)}else toast('تعذر تحميل بيانات القارئ — تحقق من الإنترنت');return}
  if(t=g('[data-fr]')){const i=+t.dataset.fr;S.fr=S.fr.includes(i)?S.fr.filter(x=>x!=i):[...S.fr,i];save();render();return}
@@ -467,7 +533,8 @@ a.onplay=()=>{document.body.classList.add('playing');lc=a.currentTime};
 a.onpause=()=>{document.body.classList.remove('playing');lc=null;savePos();save();if(newVer)setTimeout(()=>location.reload(),300)};
 a.onloadedmetadata=()=>{if(seekTo!=null){if(seekTo<a.duration-5)a.currentTime=seekTo;seekTo=null}lc=a.currentTime;prog()};
 a.onseeking=()=>{lc=null};a.onseeked=()=>{lc=a.currentTime};
-a.onerror=()=>{if(LV&&LV.alt&&LV.alt.length){LV.url=LV.alt.shift();a.src=LV.url;a.play().catch(()=>{});return}toast(LV?'تعذر تشغيل الإذاعة — تحقق من الإنترنت':S.dl[pk]?'تعذر تشغيل الملف المحمّل':'تعذر التشغيل — تحقق من الإنترنت أو نزّل السورة للاستماع بدون نت')};
+a.onerror=()=>{if(MX&&!LV&&MXE<3){MXE++;mxGo(cur.n);return}if(LV&&LV.alt&&LV.alt.length){LV.url=LV.alt.shift();a.src=LV.url;a.play().catch(()=>{});return}toast(LV?'تعذر تشغيل الإذاعة — تحقق من الإنترنت':S.dl[pk]?'تعذر تشغيل الملف المحمّل':'تعذر التشغيل — تحقق من الإنترنت أو نزّل السورة للاستماع بدون نت')};
+a.addEventListener('playing',()=>{MXE=0});
 addEventListener('visibilitychange',()=>{if(document.hidden){acc();savePos();save()}});
 addEventListener('pagehide',()=>{savePos();save()});
 function prog(){const d=isFinite(a.duration)?a.duration:0,c=a.currentTime||0;$('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');$('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)}
