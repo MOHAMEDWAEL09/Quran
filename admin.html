@@ -184,16 +184,17 @@ async function rssConvert(k){const x=$('#rsx'+k).value,res=$('#rsr'+k);const set
   else if(gs.length>1){const top=gs[0];it=it.filter(e=>sl(e)===top);rnote=' الملف فيه أكتر من رواية ('+gs.map(g=>g+' '+cnt[g]).join('، ')+')، فاستوردت «'+top+'» بس. لباقي الروايات اعمل استيراد منفصل واكتب اسمها في خانة الرواية.'}
   /* "ما تيسر" = short excerpts, not whole surahs: leave them out so a surah never plays as a few minutes only */
   const ex=it.filter(e=>/ما\s*تيسر/.test(e.t||'')),keepEx=!!($('#rsm'+k)&&$('#rsm'+k).checked);
-  if(ex.length){if(keepEx)rnote+=' اتضافت '+ex.length+' مقتطف «ما تيسر» (مش سور كاملة)، وروابطها ممكن تكون بصيغة مختلفة فاختبرها.';else{it=it.filter(e=>!ex.includes(e));rnote+=' اتجاهلت '+ex.length+' مقتطف «ما تيسر» لأنها مش سور كاملة (فعّل الخيار اللي تحت لو عايزها).'}}
+  if(ex.length){if(keepEx)rnote+=' اتضافت '+ex.length+' مقتطف «ما تيسر» وهتظهر في التطبيق باسم «ما تيسر من سورة …». روابطها ممكن تكون بصيغة مختلفة فاختبرها.';else{it=it.filter(e=>!ex.includes(e));rnote+=' اتجاهلت '+ex.length+' مقتطف «ما تيسر» لأنها مش سور كاملة (فعّل الخيار اللي تحت لو عايزها).'}}
   if(!it.length){set('مفيش سور كاملة في الرواية دي (كلها مقتطفات «ما تيسر»).'+rnote,'no');return}}
  let w2pad=true,w2note='';
  {const f=(it.filter(e=>!/ما\s*تيسر/.test(e.t||'')).map(e=>String(e.u).match(W2RE)).find(Boolean))||it.map(e=>String(e.u).match(W2RE)).find(Boolean);if(f){set('جارٍ فحص صيغة ملفات الشيخ على الموقع…');const mk=p=>'https://media.way2quran.com/'+f[1]+'/'+f[2]+'/'+(p?pad(+f[3]):String(+f[3]))+'.mp3';if(await probe(mk(true)))w2pad=true;else if(await probe(mk(false)))w2pad=false;else w2note=' ⚠ ما قدرتش أتأكد إن روابط way2quran بتشتغل — اختبر أول رابط قبل ما تكمّل.'}}
- const files={},dup=[],bad=[];let http=0,w2=0;
+ const files={},dup=[],bad=[],exN=new Set();let http=0,w2=0;
  for(const e of it){let u=e.u;if(/^http:\/\//i.test(u)){u=u.replace(/^http:/i,'https:');http++}
   {const w=u.match(W2RE);if(w){u='https://media.way2quran.com/'+w[1]+'/'+w[2]+'/'+(w2pad?pad(+w[3]):String(+w[3]))+'.mp3';w2++}}if(!/^https:\/\/\S+$/.test(u)){bad.push(e.t||'(بدون عنوان)');continue}
-  const n=surahOf(e.t,u);if(!n){bad.push(e.t||u);continue}if(files[n]){dup.push(n);continue}files[n]=u}
+  const n=surahOf(e.t,u);if(!n){bad.push(e.t||u);continue}if(files[n]){dup.push(n);continue}files[n]=u;if(/ما\s*تيسر/.test(e.t||''))exN.add(n)}
  const ls=Object.keys(files).map(Number).sort((a,b)=>a-b);if(!ls.length){set('معرفتش أربط ولا سورة. ابعتلي أول 5 عناوين من الملف.','no');return}
  $('textarea[data-f=links][data-k="'+k+'"]').value=ls.map(n=>n+' '+files[n]).join('\n');cnt($('textarea[data-f=links][data-k="'+k+'"]'));
+ if(edit&&edit.ms&&edit.ms[k])edit.ms[k].ex=[...exN].sort((a,b)=>a-b);
  const miss=[];for(let i=1;i<=114;i++)if(!files[i])miss.push(i);
  set('✓ اتربط '+ls.length+' سورة من '+it.length+' عنصر.'+(miss.length&&miss.length<=60?' ناقص: '+range(miss)+'.':miss.length?' ناقص '+miss.length+' سورة.':'')+(dup.length?' مكرر (اتجاهل): '+range([...new Set(dup)].sort((a,b)=>a-b))+'.':'')+(bad.length?' عناوين ما اتعرفتش: '+bad.slice(0,3).join(' / ')+(bad.length>3?'…':'')+'.':'')+(http?' (روابط http اتحوّلت لـ https).':'')+rnote+(w2?' (روابط way2quran اتحوّلت لروابط الملفات المباشرة'+(w2pad?'':'، من غير أصفار قبل رقم السورة')+').':'')+w2note+' راجع الروابط تحت واختبر أول رابط.','ok')}
 const filesText=m=>m.files?Object.keys(m.files).map(Number).sort((a,b)=>a-b).map(n=>n+' '+m.files[n]).join('\n'):'';
@@ -201,7 +202,7 @@ const range=ls=>{const o=[];for(let i=0;i<ls.length;){let j=i;while(j+1<ls.lengt
 
 var ra;let D={next:1000001,hidden:[],default:0,reciters:[]},dirty=false,tab=1,edit=null,API=null,em=0;const RDEF=[{name:'إذاعة القرآن الكريم من القاهرة',country:'مصر',url:'https://stream.radiojar.com/8s5u5tpdtwzuv'},{name:'إذاعة القرآن الكريم من الرياض',country:'السعودية',url:'https://stream.radiojar.com/0tpy1h0kxtzuv'},{name:'إذاعة الشارقة للقرآن الكريم',country:'الإمارات',url:'https://l3.itworkscdn.net/smcquranlive/quranradiolive/icecast.audio'},{name:'إذاعة القرآن الكريم من نابلس',country:'فلسطين',url:'https://quran-radio.org:8080/;?type=http&nocache=29'}];
 try{const x=JSON.parse(localStorage.getItem('adm-draft')||'null');if(x&&Array.isArray(x.reciters)){D=x;dirty=true}}catch(e){}
-const vt=(o,m)=>{if(m.t&&typeof m.t==='object'){const t={};for(const k in m.t){const l=m.t[k];if(+k>=1&&+k<=114&&Array.isArray(l)&&l.length>=3&&l.every(Number.isFinite))t[k]=l}if(Object.keys(t).length)o.t=t}return o};
+const vt=(o,m)=>{if(m.t&&typeof m.t==='object'){const t={};for(const k in m.t){const l=m.t[k];if(+k>=1&&+k<=114&&Array.isArray(l)&&l.length>=3&&l.every(Number.isFinite))t[k]=l}if(Object.keys(t).length)o.t=t}if(Array.isArray(m.ex)){const e=[...new Set(m.ex.map(Number).filter(n=>n>=1&&n<=114))].sort((a,b)=>a-b);if(e.length)o.ex=e}return o};
 function norm(J){const o={next:1000001,hidden:[],default:0,reciters:[]};if(!J||typeof J!=='object')return o;
  let mx=1000000;
  (J.reciters||[]).forEach(c=>{const ms=(c.moshaf||[]).map(m=>{if(m.files&&typeof m.files==='object'){const f={};for(const k in m.files){const n=+k,u=String(m.files[k]||'');if(n>=1&&n<=114&&/^https:\/\/\S+$/.test(u))f[n]=u}return vt({id:+m.id,name:String(m.name||'مرتل'),files:f},m)}return vt({id:+m.id,name:String(m.name||'مرتل'),server:String(m.server||''),surahs:String(m.surahs||'1-114')},m)});if(!c.name||!(+c.id>=1e6)||!ms.length)return;o.reciters.push({id:+c.id,name:String(c.name),moshaf:ms});mx=Math.max(mx,+c.id,...ms.map(m=>m.id))});
