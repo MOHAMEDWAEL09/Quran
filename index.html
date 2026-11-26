@@ -75,11 +75,16 @@ body.playing .arm{transform:none}
 .tm{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin:10px 4px 18px;font-variant-numeric:tabular-nums}
 .ctl{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
 .ctl button{width:50px;height:50px;display:grid;place-items:center;padding:0;font-size:13px}
+.ctl .on .i,#rp.on .i{color:var(--acc)}
 .ctl2{display:flex;align-items:center;gap:16px}
 .ctl2 button{width:50px;height:50px;font-size:22px;flex:none}
 .ctl2 .i{flex:none;color:var(--mut)}
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:99px;direction:rtl;outline:0;box-shadow:var(--in);background:linear-gradient(to left,var(--fill) var(--p,0%),var(--track) var(--p,0%))}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:0;height:0}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:40px;margin:0;background:none;direction:rtl;outline:0;touch-action:none;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:12px;border-radius:99px;box-shadow:var(--in);background:linear-gradient(to left,var(--fill) var(--p,0%),var(--track) var(--p,0%))}
+input[type=range]::-moz-range-track{height:12px;border-radius:99px;box-shadow:var(--in);background:linear-gradient(to left,var(--fill) var(--p,0%),var(--track) var(--p,0%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:0;height:0;margin-top:6px}
+#sk::-webkit-slider-thumb{width:18px;height:18px;border-radius:50%;background:var(--acc);box-shadow:0 1px 4px #0004;margin-top:-3px}
+#sk::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--acc);border:0;box-shadow:0 1px 4px #0004}
 input[type=range]::-moz-range-thumb{width:0;height:0;border:0}
 .hd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .hd .ib{width:40px;height:40px}
@@ -148,7 +153,7 @@ body.live .ctl2{margin-bottom:auto}
 #rd .dot{width:10px;height:10px;border-radius:50%;background:var(--acc);flex:none}
 body.playing.live #rd .dot{animation:lv 1.2s ease-in-out infinite}
 @keyframes lv{50%{opacity:.25}}
-body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live #fw,body.live #spb,body.live #mb2,body.live #tb,body.live #fv,body.live #dl,body.live #dlm,body.live #ds,body.live #wn{display:none!important}
+body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live #fw,body.live #rp,body.live #mb2,body.live #tb,body.live #fv,body.live #dl,body.live #dlm,body.live #ds,body.live #wn{display:none!important}
 @media (prefers-reduced-motion:reduce){body.live #rd .dot{animation:none!important}}
 </style>
 <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
@@ -216,12 +221,11 @@ body.live #sk,body.live .tm,body.live #pv,body.live #nx,body.live #bk,body.live 
   <button id="bk" aria-label="رجوع 10 ثوانٍ">−10</button>
   <button id="fw" aria-label="تقديم 10 ثوانٍ">+10</button>
   <button id="nx" data-ic="next" aria-label="السورة التالية"></button>
-  <button id="spb">×1</button>
+  <button id="rp" aria-label="إعادة هذه السورة" aria-pressed="false"></button>
  </div>
  <div class="ctl2"><button id="mb2" aria-label="نص السورة">ق</button><button id="tb" data-ic="msg" aria-label="تفسير الآية الحالية" hidden></button><span data-ic="vol" class="i2"></span><input type="range" id="vo" min="0" max="1" step=".01" aria-label="الصوت"></div>
  <button class="dlb" id="dl"></button>
  <button class="dlb" id="dlm"></button>
- <p class="mu c" id="ds"></p>
 </section>
 
 <section class="sheet" id="ms"><div class="top"><button class="ib" data-close="ms" data-ic="x" aria-label="إغلاق"></button><span class="mu">المصحف</span><span class="ib"></span></div><p class="mu c" id="mh" hidden>اضغط على أي آية لعرض تفسيرها</p><div id="mb"></div>
@@ -238,6 +242,7 @@ const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"
 const N='الفاتحة|البقرة|آل عمران|النساء|المائدة|الأنعام|الأعراف|الأنفال|التوبة|يونس|هود|يوسف|الرعد|إبراهيم|الحجر|النحل|الإسراء|الكهف|مريم|طه|الأنبياء|الحج|المؤمنون|النور|الفرقان|الشعراء|النمل|القصص|العنكبوت|الروم|لقمان|السجدة|الأحزاب|سبأ|فاطر|يس|الصافات|ص|الزمر|غافر|فصلت|الشورى|الزخرف|الدخان|الجاثية|الأحقاف|محمد|الفتح|الحجرات|ق|الذاريات|الطور|النجم|القمر|الرحمن|الواقعة|الحديد|المجادلة|الحشر|الممتحنة|الصف|الجمعة|المنافقون|التغابن|الطلاق|التحريم|الملك|القلم|الحاقة|المعارج|نوح|الجن|المزمل|المدثر|القيامة|الإنسان|المرسلات|النبأ|النازعات|عبس|التكوير|الانفطار|المطففين|الانشقاق|البروج|الطارق|الأعلى|الغاشية|الفجر|البلد|الشمس|الليل|الضحى|الشرح|التين|العلق|القدر|البينة|الزلزلة|العاديات|القارعة|التكاثر|العصر|الهمزة|الفيل|قريش|الماعون|الكوثر|الكافرون|النصر|المسد|الإخلاص|الفلق|الناس'.split('|');
 const fxm=(r,id)=>r&&r.moshaf&&r.moshaf.find(z=>z.id==id),sNm=(m,n)=>(m&&m.ex&&m.ex.includes(+n)?'ما تيسر من ':'')+'سورة '+N[n-1];
 const IC={list:'M4 6h16M4 12h16M4 18h10',users:'M15.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zM4 21c0-3.6 3.6-5.5 8-5.5s8 1.9 8 5.5',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',disc:'M18 13a7 7 0 1 1-14 0 7 7 0 0 1 14 0zM13 13a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM21.5 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM20.5 5l-5 7.5',clock:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 7v5l3 2',sun:'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',moon:'M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z',prev:'M17 5v14M5 5l9 7-9 7z',next:'M7 5v14M19 5l-9 7 9 7z',x:'M6 6l12 12M18 6L6 18',vol:'M4 9v6h4l5 4V5L8 9zM16.5 9a4 4 0 0 1 0 6',dl:'M12 4v11M7 11l5 5 5-5M5 20h14',check:'M5 12l5 5 9-10',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',cl:'M15 6l-6 6 6 6',cr:'M9 6l6 6-6 6',msg:'M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4 4v-4H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM8 9h8M8 12h5'};
+IC.rep='M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3';
 IC.shuf='M18 4l3 3-3 3M18 20l3-3-3-3M3 7h3a5 5 0 0 1 5 5 5 5 0 0 0 5 5h5M21 7h-5a5 5 0 0 0-3 1M8 16a5 5 0 0 1-2 1H3';
 const ic=n=>`<svg class="i" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 $$('[data-ic]').forEach(e=>e.innerHTML=ic(e.dataset.ic));
@@ -255,13 +260,13 @@ function match(name,q){
 const fmt=s=>{s=Math.max(0,s|0);return(s/60|0)+':'+String(s%60).padStart(2,'0')};
 
 let S={};try{S=JSON.parse(localStorage.getItem('q')||'{}')}catch(e){}
-S.fr||=[];S.ft||=[];S.hs||=[];S.sp||=1;S.vol??=1;S.dl||={};S.pos||={};S.ls||={};
+S.fr||=[];S.ft||=[];S.hs||=[];S.sp=1;S.vol??=1;S.dl||={};S.pos||={};S.ls||={};
 const save=()=>{try{localStorage.setItem('q',JSON.stringify(S))}catch(e){}};
 let LV=null,QR=null,QRp=null; // LV = live station being played; QR = mp3quran reciter radios (loaded when the list opens)
 let RDS=[{n:'إذاعة القرآن الكريم من القاهرة',c:'مصر',u:'https://stream.radiojar.com/8s5u5tpdtwzuv'},{n:'إذاعة القرآن الكريم من الرياض',c:'السعودية',u:'https://stream.radiojar.com/0tpy1h0kxtzuv'},{n:'إذاعة الشارقة للقرآن الكريم',c:'الإمارات',u:'https://l3.itworkscdn.net/smcquranlive/quranradiolive/icecast.audio'},{n:'إذاعة القرآن الكريم من نابلس',c:'فلسطين',u:'https://quran-radio.org:8080/;?type=http&nocache=29',f:['https://quran-radio.org:8899/;?type=http&nocache=29']}];
 let BM=0,R=[],cur={r:null,m:null,n:S.n||1},br={r:null,m:null},tab='home',MI=[]; // cur = what is actually loaded in the player, br = reciter being browsed
 const a=new Audio();a.preload='none';a.volume=S.vol;a.defaultPlaybackRate=a.playbackRate=S.sp;
-$('#spb').textContent='×'+S.sp;$('#vo').value=S.vol;$('#vo').style.setProperty('--p',S.vol*100+'%');
+$('#vo').value=S.vol;$('#vo').style.setProperty('--p',S.vol*100+'%');
 
 const avail=m=>new Set(((m&&m.surah_list)||'').split(',').map(Number));
 const key=()=>`${cur.r.id}|${cur.m.id}|${cur.n}`;
@@ -541,15 +546,24 @@ addEventListener('visibilitychange',()=>{if(document.hidden){acc();savePos();sav
 addEventListener('pagehide',()=>{savePos();save()});
 function prog(){const d=isFinite(a.duration)?a.duration:0,c=a.currentTime||0;$('#sk').max=d;$('#sk').value=c;$('#sk').style.setProperty('--p',d?c/d*100+'%':'0%');$('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)}
 a.ondurationchange=()=>{prog();if(wnOn)wnSync();if(msOn)msSync()};
-a.ontimeupdate=()=>{prog();acc();if(wnOn)wnSync();if(msOn)msSync();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save();if(tab==='hist'&&$('#st'))$('#st').innerHTML=stHTML()}};
-a.onended=()=>{if(LV)return;delete S.pos[pk];save();if(slEnd){sleep(0);return}step(1)};
-$('#sk').oninput=e=>{a.currentTime=+e.target.value};
+a.ontimeupdate=()=>{if(!SD)prog();acc();if(wnOn)wnSync();if(msOn)msSync();const n=Date.now();if(n-lastSave>3000){lastSave=n;savePos();save();if(tab==='hist'&&$('#st'))$('#st').innerHTML=stHTML()}};
+a.onended=()=>{if(LV)return;delete S.pos[pk];save();if(slEnd){sleep(0);return}if(S.rp&&!MX){a.currentTime=0;a.play().catch(()=>{});return}step(1)};
+let SD=0;
+{const sk=$('#sk'),pv=()=>{const d=+sk.max||0,c=+sk.value;sk.style.setProperty('--p',d?c/d*100+'%':'0%');$('#t1').textContent=fmt(c);$('#t2').textContent='-'+fmt(d-c)};
+ const at=e=>{const r=sk.getBoundingClientRect(),f=Math.min(1,Math.max(0,(r.right-e.clientX)/r.width));sk.value=f*(+sk.max||0);pv()};
+ sk.addEventListener('pointerdown',e=>{if(!(+sk.max>0))return;e.preventDefault();try{sk.setPointerCapture(e.pointerId)}catch(x){}SD=1;at(e)});
+ sk.addEventListener('pointermove',e=>{if(SD)at(e)});
+ const end=e=>{if(!SD)return;SD=0;at(e);a.currentTime=+sk.value;lc=null};
+ sk.addEventListener('pointerup',end);sk.addEventListener('pointercancel',()=>{SD=0;prog()});
+ sk.oninput=()=>{if(!SD){a.currentTime=+sk.value;pv()}}}
 $('#vo').oninput=e=>{S.vol=+e.target.value;a.volume=S.vol;e.target.style.setProperty('--p',S.vol*100+'%');save()};
 $('#pv').onclick=()=>step(-1);$('#nx').onclick=()=>step(1);
 $('#bk').onclick=()=>a.currentTime=Math.max(0,a.currentTime-10);
 $('#fw').onclick=()=>a.currentTime=Math.min(a.duration||1e9,a.currentTime+10);
 $('#fv').onclick=()=>{if(!cur.m)return;const k=key();S.ft=S.ft.includes(k)?S.ft.filter(x=>x!=k):[...S.ft,k];save();$('#fv').classList.toggle('on',S.ft.includes(k))};
-$('#spb').onclick=()=>menu('سرعة التلاوة',[.75,1,1.25,1.5,2].map(v=>['×'+v,()=>{S.sp=v;a.defaultPlaybackRate=a.playbackRate=v;$('#spb').textContent='×'+v;save()}]));
+const rpUI=()=>{const b=$('#rp');b.classList.toggle('on',!!S.rp);b.setAttribute('aria-pressed',!!S.rp)};
+$('#rp').innerHTML=ic('rep');rpUI();
+$('#rp').onclick=()=>{S.rp=S.rp?0:1;save();rpUI();toast(S.rp?'هتتكرر السورة دي لحد ما توقفها':'تم إيقاف التكرار')};
 
 /* sleep timer */
 let sl=null,slEnd=false;
