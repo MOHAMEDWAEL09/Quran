@@ -1,6 +1,6 @@
 {
  "v": 1,
- "next": 1000021,
+ "next": 1000023,
  "default": 259,
  "hidden": [],
  "reciters": [
@@ -735,6 +735,53 @@
       "112": "https://media.way2quran.com/abdul-rahman-al-jarizi/hafs-an-asim/112.mp3",
       "113": "https://media.way2quran.com/abdul-rahman-al-jarizi/hafs-an-asim/113.mp3",
       "114": "https://media.way2quran.com/abdul-rahman-al-jarizi/hafs-an-asim/114.mp3"
+     }
+    }
+   ]
+  },
+  {
+   "id": 1000021,
+   "name": "أسامة جلال",
+   "moshaf": [
+    {
+     "id": 1000022,
+     "name": "حفص عن عاصم-مجود",
+     "files": {
+      "1": "https://archive.org/download/a0251208aaaaaaaaaaaaa/001-%D8%A7%D9%84%20%D8%B9%D9%85%D8%B1%D8%A7%D9%86%20-%20%D8%A7%D9%85%D8%B3%D9%8A%D8%A9.mp3",
+      "2": "https://archive.org/download/a0251208aaaaaaaaaaaaa/002-%D8%A7%D9%84%D8%A3%D8%AD%D8%B2%D8%A7%D8%A8.mp3",
+      "3": "https://archive.org/download/a0251208aaaaaaaaaaaaa/003-%D8%A7%D9%84%D8%A8%D9%82%D8%B1%D8%A9%201%20%D8%A7%D9%85%D8%B3%D9%8A%D8%A9.mp3",
+      "4": "https://archive.org/download/a0251208aaaaaaaaaaaaa/004-%D8%A7%D9%84%D8%A8%D9%82%D8%B1%D8%A9%202%20%D8%A7%D9%85%D8%B3%D9%8A%D8%A9.mp3",
+      "5": "https://archive.org/download/a0251208aaaaaaaaaaaaa/005-%D8%A7%D9%84%D8%AD%D8%AC%D8%B1%D8%A7%D8%AA%201.mp3",
+      "6": "https://archive.org/download/a0251208aaaaaaaaaaaaa/006-%D8%A7%D9%84%D8%AD%D8%AC%D8%B1%D8%A7%D8%AA%202.mp3",
+      "7": "https://archive.org/download/a0251208aaaaaaaaaaaaa/007-%D8%A7%D9%84%D8%AD%D8%AC%D8%B1%D8%A7%D8%AA.mp3",
+      "8": "https://archive.org/download/a0251208aaaaaaaaaaaaa/008-%D8%A7%D9%84%D8%AD%D8%B4%D8%B1%20%D8%A7%D9%84%D9%82%D8%B5%D8%A7%D8%B1.mp3",
+      "9": "https://archive.org/download/a0251208aaaaaaaaaaaaa/009-%D8%A7%D9%84%D8%B9%D8%B4%D8%A7%D8%A1%20%D8%A7%D9%84%D9%82%D8%B5%D8%B5%201.mp3",
+      "10": "https://archive.org/download/a0251208aaaaaaaaaaaaa/010-%D8%A7%D9%84%D8%B9%D8%B4%D8%A7%D8%A1%20%D8%A7%D9%84%D9%82%D8%B5%D8%B5%202.mp3",
+      "11": "https://archive.org/download/a0251208aaaaaaaaaaaaa/011-%D8%A7%D9%84%D8%B9%D8%B4%D8%A7%D8%A1%20%D9%84%D9%82%D9%85%D8%A7%D9%86%20%D8%B9%D8%B2%D8%A7%D8%A1%2027-12-2010.mp3",
+      "12": "https://archive.org/download/a0251208aaaaaaaaaaaaa/012-%D8%A7%D9%84%D8%B9%D8%B5%D8%B1%201%D9%8A%D9%88%D8%B3%D9%81.mp3",
+      "13": "https://archive.org/download/a0251208aaaaaaaaaaaaa/013-%D8%A7%D9%84%D8%B9%D8%B5%D8%B1%202%20%D9%8A%D9%88%D8%B3%D9%81.mp3",
+      "14": "https://archive.org/download/a0251208aaaaaaaaaaaaa/014-%D8%A7%D9%84%D9%81%D8%AA%D8%AD%20%D8%A7%D9%84%D8%AD%D8%AC%D8%B1%D8%A7%D8%AA%201.mp3",
+      "15": "https://archive.org/download/a0251208aaaaaaaaaaaaa/015-%D8%A7%D9%84%D9%81%D8%AA%D8%AD%20%D8%A7%D9%84%D8%AD%D8%AC%D8%B1%D8%A7%D8%AA%202.mp3",
+      "16": "https://archive.org/download/a0251208aaaaaaaaaaaaa/016-%D8%A7%D9%84%D9%81%D8%AA%D8%AD%20%D8%A7%D9%84%D8%AD%D8%AC%D8%B1%D8%A7%D8%AA%203.mp3",
+      "17": "https://archive.org/download/a0251208aaaaaaaaaaaaa/017-%D8%A7%D9%84%D9%81%D8%AA%D8%AD.mp3",
+      "18": "https://archive.org/download/a0251208aaaaaaaaaaaaa/018-%D8%A7%D9%84%D9%82%D9%85%D8%B1%20%D8%A7%D9%84%D8%B1%D8%AD%D9%85%D9%86.mp3",
+      "19": "https://archive.org/download/a0251208aaaaaaaaaaaaa/019-%D8%A7%D9%84%D9%85%D8%A7%D8%A6%D8%AF%D8%A9%20-%20%D8%A7%D9%85%D8%B3%D9%8A%D8%A9.mp3",
+      "20": "https://archive.org/download/a0251208aaaaaaaaaaaaa/020-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1%201.mp3",
+      "21": "https://archive.org/download/a0251208aaaaaaaaaaaaa/021-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1%202.mp3",
+      "22": "https://archive.org/download/a0251208aaaaaaaaaaaaa/022-%D8%A7%D9%84%D9%86%D8%B3%D8%A7%D8%A1%204.mp3",
+      "23": "https://archive.org/download/a0251208aaaaaaaaaaaaa/023-%D8%A7%D9%84%D9%86%D9%85%D9%84%202.mp3",
+      "24": "https://archive.org/download/a0251208aaaaaaaaaaaaa/024-%D8%B7%D9%87%201.mp3",
+      "25": "https://archive.org/download/a0251208aaaaaaaaaaaaa/025-%D8%B7%D9%87%202.mp3",
+      "26": "https://archive.org/download/a0251208aaaaaaaaaaaaa/026-%D8%B7%D9%87.mp3",
+      "27": "https://archive.org/download/a0251208aaaaaaaaaaaaa/027-%D9%82%D8%B5%D8%A7%D8%B1%20%D8%A7%D9%84%D8%B3%D9%88%D8%B1.mp3",
+      "28": "https://archive.org/download/a0251208aaaaaaaaaaaaa/028-%D9%85%D8%B1%D9%8A%D9%85%20-%20%D8%A7%D9%85%D8%B3%D9%8A%D8%A9.mp3",
+      "29": "https://archive.org/download/a0251208aaaaaaaaaaaaa/029-%D9%87%D9%88%D8%AF%20-%20%D8%A7%D9%85%D8%B3%D9%8A%D8%A9.mp3",
+      "30": "https://archive.org/download/a0251208aaaaaaaaaaaaa/030-%D9%87%D9%88%D8%AF.mp3",
+      "31": "https://archive.org/download/a0251208aaaaaaaaaaaaa/031-%D9%8A%D9%88%D8%B3%D9%81%20-%20%D8%A7%D9%85%D8%B3%D9%8A%D8%A9.mp3",
+      "32": "https://archive.org/download/a0251208aaaaaaaaaaaaa/032-%D9%8A%D9%88%D8%B3%D9%81%201.mp3",
+      "33": "https://archive.org/download/a0251208aaaaaaaaaaaaa/033-%D9%8A%D9%88%D8%B3%D9%81%202.mp3",
+      "34": "https://archive.org/download/a0251208aaaaaaaaaaaaa/034-%D9%8A%D9%88%D8%B3%D9%81%204.mp3",
+      "35": "https://archive.org/download/a0251208aaaaaaaaaaaaa/035-%D9%8A%D9%88%D8%B3%D9%81.mp3"
      }
     }
    ]
